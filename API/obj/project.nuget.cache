@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "d3FB+4qiO0g=",
+  "dgSpecHash": "t4Tdgf5ZRgY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Saes\\Documents\\Fiap\\2025\\Challenge\\DotNet\\Ninhuu-CSharp\\API\\API.csproj",
+  "projectFilePath": "C:\\Users\\Saes\\Documents\\programacao\\Fiap\\Challenge\\Ninhuu-CSharp\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Saes\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\Saes\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
