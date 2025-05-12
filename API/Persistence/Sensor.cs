@@ -7,8 +7,8 @@ namespace API.Persistence
         [Key]
         public Guid Id { get; set; }
         public string CodigoSensor { get; set; }
+        public Guid IdZona { get; set; } // Tipo do id deve ser igual ao da entidade estrangeira
         public Zona Zona { get; set; }
-        public Guid IdZona { get; set; }
 
     }
 }

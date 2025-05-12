@@ -18,13 +18,9 @@ namespace API.Mappings
                 .Property(p => p.CodigoSensor)
                 .IsRequired();
 
-            builder
-                .Property(p => p.Zona)
-                .IsRequired();
-
-            builder
-                .Property(p => p.IdZona)
-                .IsRequired();
+            builder.HasOne(p => p.Zona)
+                .WithMany(z => z.Sensores)
+                .HasForeignKey(p => p.IdZona);
         }
     }
 }
