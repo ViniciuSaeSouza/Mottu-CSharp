@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Saes\\Documents\\programacao\\Fiap\\Challenge\\Ninhuu-CSharp\\API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|c:\\users\\saes\\documents\\programacao\\fiap\\challenge\\ninhuu-csharp\\api\\persistence\\zona.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|solutionrelative:persistence\\zona.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|c:\\users\\saes\\documents\\programacao\\fiap\\challenge\\ninhuu-csharp\\api\\persistence\\sensor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|solutionrelative:persistence\\sensor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|c:\\users\\saes\\documents\\programacao\\fiap\\challenge\\ninhuu-csharp\\api\\mappings\\sensormapping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|solutionrelative:mappings\\sensormapping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|c:\\users\\saes\\documents\\programacao\\fiap\\challenge\\ninhuu-csharp\\api\\persistence\\sensor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|solutionrelative:persistence\\sensor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|c:\\users\\saes\\documents\\programacao\\fiap\\challenge\\ninhuu-csharp\\api\\persistence\\zona.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|solutionrelative:persistence\\zona.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A93C3C33-23B6-4993-8A2F-BC896828BFDF}|API.csproj|c:\\users\\saes\\documents\\programacao\\fiap\\challenge\\ninhuu-csharp\\api\\persistence\\filial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -60,7 +60,7 @@
               "RelativeDocumentMoniker": "Mappings\\SensorMapping.cs",
               "ToolTip": "C:\\Users\\Saes\\Documents\\programacao\\Fiap\\Challenge\\Ninhuu-CSharp\\API\\Mappings\\SensorMapping.cs",
               "RelativeToolTip": "Mappings\\SensorMapping.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-10T19:32:07.104Z",
               "EditorCaption": ""
@@ -81,17 +81,17 @@
         },
         {
           "DockedWidth": 179,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Sensor.cs",
               "DocumentMoniker": "C:\\Users\\Saes\\Documents\\programacao\\Fiap\\Challenge\\Ninhuu-CSharp\\API\\Persistence\\Sensor.cs",
               "RelativeDocumentMoniker": "Persistence\\Sensor.cs",
               "ToolTip": "C:\\Users\\Saes\\Documents\\programacao\\Fiap\\Challenge\\Ninhuu-CSharp\\API\\Persistence\\Sensor.cs",
               "RelativeToolTip": "Persistence\\Sensor.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-10T19:31:50.703Z",
               "EditorCaption": ""
@@ -106,8 +106,7 @@
               "RelativeToolTip": "Persistence\\Endereco.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABIAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-07T23:40:58.068Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-07T23:40:58.068Z"
             },
             {
               "$type": "Document",
@@ -119,18 +118,17 @@
               "RelativeToolTip": "Persistence\\Filial.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-10T19:29:27.845Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-10T19:29:27.845Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Zona.cs",
               "DocumentMoniker": "C:\\Users\\Saes\\Documents\\programacao\\Fiap\\Challenge\\Ninhuu-CSharp\\API\\Persistence\\Zona.cs",
               "RelativeDocumentMoniker": "Persistence\\Zona.cs",
               "ToolTip": "C:\\Users\\Saes\\Documents\\programacao\\Fiap\\Challenge\\Ninhuu-CSharp\\API\\Persistence\\Zona.cs",
               "RelativeToolTip": "Persistence\\Zona.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-08T00:05:05.18Z",
               "EditorCaption": ""

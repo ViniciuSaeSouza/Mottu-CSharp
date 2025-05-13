@@ -19,8 +19,8 @@ namespace API.Mappings
                 .IsRequired();
 
             builder.HasOne(p => p.Zona)
-                .WithMany(z => z.Sensores)
-                .HasForeignKey(p => p.IdZona);
+                .WithOne(z => z.Sensor)
+                .HasForeignKey("IdZona");
         }
     }
 }
