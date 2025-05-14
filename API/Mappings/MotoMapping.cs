@@ -9,25 +9,29 @@ namespace API.Mappings
         public void Configure(EntityTypeBuilder<Moto> builder)
         {
             builder
-                .ToTable("Motos");
+                .ToTable("tbl_moto");
 
-            builder.HasKey("Id");
+            builder.HasKey(m => m.Id);
 
             builder
-                .Property(p => p.Placa)
+                .Property(m => m.Placa)              
+                .IsRequired();
+
+            builder.HasIndex(m => m.Placa)
+                .IsUnique();
+
+            builder
+                .HasOne(m => m.Modelo)
+                .WithMany(md => md.Motos)
+                .HasForeignKey(m => m.IdModelo)
                 .IsRequired();
 
             builder
-                .Property(p => p.Modelo)
+                .HasOne(m => m.Filial)
+                .WithMany(f => f.Motos)
+                .HasForeignKey(m => m.IdFilial)
                 .IsRequired();
-
-            builder
-                .Property(p => p.Status)
-                .IsRequired();
-
-            builder
-                .Property(p => p.IdFilial)
-                .IsRequired();
+                
         }
     }
 }

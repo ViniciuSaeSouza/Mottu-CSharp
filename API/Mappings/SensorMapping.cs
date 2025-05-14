@@ -9,18 +9,28 @@ namespace API.Mappings
         public void Configure(EntityTypeBuilder<Sensor> builder)
         {
             builder
-                .ToTable("Sensores");
+                .ToTable("tbl_sensor");
 
             builder
-                .HasKey(p => p.Id);
+                .HasKey(s => s.Id);
 
             builder
-                .Property(p => p.CodigoSensor)
+                .Property(s => s.NomeSensor)
+                .HasMaxLength(11)
                 .IsRequired();
 
-            builder.HasOne(p => p.Zona)
+            builder
+                .HasIndex(s => s.NomeSensor)
+                .IsUnique();
+
+            builder.HasOne(s => s.Zona)
                 .WithOne(z => z.Sensor)
-                .HasForeignKey("IdZona");
+                .HasForeignKey<Sensor>(s => s.IdZona)
+                .IsRequired(); // Relação 1:1 exige especificar qual entidade (Quem tem a FK?)
+
+            builder
+                .HasIndex(s => s.IdZona)
+                .IsUnique();
         }
     }
 }

@@ -8,10 +8,15 @@
 
         public string Descricao { get; set; }
 
-        public ZonaPadrao(string nomeZona, string descricao)
+        public string CorZona { get; set; }
+
+        public ICollection<ZonaFilial> Zonas { get; set; }
+
+        public ZonaPadrao(string nomeZona, string descricao, string corZona)
         {
             this.NomeZona = nomeZona;
             this.Descricao = descricao;
+            this.CorZona = corZona;
         }
     }
 }
