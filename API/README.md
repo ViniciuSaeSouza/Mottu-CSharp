@@ -2,15 +2,15 @@
 
 API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utilizando Oracle, Entity Framework Core, Clean Architecture e princípios de DDD.
 
-*solucação criada para o [check-point 2](https://github.com/2TDSPK-25/CP2)*
+*solução criada para o **Challenge Mottu***
 ---
 
 ## 📦 Estrutura da Solução
 
-- **Domain**: Entidades de domínio, enums e exceções.
-- **Application**: DTOs, validações e mapeamentos.
-- **Infrastructure**: Contexto do EF Core, configurações de banco e mapeamentos Fluent API.
-- **Presentation**: Controllers, endpoints e configuração de rotas.
+- **Dominio**: Entidades de domínio, enums e exceções.
+- **Aplicacao**: DTOs, validações e mapeamentos.
+- **Infraestrutura**: Contexto do EF Core, configurações de banco e mapeamentos Fluent API.
+- **Apresentacao**: Controllers, endpoints e configuração de rotas.
 
 ---
 
@@ -20,7 +20,10 @@ API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utiliz
 - Cadastro, consulta, atualização e remoção de filiais.
 - Relacionamento muitos-para-um entre Moto e Filial.
 - Validações de domínio e unicidade de placa.
-- Documentação automática via Swagger.
+- Documentação automática via Swagger/OpenAPI.
+- Respostas HTTP padronizadas (200, 201, 204, 400, 404, 409, 500, 503).
+- Uso de DTOs para entrada e saída de dados.
+- Injeção de dependência e separação por camadas.
 
 ---
 
@@ -36,8 +39,8 @@ API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utiliz
 
 ### Filiais
 
-- `GET /api/filial` — Lista todas as filiais.
-- `GET /api/filial/{id}` — Consulta uma filial pelo ID.
+- `GET /api/filial` — Lista todas as filiais (sem motos associadas).
+- `GET /api/filial/{id}` — Consulta uma filial pelo ID (inclui as motos associadas).
 - `POST /api/filial` — Cadastra uma nova filial.
 - `PATCH /api/filial/{id}` — Atualiza parcialmente uma filial.
 - `DELETE /api/filial/{id}` — Remove uma filial.
@@ -47,6 +50,7 @@ API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utiliz
 ## ⚙️ Tecnologias Utilizadas
 
 - .NET 8 / ASP.NET Core
+- C# 12
 - Entity Framework Core 9
 - Oracle (Oracle.EntityFrameworkCore)
 - Swagger (Swashbuckle)
@@ -65,10 +69,12 @@ API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utiliz
      }
      ```
 2. **Restaurar pacotes e aplicar migrations**
-   (No CMD da aplicação) - `dotnet restore dotnet ef database update`
+   (No CMD da aplicação)
+   `dotnet restore dotnet ef database update`
 
-4. **Executar a aplicação**
-   (No CMD da aplicação) - `dotnet run` 
+3. **Executar a aplicação**
+   (No CMD da aplicação)
+   `dotnet run`
 
 Acesse o Swagger em: `https://localhost:7018/swagger/index.html`
 ---
