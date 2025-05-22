@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\Ninhuu-CSharp\\API\\API.csproj": {}
+    "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\CSharp\\API\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\Ninhuu-CSharp\\API\\API.csproj": {
+    "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\CSharp\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\Ninhuu-CSharp\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\CSharp\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\Ninhuu-CSharp\\API\\API.csproj",
+        "projectPath": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\CSharp\\API\\API.csproj",
         "packagesPath": "C:\\Users\\Vinic\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\Ninhuu-CSharp\\API\\obj\\",
+        "outputPath": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\CSharp\\API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

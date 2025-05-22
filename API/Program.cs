@@ -1,10 +1,7 @@
 using API.Aplicacao.Repositorios;
 using API.Application;
-using API.Domain.Interfaces;
-using API.Domain.Persistence;
 using API.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
