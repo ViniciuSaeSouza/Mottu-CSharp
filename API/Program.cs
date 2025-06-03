@@ -1,12 +1,15 @@
 using API.Aplicacao.Repositorios;
 using API.Application;
 using API.Infrastructure.Context;
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
+
 // TODO: Refatorar: Abstrair validações dos controllers para uma camada Service (corrigir para a sprint 2)
 // TODO: Refatorar: Abstrair conversões de DTO para uma camada Service (corrigir para a sprint 2)
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +30,6 @@ builder.Services.AddSwaggerGen(swagger =>
             Name = "Prisma.Code",
             Email = "prismacode3@gmail.com"
         },
-
     });
 
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"; // Obtém o nome do arquivo XML de documentação
@@ -35,8 +37,17 @@ builder.Services.AddSwaggerGen(swagger =>
     swagger.IncludeXmlComments(xmlPath); // Inclui o arquivo XML de documentação no Swagger
 });
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseOracle(builder.Configuration.GetConnectionString("Oracle"))); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
+// Busca as credenciais pelo documento .env
+try
+{
+    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseOracle(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
+}
+catch (ArgumentNullException)
+{
+    throw new Exception("Falha ao buscar a varíavel de ambiente");
+}
 
 builder.Services.AddScoped<MotoRepositorio>();// Registra o repositório de motos como um serviço com escopo
 builder.Services.AddScoped<FilialRepositorio>();

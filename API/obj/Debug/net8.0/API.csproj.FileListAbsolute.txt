@@ -144,7 +144,6 @@ C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\Ninhuu-CSharp\API\obj\
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\Ninhuu-CSharp\API\obj\Debug\net8.0\API.pdb
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\Ninhuu-CSharp\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\Ninhuu-CSharp\API\obj\Debug\net8.0\ref\API.dll
-C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\appsettings.json
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\API.staticwebassets.endpoints.json
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\API.exe
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\API.deps.json
@@ -289,3 +288,7 @@ C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\obj\Debug\n
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\API.pdb
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\ref\API.dll
+C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\FluentValidation.dll
+C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\DotNetEnv.dll
+C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\Sprache.dll
+C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\appsettings.json
