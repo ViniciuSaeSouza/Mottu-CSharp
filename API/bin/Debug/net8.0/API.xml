@@ -121,16 +121,16 @@
             Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
             </returns>
         </member>
-        <member name="T:API.Migrations.projetoV1">
+        <member name="T:API.Migrations.projetoSupa">
             <inheritdoc />
         </member>
-        <member name="M:API.Migrations.projetoV1.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:API.Migrations.projetoSupa.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:API.Migrations.projetoV1.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:API.Migrations.projetoSupa.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:API.Migrations.projetoV1.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+        <member name="M:API.Migrations.projetoSupa.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

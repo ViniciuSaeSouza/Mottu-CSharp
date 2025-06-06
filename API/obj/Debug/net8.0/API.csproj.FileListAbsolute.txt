@@ -292,3 +292,5 @@ C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\n
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\DotNetEnv.dll
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\Sprache.dll
 C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\appsettings.json
+C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\Npgsql.dll
+C:\Users\Vinic\Documents\programacao\Fiap\Challenge-Mottu\CSharp\API\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll

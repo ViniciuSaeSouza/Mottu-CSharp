@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Syk11aKD82A=",
+  "dgSpecHash": "aLuUjSw7CxY=",
   "success": true,
   "projectFilePath": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\CSharp\\API\\API.csproj",
   "expectedPackageFiles": [
@@ -40,6 +40,8 @@
     "C:\\Users\\Vinic\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\Vinic\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
     "C:\\Users\\Vinic\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
+    "C:\\Users\\Vinic\\.nuget\\packages\\npgsql\\9.0.3\\npgsql.9.0.3.nupkg.sha512",
+    "C:\\Users\\Vinic\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.4\\npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
     "C:\\Users\\Vinic\\.nuget\\packages\\oracle.entityframeworkcore\\9.23.80\\oracle.entityframeworkcore.9.23.80.nupkg.sha512",
     "C:\\Users\\Vinic\\.nuget\\packages\\oracle.manageddataaccess.core\\23.8.0\\oracle.manageddataaccess.core.23.8.0.nupkg.sha512",
     "C:\\Users\\Vinic\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",

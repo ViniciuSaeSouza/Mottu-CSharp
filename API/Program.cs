@@ -40,9 +40,9 @@ builder.Services.AddSwaggerGen(swagger =>
 // Busca as credenciais pelo documento .env
 try
 {
-    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle");
+    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Postgres");
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseOracle(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
+        options.UseNpgsql(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
 }
 catch (ArgumentNullException)
 {

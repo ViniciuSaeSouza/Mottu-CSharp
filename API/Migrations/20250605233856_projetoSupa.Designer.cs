@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Oracle.EntityFrameworkCore.Metadata;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250518021142_projetoV1")]
-    partial class projetoV1
+    [Migration("20250605233856_projetoSupa")]
+    partial class projetoSupa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,27 +20,27 @@ namespace API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Cp2Mottu.Domain.Persistence.Filial", b =>
+            modelBuilder.Entity("API.Domain.Persistence.Filial", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("integer");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Endereco")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("NVARCHAR2(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("NVARCHAR2(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
@@ -50,24 +50,24 @@ namespace API.Migrations
                     b.ToTable("Filiais");
                 });
 
-            modelBuilder.Entity("Cp2Mottu.Domain.Persistence.Moto", b =>
+            modelBuilder.Entity("API.Domain.Persistence.Moto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("integer");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("IdFilial")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Modelo")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Placa")
                         .IsRequired()
                         .HasMaxLength(7)
-                        .HasColumnType("NVARCHAR2(7)");
+                        .HasColumnType("character varying(7)");
 
                     b.HasKey("Id");
 
@@ -79,9 +79,9 @@ namespace API.Migrations
                     b.ToTable("Motos");
                 });
 
-            modelBuilder.Entity("Cp2Mottu.Domain.Persistence.Moto", b =>
+            modelBuilder.Entity("API.Domain.Persistence.Moto", b =>
                 {
-                    b.HasOne("Cp2Mottu.Domain.Persistence.Filial", "Filial")
+                    b.HasOne("API.Domain.Persistence.Filial", "Filial")
                         .WithMany("Motos")
                         .HasForeignKey("IdFilial")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -90,7 +90,7 @@ namespace API.Migrations
                     b.Navigation("Filial");
                 });
 
-            modelBuilder.Entity("Cp2Mottu.Domain.Persistence.Filial", b =>
+            modelBuilder.Entity("API.Domain.Persistence.Filial", b =>
                 {
                     b.Navigation("Motos");
                 });
