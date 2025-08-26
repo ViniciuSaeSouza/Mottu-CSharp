@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "aLuUjSw7CxY=",
+  "dgSpecHash": "K8BOSpOb4Dk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\Challenge-Mottu\\CSharp\\API\\API.csproj",
+  "projectFilePath": "C:\\Users\\Vinic\\Documents\\programacao\\Fiap\\2_ano\\Challenge-Mottu\\CSharp\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Vinic\\.nuget\\packages\\dotnetenv\\3.1.1\\dotnetenv.3.1.1.nupkg.sha512",
     "C:\\Users\\Vinic\\.nuget\\packages\\fluentvalidation\\12.0.0\\fluentvalidation.12.0.0.nupkg.sha512",
