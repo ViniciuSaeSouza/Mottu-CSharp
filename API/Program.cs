@@ -8,6 +8,7 @@ using System.Reflection;
 
 
 // TODO: Remover comentários inúteis de todas as classes
+// TODO: Separar os pacotes por camadas de biblioteca de classes
 // TODO: Adicionar camada SERVICE com interfaces
 
 Env.Load();
