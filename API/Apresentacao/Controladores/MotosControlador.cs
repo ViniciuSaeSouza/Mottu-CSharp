@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Presentation.Controllers;
 
 
+// TODO: Remover lógicas de validação do controlador e jogar para a camada SERVICE
 
 [Route("api/[controller]")] // Define a rota base para o controller, removendo o prefixo "api" do caminho da URL, ficando apenas "motos"
 [ApiController] // Indica que este controller é um controlador de API

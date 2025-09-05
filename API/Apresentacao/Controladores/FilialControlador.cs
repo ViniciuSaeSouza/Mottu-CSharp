@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Presentation.Controllers;
 
 
+// TODO: Remover lógicas de validação do controlador e jogar para a camada SERVICE
+
 [Route("api/[controller]")] // Define a rota base para o controller, removendo o prefixo "api" do caminho da URL, ficando apenas "filiais"
 [ApiController] // Indica que este controller é um controlador de API
 [Tags("Filiais")] // Define a tag para o Swagger, que agrupa os endpoints deste controller na documentação
@@ -38,7 +40,7 @@ public class FilialControlador : ControllerBase
     public async Task<ActionResult<IEnumerable<FilialLeituraDto>>> GetFiliais()
     {
         var filiais = await _repositorio.ObterTodos(); // Altera para obter as filiais através do repositório
-
+        // TODO: Utilizar classe FilialLeituraDTO
         var filiaisDto = filiais.Select(f => new FiliaisLeituraDto
         {
             Id = f.Id,

@@ -4,6 +4,8 @@ namespace API.Application.DTOs.Filial
 {
     public class FilialCriarDto
     {
+        // TODO: Remover validação daqui e manter na classe de DOMAIN
+
         [Required(ErrorMessage = "Nome da filial não pode estar vazio")]
         public string Nome { get; set; }
         

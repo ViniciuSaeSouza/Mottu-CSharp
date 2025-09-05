@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Aplicacao.Repositorios
 {
 
-    // Não tenho tempo para encontrar a melhor maneira de implementar esse repositorio genérico de jeito que possa usar o .Include() para filiais ou motos.
+    // Não tive tempo para encontrar a melhor maneira de implementar esse repositorio genérico de jeito que possa usar o .Include() para filiais ou motos,
+    // desconsidere esta classe
     public class Repositorio<T> : IRepositorio<T> where T : class
     {
         private readonly AppDbContext _context;

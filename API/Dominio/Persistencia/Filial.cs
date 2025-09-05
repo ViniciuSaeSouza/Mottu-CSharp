@@ -18,6 +18,7 @@ namespace API.Domain.Persistence
 
         private void DefinirEndereco(string endereco)
         {
+            // TODO: Abstrair validação de Nulo ou vazio para outro método
             if (string.IsNullOrWhiteSpace(endereco))
             {
                 throw new ExcecaoDominio("Endereço não pode ser nulo ou vazio.", nameof(endereco)); // Verifica se o endereço é nulo ou vazio

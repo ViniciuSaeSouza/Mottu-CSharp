@@ -7,8 +7,9 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 
-// TODO: Refatorar: Abstrair validações dos controllers para uma camada Service (corrigir para a sprint 2)
-// TODO: Refatorar: Abstrair conversões de DTO para uma camada Service (corrigir para a sprint 2)
+// TODO: Remover comentários inúteis de todas as classes
+// TODO: Adicionar camada SERVICE com interfaces
+
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
+    // TODO: Trocar para V2
     swagger.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "API de filiais e motos Mottu",
@@ -38,6 +40,7 @@ builder.Services.AddSwaggerGen(swagger =>
 });
 
 // Busca as credenciais pelo documento .env
+// TODO: Configurar connection com Oracle SQL
 try
 {
     var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Postgres");
