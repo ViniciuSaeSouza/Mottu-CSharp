@@ -44,9 +44,9 @@ builder.Services.AddSwaggerGen(swagger =>
 // TODO: Configurar connection com Oracle SQL
 try
 {
-    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle");
+    var connectionString = Environment.GetEnvironmentVariable("Connection__String");
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
+        options.UseOracle(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
 }
 catch (ArgumentNullException)
 {
