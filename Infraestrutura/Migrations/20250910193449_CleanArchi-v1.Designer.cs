@@ -4,43 +4,43 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Oracle.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace API.Migrations
+namespace Infraestrutura.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250605233856_projetoSupa")]
-    partial class projetoSupa
+    [Migration("20250910193449_CleanArchi-v1")]
+    partial class CleanArchiv1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("API.Domain.Persistence.Filial", b =>
+            modelBuilder.Entity("Dominio.Persistencia.Filial", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("NUMBER(10)");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Endereco")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("NVARCHAR2(200)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("NVARCHAR2(100)");
 
                     b.HasKey("Id");
 
@@ -50,24 +50,24 @@ namespace API.Migrations
                     b.ToTable("Filiais");
                 });
 
-            modelBuilder.Entity("API.Domain.Persistence.Moto", b =>
+            modelBuilder.Entity("Dominio.Persistencia.Moto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("NUMBER(10)");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("IdFilial")
-                        .HasColumnType("integer");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<int>("Modelo")
-                        .HasColumnType("integer");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<string>("Placa")
                         .IsRequired()
                         .HasMaxLength(7)
-                        .HasColumnType("character varying(7)");
+                        .HasColumnType("NVARCHAR2(7)");
 
                     b.HasKey("Id");
 
@@ -79,9 +79,9 @@ namespace API.Migrations
                     b.ToTable("Motos");
                 });
 
-            modelBuilder.Entity("API.Domain.Persistence.Moto", b =>
+            modelBuilder.Entity("Dominio.Persistencia.Moto", b =>
                 {
-                    b.HasOne("API.Domain.Persistence.Filial", "Filial")
+                    b.HasOne("Dominio.Persistencia.Filial", "Filial")
                         .WithMany("Motos")
                         .HasForeignKey("IdFilial")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -90,7 +90,7 @@ namespace API.Migrations
                     b.Navigation("Filial");
                 });
 
-            modelBuilder.Entity("API.Domain.Persistence.Filial", b =>
+            modelBuilder.Entity("Dominio.Persistencia.Filial", b =>
                 {
                     b.Navigation("Motos");
                 });
