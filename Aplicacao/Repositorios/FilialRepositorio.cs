@@ -17,8 +17,8 @@ public class FilialRepositorio : IRepositorio<Filial>
 
     public async Task<Filial> Adicionar(Filial filial)
     {
-        await _context.Filiais.AddAsync(filial); // Adiciona a moto ao contexto
-        await _context.SaveChangesAsync(); // Salva as alterações no banco de dados
+        await _context.Filiais.AddAsync(filial);
+        await _context.SaveChangesAsync();
 
         return filial;
     }
@@ -26,19 +26,19 @@ public class FilialRepositorio : IRepositorio<Filial>
     public async Task<Filial> Atualizar(Filial filial)
     {
         _context.Filiais.Update(filial);
-        _context.Entry(filial).State = EntityState.Modified; // Marca a entidade como modificada
-        await _context.SaveChangesAsync(); // Salva as alterações no banco de dados
+        _context.Entry(filial).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
 
-        return filial; // Retorna a moto atualizada
+        return filial;
     }
 
     public async Task<Filial> ObterPorId(int id) =>
-        await _context.Filiais.Include(f => f.Motos).FirstOrDefaultAsync(f => f.Id == id); // Obtém a moto pelo ID, incluindo a filial associada
+        await _context.Filiais.Include(f => f.Motos).FirstOrDefaultAsync(f => f.Id == id);
 
 
 
     public async Task<List<Filial>> ObterTodos() =>
-        await _context.Filiais.OrderBy(f => f.Id).ToListAsync(); // Obtém todas as motos, incluindo as filiais associadas
+        await _context.Filiais.OrderBy(f => f.Id).ToListAsync();
 
 
     public async Task<bool> Remover(Filial filial)

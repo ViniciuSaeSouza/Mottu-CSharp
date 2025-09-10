@@ -35,25 +35,24 @@ builder.Services.AddSwaggerGen(swagger =>
         },
     });
 
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"; // Obtém o nome do arquivo XML de documentação
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile); // Cria o caminho completo para o arquivo XML
-    swagger.IncludeXmlComments(xmlPath); // Inclui o arquivo XML de documentação no Swagger
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    swagger.IncludeXmlComments(xmlPath);
 });
 
-// Busca as credenciais pelo documento .env
 // TODO: Configurar connection com Oracle SQL
 try
 {
     var connectionString = Environment.GetEnvironmentVariable("Connection__String");
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseOracle(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
+        options.UseOracle(connectionString));
 }
 catch (ArgumentNullException)
 {
     throw new Exception("Falha ao buscar a varíavel de ambiente");
 }
 
-builder.Services.AddScoped<MotoRepositorio>();// Registra o repositório de motos como um serviço com escopo
+builder.Services.AddScoped<MotoRepositorio>();
 builder.Services.AddScoped<FilialRepositorio>();
 
 var app = builder.Build();

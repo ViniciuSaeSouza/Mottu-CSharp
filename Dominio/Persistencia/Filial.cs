@@ -4,10 +4,10 @@ namespace Dominio.Persistencia;
 
 public class Filial
 {
-    public int Id { get; private set; } // Identificador da filial
-    public string Nome { get; private set; } // Nome da filial, usa private set para não permitir alterações externas
-    public string Endereco { get; private set; } // Endereço da filial, usa private set para não permitir alterações externas
-    public ICollection<Moto> Motos { get; private set; } = new List<Moto>(); // Coleção de motos associadas à filial, usa private set para não permitir alterações externas
+    public int Id { get; private set; }
+    public string Nome { get; private set; }
+    public string Endereco { get; private set; }
+    public ICollection<Moto> Motos { get; private set; } = new List<Moto>();
 
     public Filial(string nome, string endereco)
     {
@@ -19,19 +19,19 @@ public class Filial
     {
         if (string.IsNullOrWhiteSpace(endereco))
         {
-            throw new ExcecaoDominio("Endereço não pode ser nulo ou vazio.", nameof(endereco)); // Verifica se o endereço é nulo ou vazio
+            throw new ExcecaoDominio("Endereço não pode ser nulo ou vazio.", nameof(endereco));
         }
 
-        this.Endereco = endereco; // Atribui o endereço
+        this.Endereco = endereco;
     }
 
     private void DefinirNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))
         {
-            throw new ArgumentException("Nome não pode ser nulo ou vazio.", nameof(nome)); // Verifica se o nome é nulo ou vazio
+            throw new ArgumentException("Nome não pode ser nulo ou vazio.", nameof(nome));
         }
-        this.Nome = nome; // Atribui o nome
+        this.Nome = nome;
     }
 
     public void AlterarEndereco(string novoEndereco)

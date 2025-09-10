@@ -2,7 +2,7 @@
 
 public enum ModeloMoto
 {
-    SPORT = 1, // Identificador (id) do modelo no banco de dados
+    SPORT = 1,
     E = 2,
     POP = 3,
 }

@@ -10,9 +10,9 @@ namespace API.Presentation.Controllers;
 
 // TODO: Remover lógicas de validação do controlador e jogar para a camada SERVICE
 
-[Route("api/[controller]")] // Define a rota base para o controller, removendo o prefixo "api" do caminho da URL, ficando apenas "motos"
-[ApiController] // Indica que este controller é um controlador de API
-[Tags("Motos")] // Define a tag para o Swagger, que agrupa os endpoints deste controller na documentação
+[Route("api/[controller]")]
+[ApiController]
+[Tags("Motos")]
 public class MotosControlador : ControllerBase
 {
     private readonly MotoRepositorio _repositorio;
@@ -22,7 +22,7 @@ public class MotosControlador : ControllerBase
     {
         _repositorio = repositorio;
         _filialRepositorio = filialRepositorio;
-    }   
+    }
 
 
     /// <summary>
@@ -34,22 +34,22 @@ public class MotosControlador : ControllerBase
     /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
     /// </returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)] // Indica que este método pode retornar um sucesso 200 OK
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que ocorreu um erro interno no servidor
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que o serviço está temporariamente indisponível
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Moto>>> GetMotos()
     {
         var motos = await _repositorio.ObterTodos();
 
-        
+
 
         var motosDto = motos.Select(m => new MotoLeituraDto
         {
             Id = m.Id,
             Placa = m.Placa,
-            Modelo = m.Modelo.ToString().ToUpper(), // Converte o enum ModeloMoto para string
-            NomeFilial = m.Filial.Nome // Inclui o nome da filial relacionada
-        }).ToList(); // Mapeia as motos para o DTO Moto, incluindo a entidade Filial relacionada
+            Modelo = m.Modelo.ToString().ToUpper(),
+            NomeFilial = m.Filial.Nome
+        }).ToList();
 
         return Ok(motosDto);
     }
@@ -66,14 +66,14 @@ public class MotosControlador : ControllerBase
     /// </returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)] // Indica que este método pode retornar um erro 404 Not Found
-    [ProducesResponseType(StatusCodes.Status400BadRequest)] // Indica que este método pode retornar um erro 400 Bad Request caso o ID não seja válido (não seja um número inteiro)
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que ocorreu um erro interno no servidor
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que o serviço está temporariamente indisponível
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Moto>> GetMoto(int id)
     {
         var moto = await _repositorio.ObterPorId(id);
-        if (moto == null) // Se não encontrar, retorna 404 Not Found
+        if (moto == null)
         {
             return NotFound();
         }
@@ -81,10 +81,10 @@ public class MotosControlador : ControllerBase
         {
             Id = moto.Id,
             Placa = moto.Placa,
-            Modelo = moto.Modelo.ToString().ToUpper(), // Converte o enum ModeloMoto para string
-            NomeFilial = moto.Filial.Nome // Inclui o nome da filial relacionada
+            Modelo = moto.Modelo.ToString().ToUpper(),
+            NomeFilial = moto.Filial.Nome
         };
-        return Ok(motoDto); // Retorna a moto encontrada
+        return Ok(motoDto);
     }
 
 
@@ -100,12 +100,12 @@ public class MotosControlador : ControllerBase
     /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
     /// </returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)] // Indica que este método pode retornar um sucesso 201 Created
-    [ProducesResponseType(StatusCodes.Status400BadRequest)] // Indica que o corpo da requisição não é válido
-    [ProducesResponseType(StatusCodes.Status404NotFound)] // Indica que este método pode retornar um erro 404 Not Found caso a filial não seja encontrada
-    [ProducesResponseType(StatusCodes.Status409Conflict)] // Indica que este método pode retornar um erro 409 Conflict caso a placa já exista
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que ocorreu um erro interno no servidor
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que o serviço está temporariamente indisponível
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
 
     public async Task<ActionResult<Moto>> CriarMoto([FromBody] MotoCriarDto motoDto)
     {
@@ -115,8 +115,8 @@ public class MotosControlador : ControllerBase
         {
             return NotFound("Filial não encontrada.");
         }
-        
-        if(Enum.IsDefined(typeof(ModeloMoto), motoDto.Modelo.ToUpper()) == false) // Verifica se o modelo é válido
+
+        if (Enum.IsDefined(typeof(ModeloMoto), motoDto.Modelo.ToUpper()) == false)
         {
             return BadRequest("Modelo inválido.");
         }
@@ -131,7 +131,7 @@ public class MotosControlador : ControllerBase
         };
 
 
-        return CreatedAtAction(nameof(GetMoto), new { id = moto.Id }, motoLeituraDto); // Retorna o DTO de leitura com o status 201 Created, incluindo o ID da moto criada e o caminho para obter a moto
+        return CreatedAtAction(nameof(GetMoto), new { id = moto.Id }, motoLeituraDto);
     }
 
 
@@ -146,21 +146,21 @@ public class MotosControlador : ControllerBase
     /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
     /// </returns>
     [HttpPatch("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)] // Indica que este método pode retornar um sucesso 200 OK
-    [ProducesResponseType(StatusCodes.Status400BadRequest)] // Indica que este método pode retornar um erro 400 Bad Request caso o corpo da requisição não seja válido
-    [ProducesResponseType(StatusCodes.Status404NotFound)] // Indica que este método pode retornar um erro 404 Not Found caso a moto não seja encontrada
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que ocorreu um erro interno no servidor
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que o serviço está temporariamente indisponível
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Moto>> PatchMoto(int id, [FromBody] MotoAtualizarDto motoUpdateDto)
     {
-        var moto = await _repositorio.ObterPorId(id); // Busca a moto pelo ID
+        var moto = await _repositorio.ObterPorId(id);
 
-        if (moto == null) // Se não encontrar, retorna 404 Not Found
+        if (moto == null)
         {
             return NotFound("Moto não encontrada");
         }
 
-        var filial = await _filialRepositorio.ObterPorId(moto.IdFilial); // Busca a filial pelo ID
+        var filial = await _filialRepositorio.ObterPorId(moto.IdFilial);
 
         if (motoUpdateDto.Placa != null)
         {
@@ -168,16 +168,16 @@ public class MotosControlador : ControllerBase
         }
         if (motoUpdateDto.Modelo != null)
         {
-            moto.AlterarModelo(motoUpdateDto.Modelo.ToString()); // Converte o enum para string
+            moto.AlterarModelo(motoUpdateDto.Modelo.ToString());
         }
         if (motoUpdateDto.IdFilial != null)
         {
-            var novaFilial = await _filialRepositorio.ObterPorId(motoUpdateDto.IdFilial.Value); // Busca a nova filial pelo ID
-            if (novaFilial == null) // Se não encontrar, retorna 404 Not Found
+            var novaFilial = await _filialRepositorio.ObterPorId(motoUpdateDto.IdFilial.Value);
+            if (novaFilial == null)
             {
                 return NotFound("Filial não encontrada.");
             }
-            moto.AlterarFilial(motoUpdateDto.IdFilial.Value, novaFilial); // Atualiza a filial
+            moto.AlterarFilial(motoUpdateDto.IdFilial.Value, novaFilial);
         }
         var motoAtualizada = await _repositorio.Atualizar(moto);
         var motoReadDto = new MotoLeituraDto(
@@ -185,8 +185,8 @@ public class MotosControlador : ControllerBase
             motoAtualizada.Placa,
             motoAtualizada.Modelo.ToString(),
             motoAtualizada.Filial.Nome
-        ); // Cria um DTO de leitura com os dados da moto atualizada para evitar circularidade de repetição de dados da filial
-        return Ok(motoReadDto); // Retorna a moto atualizada
+        );
+        return Ok(motoReadDto);
     }
 
 
@@ -201,21 +201,19 @@ public class MotosControlador : ControllerBase
     /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
     /// </returns>
     [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)] // Indica que este método pode retornar um sucesso 204 No Content
-    [ProducesResponseType(StatusCodes.Status404NotFound)] // Indica que este método pode retornar um erro 404 Not Found
-    [ProducesResponseType(StatusCodes.Status400BadRequest)] // Indica que este método pode retornar um erro 400 Bad Request caso o ID não seja válido (não seja um número inteiro)
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que ocorreu um erro interno no servidor
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que o serviço está temporariamente indisponível
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<IActionResult> DeletarMoto(int id)
     {
-        var moto = await _repositorio.ObterPorId(id); // Busca a moto pelo ID
-        if (moto == null) // Se não encontrar, retorna 404 Not Found
+        var moto = await _repositorio.ObterPorId(id);
+        if (moto == null)
         {
             return NotFound();
         }
-        await _repositorio.Remover(moto); // Remove a moto do contexto
-        return NoContent(); // Retorna 204 No Content
+        await _repositorio.Remover(moto);
+        return NoContent();
     }
 }
-
-

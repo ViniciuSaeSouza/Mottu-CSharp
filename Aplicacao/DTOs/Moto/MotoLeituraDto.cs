@@ -7,10 +7,7 @@ public class MotoLeituraDto
     public string Modelo { get; set; }
     public string NomeFilial { get; set; }
 
-
-    public MotoLeituraDto()
-    {
-    }
+    public MotoLeituraDto() { }
 
     public MotoLeituraDto(int id, string placa, string modelo, string nomeFilial)
     {
@@ -19,4 +16,4 @@ public class MotoLeituraDto
         Modelo = modelo;
         NomeFilial = nomeFilial;
     }
-}   
+}
