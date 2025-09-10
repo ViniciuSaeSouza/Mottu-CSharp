@@ -1,7 +1,7 @@
 using API.Aplicacao.Repositorios;
 using API.Application;
-using API.Infrastructure.Context;
 using DotNetEnv;
+using Infraestrutura.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -44,9 +44,9 @@ builder.Services.AddSwaggerGen(swagger =>
 // TODO: Configurar connection com Oracle SQL
 try
 {
-    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Postgres");
+    var connectionString = Environment.GetEnvironmentVariable("Connection__String");
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
+        options.UseOracle(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
 }
 catch (ArgumentNullException)
 {
