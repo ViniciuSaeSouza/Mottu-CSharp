@@ -1,7 +1,7 @@
-﻿using API.Domain.Enums;
-using API.Domain.Exceptions;
+﻿using Dominio.Enumeradores;
+using Dominio.Excecoes;
 
-namespace API.Domain.Persistence;
+namespace Dominio.Persistencia;
 
 public class Moto
 {
@@ -20,14 +20,14 @@ public class Moto
     {
         DefinirPlaca(placa);
         DefinirModelo(nomeModelo);// Converte o nomeModelo para o enum ModeloMoto
-        this.IdFilial = idFilial; // Atribui o idFilial
-        this.Filial = filial; // Atribui a filial
+        IdFilial = idFilial; // Atribui o idFilial
+        Filial = filial; // Atribui a filial
     }
 
     public Moto() { } // Construtor padrão para o Entity Framework
 
     // Métodos para alterar a placa e o modelo da moto
-    
+
     private void DefinirPlaca(string placa)
     {
         if (string.IsNullOrWhiteSpace(placa))
@@ -62,9 +62,9 @@ public class Moto
         DefinirModelo(novoModelo); // Chama o método para validar e atribuir o novo modelo
     }
 
-    public void AlterarFilial(int novoIdFilial,Filial novaFilial)
+    public void AlterarFilial(int novoIdFilial, Filial novaFilial)
     {
-        this.IdFilial = novoIdFilial; // Atribui o novo idFilial
-        this.Filial = novaFilial; // Atribui a nova filial
+        IdFilial = novoIdFilial; // Atribui o novo idFilial
+        Filial = novaFilial; // Atribui a nova filial
     }
 }

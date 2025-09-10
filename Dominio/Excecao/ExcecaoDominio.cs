@@ -1,4 +1,4 @@
-﻿namespace API.Domain.Exceptions;
+﻿namespace Dominio.Excecoes;
 
 public class ExcecaoDominio : Exception
 {

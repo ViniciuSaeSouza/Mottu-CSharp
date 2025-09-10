@@ -1,4 +1,4 @@
-﻿using API.Domain.Persistence;
+﻿using Dominio.Persistencia;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
