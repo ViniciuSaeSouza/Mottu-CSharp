@@ -17,8 +17,7 @@ public class MotoCriarDto
     public MotoCriarDto(string placa, string modelo, int idFilial)
     {
         Placa = placa;
-        // TODO: Remover esse ToUpper ou jogar lógica para classe de DOMAIN
-        Modelo = modelo.ToUpper();
+        Modelo = modelo;
         IdFilial = idFilial;
     }
 }

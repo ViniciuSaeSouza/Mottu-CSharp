@@ -13,6 +13,8 @@ public class Filial
     {
         DefinirNome(nome);
         DefinirEndereco(endereco);
+
+        // preparar o método pra receber uma lista de atributos (array com nome e endereço) nome deu false, interpola com o atributo nome
     }
 
     private void DefinirEndereco(string endereco)

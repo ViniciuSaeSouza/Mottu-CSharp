@@ -21,8 +21,15 @@ public class Moto
 
     public Moto() { }
 
-    private void DefinirPlaca(string placa)
+    private void Validar() {
+        // aqui eu passo o validar null or empty da lista
+        // aqui eu passo o validar placa
+    }
+
+    private void ValidarPlaca(string placa)
     {
+
+    // método que vai chamar o método verificação lenght
         if (string.IsNullOrWhiteSpace(placa))
         {
             throw new ExcecaoDominio("Placa não pode ser nula ou vazia.", nameof(placa));
