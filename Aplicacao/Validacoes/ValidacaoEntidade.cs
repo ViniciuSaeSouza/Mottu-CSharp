@@ -1,9 +1,4 @@
 ﻿using Dominio.Excecao;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aplicacao.Validacoes
 {
@@ -14,5 +9,22 @@ namespace Aplicacao.Validacoes
             if (entidade == null)
                 throw new EntidadeNaoEncontradaException(nomeEntidade, id);
         }
+        public static void AlterarValor(string valor, Action<string> alterar)
+        {
+            if (!string.IsNullOrWhiteSpace(valor))
+            {
+                alterar(valor);  
+            }
+        }
+
+        public static void ValidarValor(string valor, Action<string> validar = null)
+        {
+            if (!string.IsNullOrWhiteSpace(valor))
+            {
+                validar?.Invoke(valor);  
+            }
+        }
+
+
     }
 }

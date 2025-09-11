@@ -1,5 +1,5 @@
 ﻿using Dominio.Enumeradores;
-using Dominio.Excecoes;
+using Dominio.Excecao;
 
 namespace Dominio.Persistencia;
 
