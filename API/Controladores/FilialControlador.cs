@@ -2,6 +2,7 @@
 using API.Application;
 using Aplicacao.DTOs.Filial;
 using Aplicacao.DTOs.Moto;
+using Aplicacao.Servicos;
 using Dominio.Persistencia;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +17,11 @@ namespace API.Presentation.Controllers;
 public class FilialControlador : ControllerBase
 {
 
-    private readonly FilialRepositorio _repositorio;
-    private readonly MotoRepositorio _motoRepositorio;
-    public FilialControlador(FilialRepositorio repositorio, MotoRepositorio motoRepositorio)
+    private readonly FilialServico _filialServico;
+
+    public FilialControlador(FilialServico filialServico)
     {
-        _repositorio = repositorio;
-        _motoRepositorio = motoRepositorio;
+        _filialServico = filialServico;
     }
 
 
@@ -38,16 +38,8 @@ public class FilialControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<FilialLeituraDto>>> GetFiliais()
     {
-        var filiais = await _repositorio.ObterTodos();
-        // TODO: Utilizar classe FilialLeituraDTO
-        var filiaisDto = filiais.Select(f => new FiliaisLeituraDto
-        {
-            Id = f.Id,
-            Nome = f.Nome,
-            Endereco = f.Endereco,
-        }).ToList();
-
-        return Ok(filiaisDto);
+        var filiais = await _filialServico.ObterTodos();
+        return Ok(filiais);
     }
 
 
@@ -70,28 +62,15 @@ public class FilialControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<FilialLeituraDto>> GetFilial(int id)
     {
-        var filial = await _repositorio.ObterPorId(id);
-
-        if (filial == null)
+        try
+        {
+            var filial = await _filialServico.ObterPorId(id);
+            return Ok(filial);
+        }
+        catch
         {
             return NotFound();
         }
-
-        var filialDto = new FilialLeituraDto
-        {
-            Id = filial.Id,
-            Nome = filial.Nome,
-            Endereco = filial.Endereco,
-            Motos = filial.Motos.Select(m => new MotoLeituraDto
-            {
-                Id = m.Id,
-                Placa = m.Placa,
-                Modelo = m.Modelo.ToString().ToUpper(),
-                NomeFilial = filial.Nome
-            }).ToList()
-        };
-
-        return Ok(filialDto);
     }
 
     /// <summary>
@@ -111,24 +90,15 @@ public class FilialControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<FilialLeituraDto>> CriarFilial([FromBody] FilialCriarDto filialCreateDto)
     {
-        if (filialCreateDto == null)
+        try
         {
-            return BadRequest("Filial não pode ser nula.");
+            var filial = await _filialServico.Criar(filialCreateDto);
+            return CreatedAtAction(nameof(GetFilial), new { id = filial.Id }, filial);
         }
-
-        var filial = new Filial(filialCreateDto.Nome, filialCreateDto.Endereco);
-
-        await _repositorio.Adicionar(filial);
-
-
-        // TODO: VERIFICAR SE TRAZ UMA LISTA VAZIA EM 'MOTOS'
-        var filialReadDto = new FilialLeituraDto
+        catch (Exception ex)
         {
-            Id = filial.Id,
-            Nome = filial.Nome,
-            Endereco = filial.Endereco
-        };
-        return CreatedAtAction(nameof(GetFilial), new { id = filial.Id }, filialReadDto);
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -149,37 +119,15 @@ public class FilialControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<IActionResult> PatchFilial(int id, [FromBody] FilialAtualizarDto filialUpdateDto)
     {
-        var filial = await _repositorio.ObterPorId(id);
-
-        if (filial == null)
+        try
+        {
+            var filialAtualizada = await _filialServico.Atualizar(id, filialUpdateDto);
+            return Ok(filialAtualizada);
+        }
+        catch
         {
             return NotFound();
         }
-        if (filialUpdateDto.Endereco != null)
-        {
-            filial.AlterarEndereco(filialUpdateDto.Endereco);
-        }
-        if (filialUpdateDto.Nome != null)
-        {
-            filial.AlterarNome(filialUpdateDto.Nome);
-        }
-
-        await _repositorio.Atualizar(filial);
-
-        var filialReadDto = new FilialLeituraDto
-        {
-            Id = filial.Id,
-            Nome = filial.Nome,
-            Endereco = filial.Endereco,
-            Motos = filial.Motos.Select(m => new MotoLeituraDto
-            {
-                Id = m.Id,
-                Placa = m.Placa,
-                Modelo = m.Modelo.ToString().ToUpper(),
-                NomeFilial = filial.Nome
-            }).ToList()
-        };
-        return Ok(filialReadDto);
     }
 
     /// <summary>
@@ -200,14 +148,14 @@ public class FilialControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<IActionResult> DeletaFilial(int id)
     {
-        var filial = await _repositorio.ObterPorId(id);
-        if (filial == null)
+        try
+        {
+            await _filialServico.Remover(id);
+            return NoContent();
+        }
+        catch
         {
             return NotFound();
         }
-
-        await _repositorio.Remover(filial);
-
-        return NoContent();
     }
 }
