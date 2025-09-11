@@ -17,8 +17,8 @@ namespace API.Aplicacao.Repositorios
 
         public async Task<Moto> Adicionar(Moto moto)
         {
-            await _context.Motos.AddAsync(moto); // Adiciona a moto ao contexto
-            await _context.SaveChangesAsync(); // Salva as alterações no banco de dados
+            await _context.Motos.AddAsync(moto);
+            await _context.SaveChangesAsync();
 
             return moto;
         }
@@ -27,18 +27,18 @@ namespace API.Aplicacao.Repositorios
         {
             _context.Motos.Update(moto);
             _context.Entry(moto).State = EntityState.Modified;
-            await _context.SaveChangesAsync(); // Salva as alterações no banco de dados
+            await _context.SaveChangesAsync();
 
-            return moto; // Retorna a moto atualizada
+            return moto;
         }
 
-        public async Task<Moto> ObterPorId(int id) => 
-            await _context.Motos.Include(m => m.Filial).FirstOrDefaultAsync(m => m.Id == id); // Obtém a moto pelo ID, incluindo a filial associada
+        public async Task<Moto> ObterPorId(int id) =>
+            await _context.Motos.Include(m => m.Filial).FirstOrDefaultAsync(m => m.Id == id);
 
 
 
-        public async Task<List<Moto>> ObterTodos() => 
-            await _context.Motos.Include(m => m.Filial).OrderBy(m => m.Id).ToListAsync(); // Obtém todas as motos, incluindo as filiais associadas
+        public async Task<List<Moto>> ObterTodos() =>
+            await _context.Motos.Include(m => m.Filial).OrderBy(m => m.Id).ToListAsync();
 
 
         public async Task<bool> Remover(Moto moto)

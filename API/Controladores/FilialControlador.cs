@@ -10,9 +10,9 @@ namespace API.Presentation.Controllers;
 
 // TODO: Remover lógicas de validação do controlador e jogar para a camada SERVICE
 
-[Route("api/[controller]")] // Define a rota base para o controller, removendo o prefixo "api" do caminho da URL, ficando apenas "filiais"
-[ApiController] // Indica que este controller é um controlador de API
-[Tags("Filiais")] // Define a tag para o Swagger, que agrupa os endpoints deste controller na documentação
+[Route("api/[controller]")]
+[ApiController]
+[Tags("Filiais")]
 public class FilialControlador : ControllerBase
 {
 
@@ -33,19 +33,19 @@ public class FilialControlador : ControllerBase
     /// Retorna 200 OK se as filiais forem encontradas.
     /// </returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)] // Indica que este método pode retornar um sucesso 200 OK
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que este método pode retornar um erro 500 Internal Server Error caso ocorra algum erro inesperado
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que este método pode retornar um erro 503 Service Unavailable caso o serviço esteja indisponível
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<FilialLeituraDto>>> GetFiliais()
     {
-        var filiais = await _repositorio.ObterTodos(); // Altera para obter as filiais através do repositório
+        var filiais = await _repositorio.ObterTodos();
         // TODO: Utilizar classe FilialLeituraDTO
         var filiaisDto = filiais.Select(f => new FiliaisLeituraDto
         {
             Id = f.Id,
             Nome = f.Nome,
             Endereco = f.Endereco,
-        }).ToList(); // Mapeia as filiais para o DTO Filial sem as motos associadas
+        }).ToList();
 
         return Ok(filiaisDto);
     }
@@ -62,12 +62,12 @@ public class FilialControlador : ControllerBase
     /// Retorna 200 OK se a filial for encontrada, ou 404 Not Found se não houver filial com o ID fornecido.
     /// Retorna 400 Bad Request se o ID não for válido (não for um número inteiro).
     /// </returns>
-    [HttpGet("{id}")] // Define a rota para obter uma filial específica pelo ID
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)] // Indica que este método pode retornar um erro 404 Not Found caso a filial não seja encontrada
-    [ProducesResponseType(StatusCodes.Status400BadRequest)] // Indica que este método pode retornar um erro 400 Bad Request caso o ID não seja válido (não seja um número inteiro)
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que este método pode retornar um erro 500 Internal Server Error caso ocorra algum erro inesperado
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que este método pode retornar um erro 503 Service Unavailable caso o serviço esteja indisponível
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<FilialLeituraDto>> GetFilial(int id)
     {
         var filial = await _repositorio.ObterPorId(id);
@@ -86,9 +86,9 @@ public class FilialControlador : ControllerBase
             {
                 Id = m.Id,
                 Placa = m.Placa,
-                Modelo = m.Modelo.ToString().ToUpper(), // Converte o enum ModeloMoto para string
-                NomeFilial = filial.Nome // Inclui o nome da filial relacionada
-            }).ToList() // Mapeia as motos para o DTO Moto, incluindo a entidade Filial relacionada
+                Modelo = m.Modelo.ToString().ToUpper(),
+                NomeFilial = filial.Nome
+            }).ToList()
         };
 
         return Ok(filialDto);
@@ -105,10 +105,10 @@ public class FilialControlador : ControllerBase
     /// Retorna 201 Created se a filial for criada com sucesso, ou 400 se o objeto filialCreateDto não for passado corretamente no corpo.
     /// </returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)] // Indica que este método pode retornar um sucesso 201 Created caso a filial seja criada com sucesso
-    [ProducesResponseType(StatusCodes.Status400BadRequest)] // Indica que este método pode retornar um erro 400 Bad Request caso o objeto filialCreateDto não seja passado corretamente no corpo
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que este método pode retornar um erro 500 Internal Server Error caso ocorra algum erro inesperado
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que este método pode retornar um erro 503 Service Unavailable caso o serviço esteja indisponível
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<FilialLeituraDto>> CriarFilial([FromBody] FilialCriarDto filialCreateDto)
     {
         if (filialCreateDto == null)
@@ -116,9 +116,9 @@ public class FilialControlador : ControllerBase
             return BadRequest("Filial não pode ser nula.");
         }
 
-        var filial = new Filial(filialCreateDto.Nome, filialCreateDto.Endereco); // Cria uma nova filial com os dados do DTO
+        var filial = new Filial(filialCreateDto.Nome, filialCreateDto.Endereco);
 
-        await _repositorio.Adicionar(filial); // Adicionar a filial ao repositório
+        await _repositorio.Adicionar(filial);
 
 
         // TODO: VERIFICAR SE TRAZ UMA LISTA VAZIA EM 'MOTOS'
@@ -127,7 +127,7 @@ public class FilialControlador : ControllerBase
             Id = filial.Id,
             Nome = filial.Nome,
             Endereco = filial.Endereco
-        }; // Cria um DTO de leitura com os dados da filial criada
+        };
         return CreatedAtAction(nameof(GetFilial), new { id = filial.Id }, filialReadDto);
     }
 
@@ -142,11 +142,11 @@ public class FilialControlador : ControllerBase
     /// REtorna 400 Bad Request se o objeto filialUpdateDto não for passado corretamente no corpo.
     /// </returns>
     [HttpPatch("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)] // Indica que este método pode retornar um sucesso 200 OK caso a filial seja atualizada com sucesso
-    [ProducesResponseType(StatusCodes.Status404NotFound)] // Indica que este método pode retornar um erro 404 Not Found caso a filial não seja encontrada
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que este método pode retornar um erro 500 Internal Server Error caso ocorra algum erro inesperado
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que este método pode retornar um erro 503 Service Unavailable caso o serviço esteja indisponível
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<IActionResult> PatchFilial(int id, [FromBody] FilialAtualizarDto filialUpdateDto)
     {
         var filial = await _repositorio.ObterPorId(id);
@@ -175,11 +175,11 @@ public class FilialControlador : ControllerBase
             {
                 Id = m.Id,
                 Placa = m.Placa,
-                Modelo = m.Modelo.ToString().ToUpper(), // Converte o enum ModeloMoto para string
-                NomeFilial = filial.Nome // Inclui o nome da filial relacionada
-            }).ToList() // Mapeia as motos para o DTO Moto, incluindo a entidade Filial relacionada
+                Modelo = m.Modelo.ToString().ToUpper(),
+                NomeFilial = filial.Nome
+            }).ToList()
         };
-        return Ok(filialReadDto); // Retorna a filial atualizada
+        return Ok(filialReadDto);
     }
 
     /// <summary>
@@ -193,11 +193,11 @@ public class FilialControlador : ControllerBase
     /// Retorna 400 Bad Request se o ID não for válido (não for um número inteiro).
     /// </returns>
     [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)] // Indica que este método pode retornar um sucesso 204 noContent caso a filial seja excluída com sucesso
-    [ProducesResponseType(StatusCodes.Status404NotFound)] // Indica que este método pode retornar um erro 404 Not Found caso a filial não seja encontrada
-    [ProducesResponseType(StatusCodes.Status400BadRequest)] // Indica que este método pode retornar um erro 400 Bad Request caso o ID não seja válido (não seja um número inteiro)
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // Indica que este método pode retornar um erro 500 Internal Server Error caso ocorra algum erro inesperado
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)] // Indica que este método pode retornar um erro 503 Service Unavailable caso o serviço esteja indisponível
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<IActionResult> DeletaFilial(int id)
     {
         var filial = await _repositorio.ObterPorId(id);
@@ -207,7 +207,7 @@ public class FilialControlador : ControllerBase
         }
 
         await _repositorio.Remover(filial);
-        
+
         return NoContent();
     }
 }

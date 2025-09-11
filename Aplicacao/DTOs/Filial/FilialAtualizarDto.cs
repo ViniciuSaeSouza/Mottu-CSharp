@@ -10,5 +10,5 @@ public class FilialAtualizarDto
         Endereco = endereco;
     }
 
-    public FilialAtualizarDto() { } // Construtor padrão para inicialização sem parâmetros
+    public FilialAtualizarDto() { }
 }

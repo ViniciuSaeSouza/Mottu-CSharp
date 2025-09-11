@@ -4,9 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Aplicacao.Repositorios
 {
-
-    // Não tive tempo para encontrar a melhor maneira de implementar esse repositorio genérico de jeito que possa usar o .Include() para filiais ou motos,
-    // desconsidere esta classe
     public class Repositorio<T> : IRepositorio<T> where T : class
     {
         private readonly AppDbContext _context;
@@ -16,7 +13,7 @@ namespace API.Aplicacao.Repositorios
         public Repositorio(AppDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>(); // Aqui o EF descobre qual a entidade pelo tipo T
+            _dbSet = context.Set<T>();
         }
 
         public async Task<T> Adicionar(T entity)
