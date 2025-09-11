@@ -77,12 +77,8 @@ namespace Aplicacao.Servicos
 
             ValidacaoEntidade.LancarSeNulo(filial, "Filial", id);
 
-            // deixando aqui até a validação na entidade Filial
-            if (!string.IsNullOrWhiteSpace(dto.Endereco))
-                filial.AlterarEndereco(dto.Endereco);
-
-            if (!string.IsNullOrWhiteSpace(dto.Nome))
-                filial.AlterarNome(dto.Nome);
+            ValidacaoEntidade.AlterarValor(dto.Nome, filial.AlterarNome);
+            ValidacaoEntidade.AlterarValor(dto.Endereco, filial.AlterarEndereco);
 
             await _filialRepositorio.Atualizar(filial);
 
