@@ -1,0 +1,105 @@
+﻿using API.Aplicacao.Repositorios;
+using API.Application;
+using Aplicacao.DTOs.Moto;
+using Aplicacao.Validacoes;
+using Dominio.Enumeradores;
+using Dominio.Excecao;
+using Dominio.Persistencia;
+
+namespace Aplicacao.Servicos
+{
+    public class MotoServico
+    {
+        private readonly MotoRepositorio _motoRepositorio;
+        private readonly FilialRepositorio _filialRepositorio;
+
+        public MotoServico(MotoRepositorio motoRepositorio, FilialRepositorio filialRepositorio)
+        {
+            _motoRepositorio = motoRepositorio;
+            _filialRepositorio = filialRepositorio;
+        }
+
+        public async Task<IEnumerable<MotoLeituraDto>> ObterTodos()
+            => (await _motoRepositorio.ObterTodos())
+                .Select(MapearParaDto)
+                .ToList();
+
+        public async Task<MotoLeituraDto> ObterPorId(int id)
+            => MapearParaDto(await ObterMotoOuLancar(id));
+
+        public async Task<MotoLeituraDto> Criar(MotoCriarDto dto)
+        {
+            ValidarDtoNaoNulo(dto);
+
+            var filial = await ObterFilialOuLancar(dto.IdFilial);
+            ValidarModelo(dto.Modelo);
+
+            var moto = new Moto(dto.Placa, dto.Modelo, dto.IdFilial, filial);
+            await _motoRepositorio.Adicionar(moto);
+
+            return MapearParaDto(moto);
+        }
+
+        public async Task<MotoLeituraDto> Atualizar(int id, MotoAtualizarDto dto)
+        {
+            var moto = await ObterMotoOuLancar(id);
+
+            ValidacaoEntidade.ValidarValor(dto.Modelo, ValidarModelo);  
+            ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);  
+
+            ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca); 
+
+
+            if (dto.IdFilial.HasValue)
+            {
+                var novaFilial = await ObterFilialOuLancar(dto.IdFilial.Value);
+                moto.AlterarFilial(dto.IdFilial.Value, novaFilial);
+            }
+
+            await _motoRepositorio.Atualizar(moto);
+            return MapearParaDto(moto);
+        }
+
+        public async Task Remover(int id)
+        {
+            var moto = await ObterMotoOuLancar(id);
+            await _motoRepositorio.Remover(moto);
+        }
+
+
+        private MotoLeituraDto MapearParaDto(Moto moto)
+            => new()
+            {
+                Id = moto.Id,
+                Placa = moto.Placa,
+                Modelo = moto.Modelo.ToString().ToUpper(),
+                NomeFilial = moto.Filial.Nome
+            };
+
+        private async Task<Moto> ObterMotoOuLancar(int id)
+        {
+            var moto = await _motoRepositorio.ObterPorId(id);
+            ValidacaoEntidade.LancarSeNulo(moto, "Moto", id);
+            return moto;
+        }
+
+        private async Task<Filial> ObterFilialOuLancar(int id)
+        {
+            var filial = await _filialRepositorio.ObterPorId(id);
+            ValidacaoEntidade.LancarSeNulo(filial, "Filial", id);
+            return filial;
+        }
+
+        private void ValidarDtoNaoNulo(object dto)
+        {
+            if (dto == null)
+                throw new ExcecaoDominio("Dados não podem ser nulos.", nameof(dto));
+        }
+
+        private void ValidarModelo(string modelo)
+        {
+            if (!Enum.IsDefined(typeof(ModeloMoto), modelo.ToUpper()))
+                throw new ExcecaoDominio("Modelo inválido.", nameof(modelo));
+        }
+    }
+}
