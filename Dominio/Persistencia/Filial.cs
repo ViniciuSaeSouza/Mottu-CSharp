@@ -11,37 +11,36 @@ public class Filial
 
     public Filial(string nome, string endereco)
     {
-        DefinirNome(nome);
-        DefinirEndereco(endereco);
+        ValidarNuloVazio(
+            (nameof(nome), nome),
+            (nameof(endereco), endereco)
+        );
+
+        Nome = nome;
+        Endereco = endereco;
     }
 
-    private void DefinirEndereco(string endereco)
+    private void ValidarNuloVazio(params (string NomeCampo, string ValorCampo)[] campos)
     {
-        if (string.IsNullOrWhiteSpace(endereco))
+        foreach (var campo in campos)
         {
-            throw new ExcecaoDominio("Endereço não pode ser nulo ou vazio.", nameof(endereco));
+            if (string.IsNullOrWhiteSpace(campo.ValorCampo))
+            {
+                throw new ExcecaoDominio($"{campo.NomeCampo} não pode ser nulo ou vazio.", campo.NomeCampo);
+            }
         }
-
-        this.Endereco = endereco;
-    }
-
-    private void DefinirNome(string nome)
-    {
-        if (string.IsNullOrWhiteSpace(nome))
-        {
-            throw new ArgumentException("Nome não pode ser nulo ou vazio.", nameof(nome));
-        }
-        this.Nome = nome;
     }
 
     public void AlterarEndereco(string novoEndereco)
     {
-        DefinirEndereco(novoEndereco);
+        ValidarNuloVazio((nameof(Endereco), novoEndereco));
+        Endereco = novoEndereco;
     }
 
     public void AlterarNome(string novoNome)
     {
-        DefinirNome(novoNome);
+        ValidarNuloVazio((nameof(Nome), novoNome));
+        Nome = novoNome;
     }
 
 }

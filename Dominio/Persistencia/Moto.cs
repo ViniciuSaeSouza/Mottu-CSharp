@@ -13,7 +13,14 @@ public class Moto
 
     public Moto(string placa, string nomeModelo, int idFilial, Filial filial)
     {
-        DefinirPlaca(placa);
+        ValidarNuloVazio(
+            (nameof(placa), placa),
+            (nameof(nomeModelo), nomeModelo)
+        );
+
+        ValidarPlaca(placa);
+
+        Placa = placa.ToUpper();
         DefinirModelo(nomeModelo);
         IdFilial = idFilial;
         Filial = filial;
@@ -21,36 +28,51 @@ public class Moto
 
     public Moto() { }
 
-    private void DefinirPlaca(string placa)
+    private void ValidarNuloVazio(params (string NomeCampo, object ValorCampo)[] campos)
     {
-        if (string.IsNullOrWhiteSpace(placa))
+        foreach (var campo in campos)
         {
-            throw new ExcecaoDominio("Placa não pode ser nula ou vazia.", nameof(placa));
+            if (campo.ValorCampo is string str && string.IsNullOrWhiteSpace(str))
+            {
+                throw new ExcecaoDominio($"{campo.NomeCampo} não pode ser nulo ou vazio.", campo.NomeCampo);
+            }
         }
-        else if (placa.Length < 6 || placa.Length > 7)
-        {
-            throw new ArgumentException("Placa deve ter no mínimo 6 e no máximo 7 caracteres.", nameof(placa));
-        }
-
-        this.Placa = placa.ToUpper();
     }
-    private void DefinirModelo(string nomeModelo)
+
+    private void ValidarPlaca(string placa)
+    {
+        if (placa.Length < 6 || placa.Length > 7)
+        {
+            throw new ExcecaoDominio("Placa deve ter no mínimo 6 e no máximo 7 caracteres.", nameof(placa));
+        }
+    }
+
+    private void ValidarModelo(string nomeModelo)
     {
         var modeloUpper = nomeModelo.ToUpper();
+
         if (!Enum.IsDefined(typeof(ModeloMoto), modeloUpper))
         {
-            throw new ArgumentOutOfRangeException(nameof(nomeModelo), "Modelo inválido.");
+            throw new ExcecaoDominio("Modelo inválido.", nameof(nomeModelo));
         }
-        Modelo = Enum.Parse<ModeloMoto>(modeloUpper, ignoreCase: true);
+    }
+
+    private void DefinirModelo(string nomeModelo)
+    {
+        ValidarModelo(nomeModelo);
+        Modelo = Enum.Parse<ModeloMoto>(nomeModelo.ToUpper(), ignoreCase: true);
     }
 
     public void AlterarPlaca(string novaPlaca)
     {
-        DefinirPlaca(novaPlaca);
+        ValidarNuloVazio((nameof(novaPlaca), novaPlaca));
+        ValidarPlaca(novaPlaca);
+        Placa = novaPlaca.ToUpper();
     }
 
     public void AlterarModelo(string novoModelo)
     {
+        ValidarNuloVazio((nameof(novoModelo), novoModelo));
         DefinirModelo(novoModelo);
     }
 
