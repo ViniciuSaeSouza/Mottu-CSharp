@@ -1,7 +1,9 @@
 ﻿using API.Aplicacao.Repositorios;
 using API.Application;
 using Aplicacao.DTOs.Moto;
+using Aplicacao.Servicos;
 using Dominio.Enumeradores;
+using Dominio.Excecao;
 using Dominio.Persistencia;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +17,11 @@ namespace API.Presentation.Controllers;
 [Tags("Motos")]
 public class MotosControlador : ControllerBase
 {
-    private readonly MotoRepositorio _repositorio;
-    private readonly FilialRepositorio _filialRepositorio;
+    private readonly MotoServico _motoServico;
 
-    public MotosControlador(MotoRepositorio repositorio, FilialRepositorio filialRepositorio)
+    public MotosControlador(MotoServico motoServico)
     {
-        _repositorio = repositorio;
-        _filialRepositorio = filialRepositorio;
+        _motoServico = motoServico;
     }
 
 
@@ -39,19 +39,8 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Moto>>> GetMotos()
     {
-        var motos = await _repositorio.ObterTodos();
-
-
-
-        var motosDto = motos.Select(m => new MotoLeituraDto
-        {
-            Id = m.Id,
-            Placa = m.Placa,
-            Modelo = m.Modelo.ToString().ToUpper(),
-            NomeFilial = m.Filial.Nome
-        }).ToList();
-
-        return Ok(motosDto);
+        var motos = await _motoServico.ObterTodos();
+        return Ok(motos);
     }
 
     /// <summary>
@@ -72,21 +61,18 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Moto>> GetMoto(int id)
     {
-        var moto = await _repositorio.ObterPorId(id);
-        if (moto == null)
         {
-            return NotFound();
+            try
+            {
+                var moto = await _motoServico.ObterPorId(id);
+                return Ok(moto);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
-        var motoDto = new MotoLeituraDto
-        {
-            Id = moto.Id,
-            Placa = moto.Placa,
-            Modelo = moto.Modelo.ToString().ToUpper(),
-            NomeFilial = moto.Filial.Nome
-        };
-        return Ok(motoDto);
     }
-
 
     /// <summary>
     /// Insere uma nova moto no sistema.
@@ -109,30 +95,16 @@ public class MotosControlador : ControllerBase
 
     public async Task<ActionResult<Moto>> CriarMoto([FromBody] MotoCriarDto motoDto)
     {
-        var filial = await _filialRepositorio.ObterPorId(motoDto.IdFilial);
-
-        if (filial == null)
-        {
-            return NotFound("Filial não encontrada.");
+            try
+            {
+                var moto = await _motoServico.Criar(motoDto);
+                return CreatedAtAction(nameof(GetMoto), new { id = moto.Id }, moto);
+            }
+            catch (ExcecaoDominio ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
-        if (Enum.IsDefined(typeof(ModeloMoto), motoDto.Modelo.ToUpper()) == false)
-        {
-            return BadRequest("Modelo inválido.");
-        }
-        var moto = await _repositorio.Adicionar(new Moto(motoDto.Placa, motoDto.Modelo, motoDto.IdFilial, filial));
-
-        var motoLeituraDto = new MotoLeituraDto
-        {
-            Id = moto.Id,
-            Placa = moto.Placa,
-            Modelo = moto.Modelo.ToString(),
-            NomeFilial = moto.Filial.Nome
-        };
-
-
-        return CreatedAtAction(nameof(GetMoto), new { id = moto.Id }, motoLeituraDto);
-    }
 
 
     /// <summary>
@@ -153,40 +125,15 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Moto>> PatchMoto(int id, [FromBody] MotoAtualizarDto motoUpdateDto)
     {
-        var moto = await _repositorio.ObterPorId(id);
-
-        if (moto == null)
+        try
         {
-            return NotFound("Moto não encontrada");
+            var motoAtualizada = await _motoServico.Atualizar(id, motoUpdateDto);
+            return Ok(motoAtualizada);
         }
-
-        var filial = await _filialRepositorio.ObterPorId(moto.IdFilial);
-
-        if (motoUpdateDto.Placa != null)
+        catch
         {
-            moto.AlterarPlaca(motoUpdateDto.Placa);
+            return NotFound();
         }
-        if (motoUpdateDto.Modelo != null)
-        {
-            moto.AlterarModelo(motoUpdateDto.Modelo.ToString());
-        }
-        if (motoUpdateDto.IdFilial != null)
-        {
-            var novaFilial = await _filialRepositorio.ObterPorId(motoUpdateDto.IdFilial.Value);
-            if (novaFilial == null)
-            {
-                return NotFound("Filial não encontrada.");
-            }
-            moto.AlterarFilial(motoUpdateDto.IdFilial.Value, novaFilial);
-        }
-        var motoAtualizada = await _repositorio.Atualizar(moto);
-        var motoReadDto = new MotoLeituraDto(
-            motoAtualizada.Id,
-            motoAtualizada.Placa,
-            motoAtualizada.Modelo.ToString(),
-            motoAtualizada.Filial.Nome
-        );
-        return Ok(motoReadDto);
     }
 
 
@@ -208,12 +155,14 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<IActionResult> DeletarMoto(int id)
     {
-        var moto = await _repositorio.ObterPorId(id);
-        if (moto == null)
+        try
+        {
+            await _motoServico.Remover(id);
+            return NoContent();
+        }
+        catch
         {
             return NotFound();
         }
-        await _repositorio.Remover(moto);
-        return NoContent();
     }
 }
