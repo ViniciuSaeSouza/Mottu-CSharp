@@ -56,6 +56,7 @@ public class Moto
             throw new ExcecaoDominio("Modelo inválido.", nameof(nomeModelo));
         }
     }
+
     private void DefinirModelo(string nomeModelo)
     {
         ValidarModelo(nomeModelo);
@@ -77,7 +78,6 @@ public class Moto
 
     public void AlterarFilial(int novoIdFilial, Filial novaFilial)
     {
-        ValidarNuloVazio((nameof(novoIdFilial), novoIdFilial));
         IdFilial = novoIdFilial;
         Filial = novaFilial;
     }
