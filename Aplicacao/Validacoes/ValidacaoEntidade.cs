@@ -7,13 +7,13 @@ namespace Aplicacao.Validacoes
         public static void LancarSeNulo<T>(T entidade, string nomeEntidade, object id)
         {
             if (entidade == null)
-                throw new EntidadeNaoEncontradaException(nomeEntidade, id);
+                throw new ExcecaoEntidadeNaoEncontrada(nomeEntidade, id);
         }
         public static void AlterarValor(string valor, Action<string> alterar)
         {
             if (!string.IsNullOrWhiteSpace(valor))
             {
-                alterar(valor);  
+                alterar(valor);
             }
         }
 
@@ -21,7 +21,7 @@ namespace Aplicacao.Validacoes
         {
             if (!string.IsNullOrWhiteSpace(valor))
             {
-                validar?.Invoke(valor);  
+                validar?.Invoke(valor);
             }
         }
 

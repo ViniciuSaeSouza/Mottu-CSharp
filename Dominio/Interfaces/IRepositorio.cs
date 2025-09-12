@@ -6,7 +6,7 @@ public interface IRepositorio<T> where T : class
 
     Task<T> ObterPorId(int id);
 
-    Task<T>Adicionar(T entity);
+    Task<T> Adicionar(T entity);
 
     Task<T> Atualizar(T entity);
 
