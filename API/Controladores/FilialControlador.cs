@@ -1,11 +1,7 @@
 ﻿using Aplicacao.DTOs.Filial;
-using Aplicacao.DTOs.Moto;
-using Aplicacao.Repositorios;
 using Aplicacao.Servicos;
 using Dominio.Excecao;
-using Dominio.Persistencia;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace API.Controladores;
 
