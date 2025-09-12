@@ -1,5 +1,4 @@
-using API.Aplicacao.Repositorios;
-using API.Application;
+using Aplicacao.Repositorios;
 using Aplicacao.Servicos;
 using DotNetEnv;
 using Infraestrutura.Contexto;
@@ -24,10 +23,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(swagger =>
 {
     // TODO: Trocar para V2
-    swagger.SwaggerDoc("v1", new OpenApiInfo
+    swagger.SwaggerDoc("v2", new OpenApiInfo
     {
         Title = "API de filiais e motos Mottu",
-        Version = "v1",
+        Version = "v2",
         Description = "API para gerenciar filiais e motos da Mottu nos pátios",
         Contact = new OpenApiContact
         {
@@ -41,7 +40,7 @@ builder.Services.AddSwaggerGen(swagger =>
     swagger.IncludeXmlComments(xmlPath);
 });
 
-// TODO: Configurar connection com Oracle SQL
+ 
 try
 {
     var connectionString = Environment.GetEnvironmentVariable("Connection__String");

@@ -1,29 +1,25 @@
-﻿using API.Aplicacao.Repositorios;
-using API.Application;
-using Aplicacao.DTOs.Filial;
+﻿using Aplicacao.DTOs.Filial;
 using Aplicacao.DTOs.Moto;
+using Aplicacao.Repositorios;
 using Aplicacao.Servicos;
+using Dominio.Excecao;
 using Dominio.Persistencia;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Controladores;
-
-
-// TODO: Remover lógicas de validação do controlador e jogar para a camada SERVICE
 
 [Route("api/[controller]")]
 [ApiController]
 [Tags("Filiais")]
 public class FilialControlador : ControllerBase
 {
-
     private readonly FilialServico _filialServico;
 
     public FilialControlador(FilialServico filialServico)
     {
         _filialServico = filialServico;
     }
-
 
     /// <summary>
     /// Obtém uma lista de todas as filiais sem as motos associadas.
@@ -38,10 +34,22 @@ public class FilialControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<FilialLeituraDto>>> GetFiliais()
     {
-        var filiais = await _filialServico.ObterTodos();
-        return Ok(filiais);
+        try
+        {
+            var filiais = await _filialServico.ObterTodos();
+            return Ok(filiais);
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha ao buscar todas as filiais no banco de dados: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Falha interna da aplicação ao buscar filiais: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
+        }
     }
-
 
     /// <summary>
     ///  Retorna uma filial específica pelo Id passado por parâmetro junto com suas motos relacionadas.
@@ -67,9 +75,20 @@ public class FilialControlador : ControllerBase
             var filial = await _filialServico.ObterPorId(id);
             return Ok(filial);
         }
-        catch
+        catch (ExcecaoEntidadeNaoEncontrada ex)
         {
-            return NotFound();
+            Console.WriteLine($"Filial de id {id} não encontrada: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = $"Nenhuma filial encontrada para o id {id}" });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha ao buscar filial de id {id} no banco de dados: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Falha interna da aplicação ao buscar filial {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
 
@@ -95,9 +114,20 @@ public class FilialControlador : ControllerBase
             var filial = await _filialServico.Criar(filialCreateDto);
             return CreatedAtAction(nameof(GetFilial), new { id = filial.Id }, filial);
         }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine($"Erro de validação ao criar filial: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha no banco de dados ao criar filial: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            Console.WriteLine($"Erro não tratado ao criar filial: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
 
@@ -124,9 +154,25 @@ public class FilialControlador : ControllerBase
             var filialAtualizada = await _filialServico.Atualizar(id, filialUpdateDto);
             return Ok(filialAtualizada);
         }
-        catch
+        catch (ExcecaoEntidadeNaoEncontrada ex)
         {
-            return NotFound();
+            Console.WriteLine($"Filial de id {id} não encontrada para atualização: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine($"Erro de validação ao atualizar filial {id}: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha no banco de dados ao atualizar filial {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro não tratado ao atualizar filial {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
 
@@ -153,9 +199,20 @@ public class FilialControlador : ControllerBase
             await _filialServico.Remover(id);
             return NoContent();
         }
-        catch
+        catch (ExcecaoEntidadeNaoEncontrada ex)
         {
-            return NotFound();
+            Console.WriteLine($"Filial de id {id} não encontrada para remoção: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha no banco de dados ao remover filial {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro não tratado ao remover filial {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
 }
