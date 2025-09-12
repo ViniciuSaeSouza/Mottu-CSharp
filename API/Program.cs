@@ -1,5 +1,6 @@
 using API.Aplicacao.Repositorios;
 using API.Application;
+using Aplicacao.Servicos;
 using DotNetEnv;
 using Infraestrutura.Contexto;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,9 @@ catch (ArgumentNullException)
 
 builder.Services.AddScoped<MotoRepositorio>();
 builder.Services.AddScoped<FilialRepositorio>();
+builder.Services.AddScoped<MotoServico>();
+builder.Services.AddScoped<FilialServico>();
+
 
 var app = builder.Build();
 
