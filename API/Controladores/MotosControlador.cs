@@ -7,7 +7,7 @@ using Dominio.Excecao;
 using Dominio.Persistencia;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Presentation.Controllers;
+namespace API.Controladores;
 
 
 // TODO: Remover lógicas de validação do controlador e jogar para a camada SERVICE
