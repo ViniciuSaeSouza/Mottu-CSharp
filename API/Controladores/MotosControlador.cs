@@ -1,6 +1,5 @@
-﻿using API.Aplicacao.Repositorios;
-using API.Application;
-using Aplicacao.DTOs.Moto;
+﻿using Aplicacao.DTOs.Moto;
+using Aplicacao.Repositorios;
 using Aplicacao.Servicos;
 using Dominio.Enumeradores;
 using Dominio.Excecao;
@@ -8,9 +7,6 @@ using Dominio.Persistencia;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controladores;
-
-
-// TODO: Remover lógicas de validação do controlador e jogar para a camada SERVICE
 
 [Route("api/[controller]")]
 [ApiController]
@@ -24,7 +20,6 @@ public class MotosControlador : ControllerBase
         _motoServico = motoServico;
     }
 
-
     /// <summary>
     /// Retorna a lista de motos cadastradas no sistema.
     /// </summary>
@@ -37,10 +32,23 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Moto>>> GetMotos()
+    public async Task<ActionResult<IEnumerable<MotoLeituraDto>>> GetMotos()
     {
-        var motos = await _motoServico.ObterTodos();
-        return Ok(motos);
+        try
+        {
+            var motos = await _motoServico.ObterTodos();
+            return Ok(motos);
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha ao buscar todas as motos no banco de dados: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Falha interna da aplicação ao buscar motos: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
+        }
     }
 
     /// <summary>
@@ -59,18 +67,27 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Moto>> GetMoto(int id)
+    public async Task<ActionResult<MotoLeituraDto>> GetMoto(int id)
     {
+        try
         {
-            try
-            {
-                var moto = await _motoServico.ObterPorId(id);
-                return Ok(moto);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var moto = await _motoServico.ObterPorId(id);
+            return Ok(moto);
+        }
+        catch (ExcecaoEntidadeNaoEncontrada ex)
+        {
+            Console.WriteLine($"Moto de id {id} não encontrada: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = $"Nenhuma moto encontrada para o id {id}" });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha ao buscar moto de id {id} no banco de dados: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Falha interna da aplicação ao buscar moto {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
 
@@ -89,23 +106,36 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-
-    public async Task<ActionResult<Moto>> CriarMoto([FromBody] MotoCriarDto motoDto)
+    public async Task<ActionResult<MotoLeituraDto>> CriarMoto([FromBody] MotoCriarDto motoDto)
     {
-            try
-            {
-                var moto = await _motoServico.Criar(motoDto);
-                return CreatedAtAction(nameof(GetMoto), new { id = moto.Id }, moto);
-            }
-            catch (ExcecaoDominio ex)
-            {
-                return BadRequest(ex.Message);
-            }
+        try
+        {
+            var moto = await _motoServico.Criar(motoDto);
+            return CreatedAtAction(nameof(GetMoto), new { id = moto.Id }, moto);
         }
-
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine($"Erro de validação ao criar moto: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoEntidadeNaoEncontrada ex)
+        {
+            Console.WriteLine($"Entidade não encontrada ao criar moto: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha no banco de dados ao criar moto: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro não tratado ao criar moto: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
+        }
+    }
 
     /// <summary>
     /// Retorna a moto com as informações atualizadas.
@@ -123,19 +153,34 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Moto>> PatchMoto(int id, [FromBody] MotoAtualizarDto motoUpdateDto)
+    public async Task<ActionResult<MotoLeituraDto>> PatchMoto(int id, [FromBody] MotoAtualizarDto motoUpdateDto)
     {
         try
         {
             var motoAtualizada = await _motoServico.Atualizar(id, motoUpdateDto);
             return Ok(motoAtualizada);
         }
-        catch
+        catch (ExcecaoEntidadeNaoEncontrada ex)
         {
-            return NotFound();
+            Console.WriteLine($"Moto ou filial de id {id} não encontrada para atualização: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine($"Erro de validação ao atualizar moto {id}: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha no banco de dados ao atualizar moto {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro não tratado ao atualizar moto {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
-
 
     /// <summary>
     ///  Retorna código 204 confirmando a exclusão da moto com o ID passado por parâmetro.
@@ -160,9 +205,20 @@ public class MotosControlador : ControllerBase
             await _motoServico.Remover(id);
             return NoContent();
         }
-        catch
+        catch (ExcecaoEntidadeNaoEncontrada ex)
         {
-            return NotFound();
+            Console.WriteLine($"Moto de id {id} não encontrada para remoção: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = ex.Message });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha no banco de dados ao remover moto {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro não tratado ao remover moto {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
 }
