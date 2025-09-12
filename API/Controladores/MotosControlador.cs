@@ -1,9 +1,6 @@
 ﻿using Aplicacao.DTOs.Moto;
-using Aplicacao.Repositorios;
 using Aplicacao.Servicos;
-using Dominio.Enumeradores;
 using Dominio.Excecao;
-using Dominio.Persistencia;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controladores;

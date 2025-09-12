@@ -1,19 +1,19 @@
-﻿using API.Aplicacao.Repositorios;
-using API.Application;
-using Aplicacao.DTOs.Moto;
+﻿using Aplicacao.DTOs.Moto;
 using Aplicacao.Validacoes;
 using Dominio.Enumeradores;
 using Dominio.Excecao;
+using Dominio.Interfaces;
 using Dominio.Persistencia;
+using Infraestrutura.Repositorios;
 
 namespace Aplicacao.Servicos
 {
     public class MotoServico
     {
-        private readonly MotoRepositorio _motoRepositorio;
-        private readonly FilialRepositorio _filialRepositorio;
+        private readonly IRepositorio<Moto> _motoRepositorio;
+        private readonly IRepositorio<Filial> _filialRepositorio;
 
-        public MotoServico(MotoRepositorio motoRepositorio, FilialRepositorio filialRepositorio)
+        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Filial> filialRepositorio)
         {
             _motoRepositorio = motoRepositorio;
             _filialRepositorio = filialRepositorio;
@@ -44,10 +44,9 @@ namespace Aplicacao.Servicos
         {
             var moto = await ObterMotoOuLancar(id);
 
-            ValidacaoEntidade.ValidarValor(dto.Modelo, ValidarModelo);  
-            ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);  
-
-            ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca); 
+            ValidacaoEntidade.ValidarValor(dto.Modelo, ValidarModelo);
+            ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);
+            ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca);
 
 
             if (dto.IdFilial.HasValue)
