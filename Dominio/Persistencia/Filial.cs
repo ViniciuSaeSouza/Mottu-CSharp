@@ -33,7 +33,7 @@ public class Filial
 
     public void AlterarEndereco(string novoEndereco)
     {
-        ValidarNuloVazio((nameof(Endereco), novoEndereco));
+        ValidarNuloVazio((nameof(novoEndereco), novoEndereco));
         Endereco = novoEndereco;
     }
 
