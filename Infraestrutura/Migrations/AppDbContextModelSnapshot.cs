@@ -55,6 +55,11 @@ namespace Infraestrutura.Migrations
 
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Chassi")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .HasColumnType("NVARCHAR2(17)");
+
                     b.Property<int>("IdFilial")
                         .HasColumnType("NUMBER(10)");
 
@@ -67,6 +72,9 @@ namespace Infraestrutura.Migrations
                         .HasColumnType("NVARCHAR2(7)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Chassi")
+                        .IsUnique();
 
                     b.HasIndex("IdFilial");
 

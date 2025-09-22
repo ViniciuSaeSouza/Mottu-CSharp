@@ -11,8 +11,8 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace Infraestrutura.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250910193449_CleanArchi-v1")]
-    partial class CleanArchi1
+    [Migration("20250922211258_Sprint3_chassi")]
+    partial class Sprint3_chassi
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,11 @@ namespace Infraestrutura.Migrations
 
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Chassi")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .HasColumnType("NVARCHAR2(17)");
+
                     b.Property<int>("IdFilial")
                         .HasColumnType("NUMBER(10)");
 
@@ -70,6 +75,9 @@ namespace Infraestrutura.Migrations
                         .HasColumnType("NVARCHAR2(7)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Chassi")
+                        .IsUnique();
 
                     b.HasIndex("IdFilial");
 
