@@ -26,11 +26,11 @@ public class FilialRepositorio : IRepositorio<Filial>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operaÁ„o cancelada ao adicionar filial no banco de dados", nameof(filial), ex);
+            throw new ExcecaoBancoDados("Falha, opera√ß√£o cancelada ao adicionar filial no banco de dados", nameof(filial), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteraÁ„o no banco de dados", nameof(filial), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar altera√ß√£o no banco de dados", nameof(filial), innerException: ex);
         }
     }
 
@@ -46,11 +46,11 @@ public class FilialRepositorio : IRepositorio<Filial>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operaÁ„o cancelada ao atualizar filial no banco de dados", nameof(filial), ex);
+            throw new ExcecaoBancoDados("Falha, opera√ß√£o cancelada ao atualizar filial no banco de dados", nameof(filial), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteraÁ„o de filial no banco de dados", nameof(filial), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar altera√ß√£o de filial no banco de dados", nameof(filial), innerException: ex);
         }
     }
 
@@ -62,8 +62,19 @@ public class FilialRepositorio : IRepositorio<Filial>
 
     public async Task<bool> Remover(Filial filial)
     {
-        _context.Filiais.Remove(filial);
-        await _context.SaveChangesAsync();
-        return true;
+        try
+        {
+            _context.Filiais.Remove(filial);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, opera√ß√£o cancelada ao remover filial do banco de dados", nameof(filial), ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ExcecaoBancoDados("Falha ao salvar remo√ß√£o de filial no banco de dados", nameof(filial), innerException: ex);
+        }
     }
 }
