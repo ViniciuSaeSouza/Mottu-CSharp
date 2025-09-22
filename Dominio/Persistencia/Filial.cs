@@ -39,7 +39,7 @@ public class Filial
 
     public void AlterarNome(string novoNome)
     {
-        ValidarNuloVazio((nameof(Nome), novoNome));
+        ValidarNuloVazio((nameof(novoNome), novoNome));
         Nome = novoNome;
     }
 
