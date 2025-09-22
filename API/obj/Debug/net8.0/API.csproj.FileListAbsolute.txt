@@ -425,7 +425,6 @@ C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\D
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\API.csproj.Up2Date
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\API.dll
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\refint\API.dll
@@ -433,3 +432,4 @@ C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\D
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\API.pdb
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\ref\API.dll
+C:\Users\Vinic\Documents\programacao\Fiap\2_ano\Challenge-Mottu\CSharp\API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

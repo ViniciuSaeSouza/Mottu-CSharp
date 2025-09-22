@@ -843,6 +843,10 @@
             "type": "string",
             "nullable": true
           },
+          "chassi": {
+            "type": "string",
+            "nullable": true
+          },
           "idFilial": {
             "type": "integer",
             "format": "int32"
