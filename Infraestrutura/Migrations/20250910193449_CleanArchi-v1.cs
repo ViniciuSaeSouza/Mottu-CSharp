@@ -5,7 +5,7 @@
 namespace Infraestrutura.Migrations
 {
     /// <inheritdoc />
-    public partial class CleanArchiv1 : Migration
+    public partial class CleanArchi1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
