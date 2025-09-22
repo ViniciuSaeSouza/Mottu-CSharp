@@ -1,6 +1,6 @@
 [
   {
-    "ContainingType": "API.Presentation.Controllers.FilialControlador",
+    "ContainingType": "API.Controladores.FilialControlador",
     "Method": "GetFiliais",
     "RelativePath": "api/FilialControlador",
     "HttpMethod": "GET",
@@ -9,7 +9,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[API.Application.DTOs.Filial.FilialLeituraDto, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Aplicacao.DTOs.Filial.FilialLeituraDto, Aplicacao, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -33,7 +33,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.FilialControlador",
+    "ContainingType": "API.Controladores.FilialControlador",
     "Method": "CriarFilial",
     "RelativePath": "api/FilialControlador",
     "HttpMethod": "POST",
@@ -42,13 +42,13 @@
     "Parameters": [
       {
         "Name": "filialCreateDto",
-        "Type": "API.Application.DTOs.Filial.FilialCriarDto",
+        "Type": "Aplicacao.DTOs.Filial.FilialCriarDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTOs.Filial.FilialLeituraDto",
+        "Type": "Aplicacao.DTOs.Filial.FilialLeituraDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -81,7 +81,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.FilialControlador",
+    "ContainingType": "API.Controladores.FilialControlador",
     "Method": "GetFilial",
     "RelativePath": "api/FilialControlador/{id}",
     "HttpMethod": "GET",
@@ -96,7 +96,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTOs.Filial.FilialLeituraDto",
+        "Type": "Aplicacao.DTOs.Filial.FilialLeituraDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -138,7 +138,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.FilialControlador",
+    "ContainingType": "API.Controladores.FilialControlador",
     "Method": "PatchFilial",
     "RelativePath": "api/FilialControlador/{id}",
     "HttpMethod": "PATCH",
@@ -152,7 +152,7 @@
       },
       {
         "Name": "filialUpdateDto",
-        "Type": "API.Aplicacao.DTOs.Filial.FilialAtualizarDto",
+        "Type": "Aplicacao.DTOs.Filial.FilialAtualizarDto",
         "IsRequired": true
       }
     ],
@@ -196,7 +196,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.FilialControlador",
+    "ContainingType": "API.Controladores.FilialControlador",
     "Method": "DeletaFilial",
     "RelativePath": "api/FilialControlador/{id}",
     "HttpMethod": "DELETE",
@@ -249,7 +249,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.MotosControlador",
+    "ContainingType": "API.Controladores.MotosControlador",
     "Method": "GetMotos",
     "RelativePath": "api/MotosControlador",
     "HttpMethod": "GET",
@@ -258,7 +258,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[API.Domain.Persistence.Moto, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Aplicacao.DTOs.Moto.MotoLeituraDto, Aplicacao, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -282,7 +282,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.MotosControlador",
+    "ContainingType": "API.Controladores.MotosControlador",
     "Method": "CriarMoto",
     "RelativePath": "api/MotosControlador",
     "HttpMethod": "POST",
@@ -291,13 +291,13 @@
     "Parameters": [
       {
         "Name": "motoDto",
-        "Type": "API.Application.DTOs.Moto.MotoCriarDto",
+        "Type": "Aplicacao.DTOs.Moto.MotoCriarDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Domain.Persistence.Moto",
+        "Type": "Aplicacao.DTOs.Moto.MotoLeituraDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -315,24 +315,6 @@
         "StatusCode": 400
       },
       {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 409
-      },
-      {
         "Type": "System.Void",
         "MediaTypes": [],
         "StatusCode": 500
@@ -348,7 +330,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.MotosControlador",
+    "ContainingType": "API.Controladores.MotosControlador",
     "Method": "GetMoto",
     "RelativePath": "api/MotosControlador/{id}",
     "HttpMethod": "GET",
@@ -363,7 +345,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Domain.Persistence.Moto",
+        "Type": "Aplicacao.DTOs.Moto.MotoLeituraDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -405,7 +387,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.MotosControlador",
+    "ContainingType": "API.Controladores.MotosControlador",
     "Method": "PatchMoto",
     "RelativePath": "api/MotosControlador/{id}",
     "HttpMethod": "PATCH",
@@ -419,13 +401,13 @@
       },
       {
         "Name": "motoUpdateDto",
-        "Type": "API.Application.DTOs.Moto.MotoAtualizarDto",
+        "Type": "Aplicacao.DTOs.Moto.MotoAtualizarDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Domain.Persistence.Moto",
+        "Type": "Aplicacao.DTOs.Moto.MotoLeituraDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -467,7 +449,7 @@
     ]
   },
   {
-    "ContainingType": "API.Presentation.Controllers.MotosControlador",
+    "ContainingType": "API.Controladores.MotosControlador",
     "Method": "DeletarMoto",
     "RelativePath": "api/MotosControlador/{id}",
     "HttpMethod": "DELETE",

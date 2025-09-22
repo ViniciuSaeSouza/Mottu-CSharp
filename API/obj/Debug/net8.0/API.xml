@@ -4,7 +4,7 @@
         <name>API</name>
     </assembly>
     <members>
-        <member name="M:API.Presentation.Controllers.FilialControlador.GetFiliais">
+        <member name="M:API.Controladores.FilialControlador.GetFiliais">
             <summary>
             Obtém uma lista de todas as filiais sem as motos associadas.
             </summary>
@@ -13,7 +13,7 @@
             Retorna 200 OK se as filiais forem encontradas.
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.FilialControlador.GetFilial(System.Int32)">
+        <member name="M:API.Controladores.FilialControlador.GetFilial(System.Int32)">
             <summary>
              Retorna uma filial específica pelo Id passado por parâmetro junto com suas motos relacionadas.
             </summary>
@@ -26,7 +26,7 @@
             Retorna 400 Bad Request se o ID não for válido (não for um número inteiro).
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.FilialControlador.CriarFilial(API.Application.DTOs.Filial.FilialCriarDto)">
+        <member name="M:API.Controladores.FilialControlador.CriarFilial(Aplicacao.DTOs.Filial.FilialCriarDto)">
             <summary>
             Cria uma nova filial no banco de dados com os dados fornecidos no DTO.
             </summary>
@@ -38,7 +38,7 @@
             Retorna 201 Created se a filial for criada com sucesso, ou 400 se o objeto filialCreateDto não for passado corretamente no corpo.
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.FilialControlador.PatchFilial(System.Int32,API.Aplicacao.DTOs.Filial.FilialAtualizarDto)">
+        <member name="M:API.Controladores.FilialControlador.PatchFilial(System.Int32,Aplicacao.DTOs.Filial.FilialAtualizarDto)">
             <summary>
              Altera um ou mais dados de uma filial existente no banco de dados com os dados fornecidos no DTO.
             </summary>
@@ -50,7 +50,7 @@
             REtorna 400 Bad Request se o objeto filialUpdateDto não for passado corretamente no corpo.
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.FilialControlador.DeletaFilial(System.Int32)">
+        <member name="M:API.Controladores.FilialControlador.DeletaFilial(System.Int32)">
             <summary>
             Deleta uma filial existente no banco de dados com o ID fornecido.
             </summary>
@@ -62,7 +62,7 @@
             Retorna 400 Bad Request se o ID não for válido (não for um número inteiro).
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.MotosControlador.GetMotos">
+        <member name="M:API.Controladores.MotosControlador.GetMotos">
             <summary>
             Retorna a lista de motos cadastradas no sistema.
             </summary>
@@ -72,7 +72,7 @@
             Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.MotosControlador.GetMoto(System.Int32)">
+        <member name="M:API.Controladores.MotosControlador.GetMoto(System.Int32)">
             <summary>
             Retorna uma moto específica pelo ID passado por parâmetro.
             </summary>
@@ -84,7 +84,7 @@
             Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.MotosControlador.CriarMoto(API.Application.DTOs.Moto.MotoCriarDto)">
+        <member name="M:API.Controladores.MotosControlador.CriarMoto(Aplicacao.DTOs.Moto.MotoCriarDto)">
             <summary>
             Insere uma nova moto no sistema.
             </summary>
@@ -97,7 +97,7 @@
             Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.MotosControlador.PatchMoto(System.Int32,API.Application.DTOs.Moto.MotoAtualizarDto)">
+        <member name="M:API.Controladores.MotosControlador.PatchMoto(System.Int32,Aplicacao.DTOs.Moto.MotoAtualizarDto)">
             <summary>
             Retorna a moto com as informações atualizadas.
             </summary>
@@ -109,7 +109,7 @@
             Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
             </returns>
         </member>
-        <member name="M:API.Presentation.Controllers.MotosControlador.DeletarMoto(System.Int32)">
+        <member name="M:API.Controladores.MotosControlador.DeletarMoto(System.Int32)">
             <summary>
              Retorna código 204 confirmando a exclusão da moto com o ID passado por parâmetro.
             </summary>
@@ -120,18 +120,6 @@
             Retorna 500 Internal Server Error se ocorrer um erro interno no servidor.
             Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
             </returns>
-        </member>
-        <member name="T:API.Migrations.projetoSupa">
-            <inheritdoc />
-        </member>
-        <member name="M:API.Migrations.projetoSupa.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:API.Migrations.projetoSupa.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:API.Migrations.projetoSupa.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
         </member>
     </members>
 </doc>

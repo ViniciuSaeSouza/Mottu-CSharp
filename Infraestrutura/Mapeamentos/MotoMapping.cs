@@ -1,0 +1,25 @@
+﻿using Dominio.Persistencia;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Infraestrutura.Mapeamentos;
+
+public class MotoMapping : IEntityTypeConfiguration<Moto>
+{
+    public void Configure(EntityTypeBuilder<Moto> builder)
+    {
+        builder.HasKey(m => m.Id);
+
+        builder.Property(m => m.Placa)
+            .IsRequired()
+            .HasMaxLength(7);
+
+        builder.HasIndex(m => m.Placa)
+            .IsUnique();
+
+        builder.HasOne(m => m.Filial)
+            .WithMany(f => f.Motos)
+            .HasForeignKey(m => m.IdFilial)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
