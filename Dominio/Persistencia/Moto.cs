@@ -38,7 +38,7 @@ public class Moto
 
     private void ValidarChassi(string chassi)
     {
-        if (chassi.Length < 7 )
+        if (chassi.Length != 7 )
             throw new ExcecaoDominio("Chassi deve ter 7 caracteres", chassi);
     }
 
