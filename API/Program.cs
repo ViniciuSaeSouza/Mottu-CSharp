@@ -56,7 +56,7 @@ builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 
 // Register services
 builder.Services.AddScoped<MotoServico>();
-builder.Services.AddScoped<FilialServico>();
+builder.Services.AddScoped<PatioServico>();
 
 
 var app = builder.Build();
