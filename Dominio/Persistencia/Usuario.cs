@@ -21,6 +21,7 @@ public class Usuario
     public Usuario(string email, string nome)
     {
         ValidarUsuario(email, nome);
+
         Email = email;
         Nome = nome;
         DataCriacao = DateTime.UtcNow;
