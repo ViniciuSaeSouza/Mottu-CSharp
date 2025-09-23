@@ -1,14 +1,14 @@
-using API.Aplicacao.Repositorios;
-using API.Application;
-using API.Infrastructure.Context;
+using Aplicacao.Servicos;
+using Dominio.Interfaces;
+using Dominio.Persistencia;
 using DotNetEnv;
+using Infraestrutura.Contexto;
+using Infraestrutura.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 
-// TODO: Refatorar: Abstrair validações dos controllers para uma camada Service (corrigir para a sprint 2)
-// TODO: Refatorar: Abstrair conversões de DTO para uma camada Service (corrigir para a sprint 2)
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,11 +20,12 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
+    
     swagger.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "API de filiais e motos Mottu",
         Version = "v1",
-        Description = "API para gerenciar filiais e motos da Mottu nos pátios",
+        Description = "API para gerenciar filiais e motos da Mottu nos pï¿½tios",
         Contact = new OpenApiContact
         {
             Name = "Prisma.Code",
@@ -32,25 +33,31 @@ builder.Services.AddSwaggerGen(swagger =>
         },
     });
 
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"; // Obtém o nome do arquivo XML de documentação
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile); // Cria o caminho completo para o arquivo XML
-    swagger.IncludeXmlComments(xmlPath); // Inclui o arquivo XML de documentação no Swagger
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    swagger.IncludeXmlComments(xmlPath);
 });
 
-// Busca as credenciais pelo documento .env
+
 try
 {
-    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Postgres");
+    var connectionString = Environment.GetEnvironmentVariable("Connection__String") ?? builder.Configuration.GetConnectionString("Oracle");
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(connectionString)); // Configura o DbContext para usar o Oracle com a string de conexão definida no appsettings.json
+        options.UseOracle(connectionString));
 }
 catch (ArgumentNullException)
 {
-    throw new Exception("Falha ao buscar a varíavel de ambiente");
+    throw new Exception("Falha ao buscar a variÃ¡vel de ambiente");
 }
 
-builder.Services.AddScoped<MotoRepositorio>();// Registra o repositório de motos como um serviço com escopo
-builder.Services.AddScoped<FilialRepositorio>();
+// Register repositories with their interfaces
+builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
+builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
+
+// Register services
+builder.Services.AddScoped<MotoServico>();
+builder.Services.AddScoped<FilialServico>();
+
 
 var app = builder.Build();
 

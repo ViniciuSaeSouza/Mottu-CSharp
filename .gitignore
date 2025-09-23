@@ -1,4 +1,7 @@
-appsettings.Development.json
+/*/obj/
+/*/bin/
+/API/appsettings.development.json
 .vs/
-/API/ValidationExample.cs
+.idea/
 /API/.env
+/Infraestrutura/Documentos/
