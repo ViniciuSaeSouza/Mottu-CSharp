@@ -7,7 +7,7 @@ public class Patio
     public int Id { get; private set; }
     public string Nome { get; private set; }
     public string Endereco { get; private set; }
-    public ICollection<Moto> Motos { get; private set; } = new List<Moto>();
+    public ICollection<Moto> Motos { get; private set; }
 
     public Patio(string nome, string endereco)
     {
@@ -18,6 +18,7 @@ public class Patio
 
         Nome = nome;
         Endereco = endereco;
+        Motos = new List<Moto>();
     }
 
     private void ValidarNuloVazio(params (string NomeCampo, string ValorCampo)[] campos)

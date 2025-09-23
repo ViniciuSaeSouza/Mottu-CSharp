@@ -8,6 +8,9 @@ public class PatioMapping : IEntityTypeConfiguration<Patio>
 {
     public void Configure(EntityTypeBuilder<Patio> builder)
     {
+        
+        builder.ToTable("PATIO");
+        
         builder.HasKey(f => f.Id);
 
         builder.Property(f => f.Nome)

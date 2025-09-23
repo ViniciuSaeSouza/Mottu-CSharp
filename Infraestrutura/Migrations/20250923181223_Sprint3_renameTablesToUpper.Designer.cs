@@ -11,15 +11,15 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace Infraestrutura.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250923005900_Sprint3_patioRename")]
-    partial class Sprint3_patioRename
+    [Migration("20250923181223_Sprint3_renameTablesToUpper")]
+    partial class Sprint3_renameTablesToUpper
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -61,7 +61,7 @@ namespace Infraestrutura.Migrations
 
                     b.HasIndex("idPatio");
 
-                    b.ToTable("Motos");
+                    b.ToTable("MOTO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Persistencia.Patio", b =>
@@ -87,7 +87,7 @@ namespace Infraestrutura.Migrations
                     b.HasIndex("Nome")
                         .IsUnique();
 
-                    b.ToTable("Patios");
+                    b.ToTable("PATIO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Persistencia.Moto", b =>
