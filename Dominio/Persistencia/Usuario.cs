@@ -41,7 +41,7 @@ public class Usuario
     public void AssociarPatio(int idPatio, Patio patio)
     {
         if (patio == null)
-            throw new ExcecaoDominio("Patio não pode ser nulo", nameof(patio));
+            throw new ExcecaoDominio("Pátio não pode ser nulo", nameof(patio));
             
         IdPatio = idPatio;
         Patio = patio;
