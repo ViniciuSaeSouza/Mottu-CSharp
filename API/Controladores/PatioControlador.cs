@@ -92,7 +92,7 @@ public class PatioControlador : ControllerBase
     /// Cria um novo patio no banco de dados com os dados fornecidos no DTO.
     /// </summary>
     /// <param name="patioCreateDto">
-    /// Dto de criação do pátio, contendo os dados necessários para criar um novo patio.
+    /// Dto de criação do patio, contendo os dados necessários para criar um novo patio.
     /// </param>
     /// <returns>
     /// Retorna um objeto PatioLeituraDto representando o patio criado.
