@@ -9,11 +9,11 @@ public class Moto
     public string Placa { get; private set; }
     public string Chassi { get; private set; }
     public ModeloMotoEnum Modelo { get; private set; }
-    public int IdFilial { get; set; }
-    public Patio Patio { get; set; }
     public ZonaEnum Zona { get; set; }
+    public int idPatio { get; set; }
+    public Patio Patio { get; set; }
 
-    public Moto(string placa, string nomeModelo, int idFilial, string chassi, Patio patio)
+    public Moto(string placa, string nomeModelo, int idPatio, string chassi, Patio patio)
     {
         ValidarNuloVazio(
             (nameof(placa), placa),
@@ -26,7 +26,7 @@ public class Moto
         Placa = placa.ToUpper();
         DefinirModelo(nomeModelo);
         
-        IdFilial = idFilial;
+        this.idPatio = idPatio;
         Patio = patio;
         Zona = ZonaEnum.Saguao;
     }
@@ -93,7 +93,7 @@ public class Moto
 
     public void AlterarFilial(int novoIdFilial, Patio novoPatio)
     {
-        IdFilial = novoIdFilial;
+        idPatio = novoIdFilial;
         Patio = novoPatio;
     }
 

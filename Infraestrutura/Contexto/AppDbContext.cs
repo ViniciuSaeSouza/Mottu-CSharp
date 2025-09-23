@@ -7,11 +7,11 @@ namespace Infraestrutura.Contexto;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Moto> Motos { get; set; }
-    public DbSet<Patio> Filiais { get; set; }
+    public DbSet<Patio> Patios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new MotoMapping());
-        modelBuilder.ApplyConfiguration(new FilialMapping());
+        modelBuilder.ApplyConfiguration(new PatioMapping());
     }
 }

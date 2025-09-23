@@ -23,10 +23,16 @@ public class MotoMapping : IEntityTypeConfiguration<Moto>
 
         builder.HasIndex(m => m.Chassi)
             .IsUnique();
+        
+        builder.Property(m => m.Modelo)
+            .IsRequired();
+
+        builder.Property(m => m.Zona)
+            .IsRequired();
 
         builder.HasOne(m => m.Patio)
             .WithMany(f => f.Motos)
-            .HasForeignKey(m => m.IdFilial)
+            .HasForeignKey(m => m.idPatio)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
