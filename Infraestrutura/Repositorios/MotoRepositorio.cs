@@ -26,11 +26,11 @@ public class MotoRepositorio : IRepositorio<Moto>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operaï¿½ï¿½o cancelada ao adicionar moto no banco de dados", nameof(moto), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteraï¿½ï¿½o no banco de dados", nameof(moto), innerException: ex);
         }
     }
 
@@ -46,19 +46,19 @@ public class MotoRepositorio : IRepositorio<Moto>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operaï¿½ï¿½o cancelada ao atualizar moto no banco de dados", nameof(moto), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteraï¿½ï¿½o de moto no banco de dados", nameof(moto), innerException: ex);
         }
     }
 
     public async Task<Moto> ObterPorId(int id) =>
-        await _context.Motos.Include(m => m.Filial).FirstOrDefaultAsync(m => m.Id == id);
+        await _context.Motos.Include(m => m.Patio).FirstOrDefaultAsync(m => m.Id == id);
 
     public async Task<List<Moto>> ObterTodos() =>
-        await _context.Motos.Include(m => m.Filial).OrderBy(m => m.Id).ToListAsync();
+        await _context.Motos.Include(m => m.Patio).OrderBy(m => m.Id).ToListAsync();
 
     public async Task<bool> Remover(Moto moto)
     {
@@ -70,11 +70,11 @@ public class MotoRepositorio : IRepositorio<Moto>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operaï¿½ï¿½o cancelada ao remover moto no banco de dados", nameof(moto), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteraï¿½ï¿½o de moto no banco de dados", nameof(moto), innerException: ex);
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestrutura.Repositorios;
 
-public class FilialRepositorio : IRepositorio<Filial>
+public class FilialRepositorio : IRepositorio<Patio>
 {
     private readonly AppDbContext _context;
 
@@ -15,66 +15,66 @@ public class FilialRepositorio : IRepositorio<Filial>
         _context = context;
     }
 
-    public async Task<Filial> Adicionar(Filial filial)
+    public async Task<Patio> Adicionar(Patio patio)
     {
         try
         {
-            await _context.Filiais.AddAsync(filial);
+            await _context.Filiais.AddAsync(patio);
             await _context.SaveChangesAsync();
 
-            return filial;
+            return patio;
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar filial no banco de dados", nameof(filial), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar filial no banco de dados", nameof(patio), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(filial), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(patio), innerException: ex);
         }
     }
 
-    public async Task<Filial> Atualizar(Filial filial)
+    public async Task<Patio> Atualizar(Patio patio)
     {
         try
         {
-            _context.Filiais.Update(filial);
-            _context.Entry(filial).State = EntityState.Modified;
+            _context.Filiais.Update(patio);
+            _context.Entry(patio).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return filial;
+            return patio;
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar filial no banco de dados", nameof(filial), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar filial no banco de dados", nameof(patio), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração de filial no banco de dados", nameof(filial), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração de filial no banco de dados", nameof(patio), innerException: ex);
         }
     }
 
-    public async Task<Filial> ObterPorId(int id) =>
+    public async Task<Patio> ObterPorId(int id) =>
         await _context.Filiais.Include(f => f.Motos).FirstOrDefaultAsync(f => f.Id == id);
 
-    public async Task<List<Filial>> ObterTodos() =>
+    public async Task<List<Patio>> ObterTodos() =>
         await _context.Filiais.OrderBy(f => f.Id).ToListAsync();
 
-    public async Task<bool> Remover(Filial filial)
+    public async Task<bool> Remover(Patio patio)
     {
         try
         {
-            _context.Filiais.Remove(filial);
+            _context.Filiais.Remove(patio);
             await _context.SaveChangesAsync();
             return true;
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover filial do banco de dados", nameof(filial), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover filial do banco de dados", nameof(patio), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar remoção de filial no banco de dados", nameof(filial), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar remoção de filial no banco de dados", nameof(patio), innerException: ex);
         }
     }
 }

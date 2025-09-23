@@ -1,6 +1,6 @@
 ﻿namespace Dominio.Enumeradores;
 
-public enum ModeloMoto
+public enum ModeloMotoEnum
 {
     SPORT = 1,
     E = 2,

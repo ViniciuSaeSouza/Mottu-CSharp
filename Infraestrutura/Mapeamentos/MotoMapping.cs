@@ -17,7 +17,14 @@ public class MotoMapping : IEntityTypeConfiguration<Moto>
         builder.HasIndex(m => m.Placa)
             .IsUnique();
 
-        builder.HasOne(m => m.Filial)
+        builder.Property(m => m.Chassi)
+            .IsRequired()
+            .HasMaxLength(17);
+
+        builder.HasIndex(m => m.Chassi)
+            .IsUnique();
+
+        builder.HasOne(m => m.Patio)
             .WithMany(f => f.Motos)
             .HasForeignKey(m => m.IdFilial)
             .OnDelete(DeleteBehavior.Restrict);

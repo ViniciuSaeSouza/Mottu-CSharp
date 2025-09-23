@@ -1,6 +1,7 @@
 /*/obj/
 /*/bin/
 /API/appsettings.development.json
-/API/.idea
+.vs/
+.idea/
 /API/.env
-/API/.vs
+/Infraestrutura/Documentos/

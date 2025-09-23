@@ -9,10 +9,10 @@ namespace Aplicacao.Servicos;
 
 public class FilialServico
 {
-    private readonly IRepositorio<Filial> _filialRepositorio;
+    private readonly IRepositorio<Patio> _filialRepositorio;
     private readonly IRepositorio<Moto> _motoRepositorio;
 
-    public FilialServico(IRepositorio<Filial> filialRepositorio, IRepositorio<Moto> motoRepositorio)
+    public FilialServico(IRepositorio<Patio> filialRepositorio, IRepositorio<Moto> motoRepositorio)
     {
         _filialRepositorio = filialRepositorio;
         _motoRepositorio = motoRepositorio;
@@ -57,7 +57,7 @@ public class FilialServico
         if (dto == null)
             throw new ExcecaoDominio("Filial não pode ser nula.", nameof(dto));
 
-        var filial = new Filial(dto.Nome, dto.Endereco);
+        var filial = new Patio(dto.Nome, dto.Endereco);
 
         await _filialRepositorio.Adicionar(filial);
 

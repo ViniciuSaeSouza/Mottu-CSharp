@@ -8,24 +8,27 @@ public class Moto
     public int Id { get; private set; }
     public string Placa { get; private set; }
     public string Chassi { get; private set; }
-    public ModeloMoto Modelo { get; private set; }
-    public int IdFilial { get; private set; }
-    public Filial Filial { get; private set; }
+    public ModeloMotoEnum Modelo { get; private set; }
+    public int IdFilial { get; set; }
+    public Patio Patio { get; set; }
+    public ZonaEnum Zona { get; set; }
 
-    public Moto(string placa, string nomeModelo, int idFilial, string chassi, Filial filial)
+    public Moto(string placa, string nomeModelo, int idFilial, string chassi, Patio patio)
     {
         ValidarNuloVazio(
             (nameof(placa), placa),
             (nameof(nomeModelo), nomeModelo),
             (nameof(chassi), chassi)
         );
-
         ValidarPlaca(placa);
+        ValidarChassi(chassi);
 
         Placa = placa.ToUpper();
         DefinirModelo(nomeModelo);
+        
         IdFilial = idFilial;
-        Filial = filial;
+        Patio = patio;
+        Zona = ZonaEnum.Saguao;
     }
 
     public Moto()
@@ -35,7 +38,8 @@ public class Moto
 
     private void ValidarChassi(string chassi)
     {
-        throw new NotImplementedException();
+        if (chassi.Length < 7 )
+            throw new ExcecaoDominio("Chassi deve ter 7 caracteres", chassi);
     }
 
 
@@ -62,7 +66,7 @@ public class Moto
     {
         var modeloUpper = nomeModelo.ToUpper();
 
-        if (!Enum.IsDefined(typeof(ModeloMoto), modeloUpper))
+        if (!Enum.IsDefined(typeof(ModeloMotoEnum), modeloUpper))
         {
             throw new ExcecaoDominio("Modelo inválido.", nameof(nomeModelo));
         }
@@ -71,7 +75,7 @@ public class Moto
     private void DefinirModelo(string nomeModelo)
     {
         ValidarModelo(nomeModelo);
-        Modelo = Enum.Parse<ModeloMoto>(nomeModelo.ToUpper(), ignoreCase: true);
+        Modelo = Enum.Parse<ModeloMotoEnum>(nomeModelo.ToUpper(), ignoreCase: true);
     }
 
     public void AlterarPlaca(string novaPlaca)
@@ -87,9 +91,14 @@ public class Moto
         DefinirModelo(novoModelo);
     }
 
-    public void AlterarFilial(int novoIdFilial, Filial novaFilial)
+    public void AlterarFilial(int novoIdFilial, Patio novoPatio)
     {
         IdFilial = novoIdFilial;
-        Filial = novaFilial;
+        Patio = novoPatio;
+    }
+
+    public void DefinirZona(ZonaEnum zona)
+    {
+        Zona = zona;
     }
 }

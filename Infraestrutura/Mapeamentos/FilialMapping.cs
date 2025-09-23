@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestrutura.Mapeamentos;
 
-public class FilialMapping : IEntityTypeConfiguration<Filial>
+public class FilialMapping : IEntityTypeConfiguration<Patio>
 {
-    public void Configure(EntityTypeBuilder<Filial> builder)
+    public void Configure(EntityTypeBuilder<Patio> builder)
     {
         builder.HasKey(f => f.Id);
 
@@ -22,7 +22,7 @@ public class FilialMapping : IEntityTypeConfiguration<Filial>
             .HasMaxLength(200);
 
         builder.HasMany(f => f.Motos)
-            .WithOne(m => m.Filial)
+            .WithOne(m => m.Patio)
             .HasForeignKey(m => m.IdFilial);
 
     }

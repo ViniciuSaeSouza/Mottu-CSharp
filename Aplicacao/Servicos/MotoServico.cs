@@ -11,9 +11,9 @@ namespace Aplicacao.Servicos
     public class MotoServico
     {
         private readonly IRepositorio<Moto> _motoRepositorio;
-        private readonly IRepositorio<Filial> _filialRepositorio;
+        private readonly IRepositorio<Patio> _filialRepositorio;
 
-        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Filial> filialRepositorio)
+        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Patio> filialRepositorio)
         {
             _motoRepositorio = motoRepositorio;
             _filialRepositorio = filialRepositorio;
@@ -72,7 +72,7 @@ namespace Aplicacao.Servicos
                 Id = moto.Id,
                 Placa = moto.Placa,
                 Modelo = moto.Modelo.ToString().ToUpper(),
-                NomeFilial = moto.Filial.Nome
+                NomeFilial = moto.Patio.Nome
             };
 
         private async Task<Moto> ObterMotoOuLancar(int id)
@@ -82,7 +82,7 @@ namespace Aplicacao.Servicos
             return moto;
         }
 
-        private async Task<Filial> ObterFilialOuLancar(int id)
+        private async Task<Patio> ObterFilialOuLancar(int id)
         {
             var filial = await _filialRepositorio.ObterPorId(id);
             ValidacaoEntidade.LancarSeNulo(filial, "Filial", id);
@@ -97,7 +97,7 @@ namespace Aplicacao.Servicos
 
         private void ValidarModelo(string modelo)
         {
-            if (!Enum.IsDefined(typeof(ModeloMoto), modelo.ToUpper()))
+            if (!Enum.IsDefined(typeof(ModeloMotoEnum), modelo.ToUpper()))
                 throw new ExcecaoDominio("Modelo inválido.", nameof(modelo));
         }
     }

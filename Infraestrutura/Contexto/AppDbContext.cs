@@ -7,7 +7,7 @@ namespace Infraestrutura.Contexto;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Moto> Motos { get; set; }
-    public DbSet<Filial> Filiais { get; set; }
+    public DbSet<Patio> Filiais { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
