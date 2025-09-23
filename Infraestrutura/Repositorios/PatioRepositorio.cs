@@ -26,7 +26,7 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar filial no banco de dados", nameof(patio), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar patio no banco de dados", nameof(patio), ex);
         }
         catch (DbUpdateException ex)
         {
@@ -46,11 +46,11 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar filial no banco de dados", nameof(patio), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar patio no banco de dados", nameof(patio), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração de filial no banco de dados", nameof(patio), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração de patio no banco de dados", nameof(patio), innerException: ex);
         }
     }
 
@@ -70,11 +70,11 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover filial do banco de dados", nameof(patio), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover patio do banco de dados", nameof(patio), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar remoção de filial no banco de dados", nameof(patio), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar remoção de patio no banco de dados", nameof(patio), innerException: ex);
         }
     }
 }

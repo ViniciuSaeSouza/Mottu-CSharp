@@ -5,11 +5,12 @@ namespace Dominio.Persistencia;
 public class Usuario
 {
     public int Id { get; private set; }
-    public string FirebaseUid { get; private set; }
+    //public string FirebaseUid { get; private set; }
     public string Email { get; private set; }
     public string Nome { get; private set; }
+    public string Password { get; set; }
     public DateTime DataCriacao { get; private set; }
-    public int? IdFilial { get; private set; }
+    public int IdPatio { get; private set; }
     public Patio Patio { get; private set; }
 
     // Para EF Core
@@ -20,7 +21,6 @@ public class Usuario
     public Usuario(string firebaseUid, string email, string nome)
     {
         ValidarUsuario(firebaseUid, email, nome);
-        FirebaseUid = firebaseUid;
         Email = email;
         Nome = nome;
         DataCriacao = DateTime.UtcNow;
@@ -28,7 +28,6 @@ public class Usuario
 
     private void ValidarUsuario(string firebaseUid, string email, string nome)
     {
-        // Validando cada campo individualmente para mensagens de erro mais específicas
         if (string.IsNullOrEmpty(firebaseUid))
             throw new ExcecaoDominio("FirebaseUid não pode ser vazio ou nulo", nameof(firebaseUid));
             
@@ -40,20 +39,14 @@ public class Usuario
     }
 
     
-    // Método para associar o usuário a uma filial
-    public void AssociarFilial(int idFilial, Patio patio)
+    // Método para associar o usuário a um pátio
+    public void AssociarPatio(int idPatio, Patio patio)
     {
         if (patio == null)
-            throw new ExcecaoDominio("Filial não pode ser nula", nameof(patio));
+            throw new ExcecaoDominio("Patio não pode ser nulo", nameof(patio));
             
-        IdFilial = idFilial;
+        IdPatio = idPatio;
         Patio = patio;
     }
     
-    
-    public void DesassociarFilial()
-    {
-        IdFilial = null;
-        Patio = null;
-    }
 }
