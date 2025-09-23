@@ -29,7 +29,7 @@ public class Moto
         this.idPatio = idPatio;
         Patio = patio;
         Zona = ZonaEnum.Saguao;
-        Chassi = chassi;
+        Chassi = chassi.ToUpper();
     }
 
     public Moto()

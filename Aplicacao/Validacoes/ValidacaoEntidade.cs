@@ -17,7 +17,7 @@ namespace Aplicacao.Validacoes
             }
         }
 
-        public static void ValidarValor(string valor, Action<string> validar = null)
+        public static void ValidarValor(string valor, Action<string>? validar = null)
         {
             if (!string.IsNullOrWhiteSpace(valor))
             {

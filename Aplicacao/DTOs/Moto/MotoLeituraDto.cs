@@ -1,19 +1,5 @@
-﻿namespace Aplicacao.DTOs.Moto;
+﻿using Dominio.Enumeradores;
 
-public class MotoLeituraDto
-{
-    public int Id { get; set; }
-    public string Placa { get; set; }
-    public string Modelo { get; set; }
-    public string NomeFilial { get; set; }
+namespace Aplicacao.DTOs.Moto;
 
-    public MotoLeituraDto() { }
-
-    public MotoLeituraDto(int id, string placa, string modelo, string nomeFilial)
-    {
-        Id = id;
-        Placa = placa;
-        Modelo = modelo;
-        NomeFilial = nomeFilial;
-    }
-}
+public record MotoLeituraDto(int Id, string Placa, string Modelo, string NomeFilial, string Chassi, ZonaEnum Zona);

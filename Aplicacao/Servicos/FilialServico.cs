@@ -42,12 +42,14 @@ public class FilialServico
             Nome = filial.Nome,
             Endereco = filial.Endereco,
             Motos = filial.Motos.Select(m => new MotoLeituraDto
-            {
-                Id = m.Id,
-                Placa = m.Placa,
-                Modelo = m.Modelo.ToString().ToUpper(),
-                NomeFilial = filial.Nome
-            }).ToList()
+            (
+                m.Id,
+                m.Placa,
+                m.Modelo.ToString().ToUpper(),
+                filial.Nome,
+                m.Chassi,
+                m.Zona,
+            )).ToList()
         };
     }
 
@@ -87,12 +89,14 @@ public class FilialServico
             Nome = filial.Nome,
             Endereco = filial.Endereco,
             Motos = filial.Motos.Select(m => new MotoLeituraDto
-            {
-                Id = m.Id,
-                Placa = m.Placa,
-                Modelo = m.Modelo.ToString().ToUpper(),
-                NomeFilial = filial.Nome
-            }).ToList()
+            (
+                m.Id,
+                m.Placa,
+                m.Modelo.ToString().ToUpper(),
+                filial.Nome,
+                m.Chassi,
+                m.Zona,
+            )).ToList()
         };
     }
 

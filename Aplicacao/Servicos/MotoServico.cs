@@ -72,7 +72,9 @@ namespace Aplicacao.Servicos
                 Id = moto.Id,
                 Placa = moto.Placa,
                 Modelo = moto.Modelo.ToString().ToUpper(),
-                NomeFilial = moto.Patio.Nome
+                NomeFilial = moto.Patio.Nome,
+                Chassi = moto.Chassi,
+                Zona = moto.Zona
             };
 
         private async Task<Moto> ObterMotoOuLancar(int id)
