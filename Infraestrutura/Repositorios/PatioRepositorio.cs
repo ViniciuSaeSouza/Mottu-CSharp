@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestrutura.Repositorios;
 
-public class FilialRepositorio : IRepositorio<Patio>
+public class PatioRepositorio : IRepositorio<Patio>
 {
     private readonly AppDbContext _context;
 
-    public FilialRepositorio(AppDbContext context)
+    public PatioRepositorio(AppDbContext context)
     {
         _context = context;
     }
@@ -19,7 +19,7 @@ public class FilialRepositorio : IRepositorio<Patio>
     {
         try
         {
-            await _context.Filiais.AddAsync(patio);
+            await _context.Patios.AddAsync(patio);
             await _context.SaveChangesAsync();
 
             return patio;
@@ -38,7 +38,7 @@ public class FilialRepositorio : IRepositorio<Patio>
     {
         try
         {
-            _context.Filiais.Update(patio);
+            _context.Patios.Update(patio);
             _context.Entry(patio).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
@@ -55,16 +55,16 @@ public class FilialRepositorio : IRepositorio<Patio>
     }
 
     public async Task<Patio> ObterPorId(int id) =>
-        await _context.Filiais.Include(f => f.Motos).FirstOrDefaultAsync(f => f.Id == id);
+        await _context.Patios.Include(f => f.Motos).FirstOrDefaultAsync(f => f.Id == id);
 
     public async Task<List<Patio>> ObterTodos() =>
-        await _context.Filiais.OrderBy(f => f.Id).ToListAsync();
+        await _context.Patios.OrderBy(f => f.Id).ToListAsync();
 
     public async Task<bool> Remover(Patio patio)
     {
         try
         {
-            _context.Filiais.Remove(patio);
+            _context.Patios.Remove(patio);
             await _context.SaveChangesAsync();
             return true;
         }
