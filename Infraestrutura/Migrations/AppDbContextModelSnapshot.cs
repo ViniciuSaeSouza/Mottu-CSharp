@@ -58,7 +58,37 @@ namespace Infraestrutura.Migrations
 
                     b.HasIndex("idPatio");
 
-                    b.ToTable("MOTO", (string)null);
+                    b.ToTable("MOTOS", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Persistencia.Mottu.MotoMottu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_MOTO");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Chassi")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .HasColumnType("NVARCHAR2(17)")
+                        .HasColumnName("CHASSI");
+
+                    b.Property<int>("Modelo")
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_MODELO");
+
+                    b.Property<string>("Placa")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("NVARCHAR2(7)")
+                        .HasColumnName("PLACA");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MOTOS_MOTTU", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Persistencia.Patio", b =>
