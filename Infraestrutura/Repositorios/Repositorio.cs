@@ -1,4 +1,5 @@
 using Dominio.Interfaces;
+using Dominio.Persistencia;
 using Infraestrutura.Contexto;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +32,7 @@ public class Repositorio<T> : IRepositorio<T> where T : class
         return entity;
     }
 
-    public async Task<T> ObterPorId(int id) => await _dbSet.FindAsync(id);
+    public async Task<T?> ObterPorId(int id) => await _dbSet.FindAsync(id);
 
     public async Task<List<T>> ObterTodos() => await _dbSet.ToListAsync();
 
