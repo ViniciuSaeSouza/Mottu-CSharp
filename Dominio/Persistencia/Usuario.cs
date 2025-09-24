@@ -5,7 +5,6 @@ namespace Dominio.Persistencia;
 public class Usuario
 {
     public int Id { get; private set; }
-    //public string FirebaseUid { get; private set; }
     public string Email { get; private set; }
     public string Nome { get; private set; }
     public string Senha { get; private set; }
@@ -18,7 +17,7 @@ public class Usuario
     {
     }
     
-    public Usuario(string email, string nome, string senha)
+    public Usuario(string email, string nome, string senha, int idPatio)
     {
         ValidarUsuario(email, nome, senha);
 
@@ -26,6 +25,7 @@ public class Usuario
         Nome = nome;
         Senha = senha;
         DataCriacao = DateTime.UtcNow;
+        IdPatio = idPatio;
     }
 
     private void ValidarUsuario( string email, string nome, string senha)

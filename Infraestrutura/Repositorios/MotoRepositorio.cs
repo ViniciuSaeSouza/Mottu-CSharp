@@ -26,11 +26,11 @@ public class MotoRepositorio : IRepositorio<Moto>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, opera��o cancelada ao adicionar moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar moto no banco de dados", nameof(moto), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar altera��o no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(moto), innerException: ex);
         }
     }
 
@@ -46,11 +46,11 @@ public class MotoRepositorio : IRepositorio<Moto>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, opera��o cancelada ao atualizar moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar moto no banco de dados", nameof(moto), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar altera��o de moto no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto), innerException: ex);
         }
     }
 
@@ -70,11 +70,11 @@ public class MotoRepositorio : IRepositorio<Moto>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, opera��o cancelada ao remover moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover moto no banco de dados", nameof(moto), ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar altera��o de moto no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto), innerException: ex);
         }
     }
 }
