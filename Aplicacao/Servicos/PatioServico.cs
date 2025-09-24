@@ -26,7 +26,9 @@ public class PatioServico
         {
             Id = p.Id,
             Nome = p.Nome,
-            Endereco = p.Endereco
+            Endereco = p.Endereco,
+            Motos = p.Motos.Take(3).Select(m =>
+                new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), p.Nome, m.Chassi, m.Zona)).ToList()
         }).ToList();
     }
 

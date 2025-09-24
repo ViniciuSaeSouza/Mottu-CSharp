@@ -12,6 +12,13 @@ using Dominio.Interfaces.Mottu;
 using Dominio.Persistencia.Mottu;
 using Infraestrutura.Repositorios.Mottu;
 
+// TODO: adicionar carrapato
+// TODO: adicionar crud usuario
+// TODO: adicionar logica de vinculo usuario patio
+// TODO: adicionar logica de moto com patio
+// TODO: adicionar logica de moto com carrapato
+
+
 
 Env.Load();
 
@@ -68,10 +75,14 @@ builder.Services.AddScoped<MotoMottuServico>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de filiais e motos Mottu v1");
+        c.RoutePrefix = string.Empty; // Define a rota raiz para acessar o Swagger UI
+    });
 }
 
 app.UseHttpsRedirection();

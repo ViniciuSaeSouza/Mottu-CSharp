@@ -15,7 +15,7 @@ public class PatioLeituraDto
         Id = id;
         Nome = nome;
         Endereco = endereco;
-        Motos = motos ?? [];
+        Motos = motos ?? new List<MotoLeituraDto>();
     }
 
     public PatioLeituraDto() { }
