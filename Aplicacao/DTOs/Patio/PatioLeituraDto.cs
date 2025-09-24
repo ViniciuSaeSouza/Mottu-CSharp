@@ -8,5 +8,5 @@ public record PatioLeituraDto(
     int Id,
     string Nome,
     string Endereco,
-    List<MotoLeituraDto> Motos,
-    List<UsuarioLeituraDto> Usuarios);
+    List<MotoLeituraDto>? Motos,
+    List<UsuarioLeituraDto>? Usuarios);
