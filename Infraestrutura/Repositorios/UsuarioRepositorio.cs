@@ -41,7 +41,7 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         try
         {
             return await _contexto.Usuarios.Include(u => u.Patio)
-                .FirstOrDefaultAsync(u => u.IdPatio == id);
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
         catch (DbUpdateException ex)
         {
