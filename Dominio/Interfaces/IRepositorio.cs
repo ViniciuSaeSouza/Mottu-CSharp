@@ -1,10 +1,12 @@
-﻿namespace Dominio.Interfaces;
+﻿using Dominio.Persistencia;
+
+namespace Dominio.Interfaces;
 
 public interface IRepositorio<T> where T : class
 {
     Task<List<T>> ObterTodos();
 
-    Task<T> ObterPorId(int id);
+    Task<T?> ObterPorId(int id);
 
     Task<T> Adicionar(T entity);
 

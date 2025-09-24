@@ -5,7 +5,7 @@
 namespace Infraestrutura.Migrations
 {
     /// <inheritdoc />
-    public partial class Sprint3_patioRename : Migration
+    public partial class Sprint3_MotosMottu : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

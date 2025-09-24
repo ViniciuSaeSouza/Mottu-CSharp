@@ -8,22 +8,29 @@ public class PatioMapping : IEntityTypeConfiguration<Patio>
 {
     public void Configure(EntityTypeBuilder<Patio> builder)
     {
-        builder.HasKey(f => f.Id);
+        
+        builder.ToTable("PATIOS");
+        
+        builder.HasKey(p => p.Id);
 
-        builder.Property(f => f.Nome)
+        builder.Property(p => p.Nome)
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.HasIndex(f => f.Nome)
+        builder.HasIndex(p => p.Nome)
             .IsUnique();
 
-        builder.Property(f => f.Endereco)
+        builder.Property(p => p.Endereco)
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.HasMany(f => f.Motos)
+        builder.HasMany(p => p.Motos)
             .WithOne(m => m.Patio)
             .HasForeignKey(m => m.idPatio);
+        
+        builder.HasMany(p => p.Usuarios)
+            .WithOne(u => u.Patio)
+            .HasForeignKey(u => u.IdPatio);
 
     }
 }

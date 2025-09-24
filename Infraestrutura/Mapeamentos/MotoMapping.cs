@@ -8,6 +8,8 @@ public class MotoMapping : IEntityTypeConfiguration<Moto>
 {
     public void Configure(EntityTypeBuilder<Moto> builder)
     {
+        builder.ToTable("MOTOS");
+
         builder.HasKey(m => m.Id);
 
         builder.Property(m => m.Placa)

@@ -11,15 +11,15 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace Infraestrutura.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250923001826_Sprint3_motoModel")]
-    partial class Sprint3_motoModel
+    [Migration("20250923205336_Sprint3_Initial")]
+    partial class Sprint3_Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -61,7 +61,37 @@ namespace Infraestrutura.Migrations
 
                     b.HasIndex("idPatio");
 
-                    b.ToTable("Motos");
+                    b.ToTable("MOTOS", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Persistencia.Mottu.MotoMottu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_MOTO");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Chassi")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .HasColumnType("NVARCHAR2(17)")
+                        .HasColumnName("CHASSI");
+
+                    b.Property<int>("ModeloMotoEnum")
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_MODELO");
+
+                    b.Property<string>("Placa")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("NVARCHAR2(7)")
+                        .HasColumnName("PLACA");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MOTOS_MOTTU", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Persistencia.Patio", b =>
@@ -87,7 +117,7 @@ namespace Infraestrutura.Migrations
                     b.HasIndex("Nome")
                         .IsUnique();
 
-                    b.ToTable("Patios");
+                    b.ToTable("PATIO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Persistencia.Moto", b =>

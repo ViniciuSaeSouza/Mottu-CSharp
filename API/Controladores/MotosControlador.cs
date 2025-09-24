@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controladores;
 
-[Route("api/[controller]")]
+[Route("api/motos")]
 [ApiController]
 [Tags("Motos")]
 public class MotosControlador : ControllerBase

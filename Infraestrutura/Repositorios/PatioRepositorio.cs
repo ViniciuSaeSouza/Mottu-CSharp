@@ -26,11 +26,13 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar filial no banco de dados", nameof(patio), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar patio no banco de dados", nameof(patio),
+                ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(patio), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(patio),
+                innerException: ex);
         }
     }
 
@@ -46,19 +48,52 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar filial no banco de dados", nameof(patio), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar patio no banco de dados", nameof(patio),
+                ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração de filial no banco de dados", nameof(patio), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração de patio no banco de dados", nameof(patio),
+                innerException: ex);
         }
     }
 
-    public async Task<Patio> ObterPorId(int id) =>
-        await _context.Patios.Include(f => f.Motos).FirstOrDefaultAsync(f => f.Id == id);
+    public async Task<Patio?> ObterPorId(int id)
+    {
+        try
+        {
+            return await _context.Patios.Include(p => p.Motos).Include(p => p.Usuarios)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter patio do banco de dados", nameof(Patio),
+                ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ExcecaoBancoDados("Falha ao obter patio do banco de dados", nameof(Patio),
+                innerException: ex);
+        }
+    }
 
-    public async Task<List<Patio>> ObterTodos() =>
-        await _context.Patios.OrderBy(f => f.Id).ToListAsync();
+    public async Task<List<Patio>> ObterTodos()
+    {
+        try
+        {
+            return await _context.Patios.OrderBy(f => f.Id).ToListAsync();
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter patios do banco de dados", nameof(Patio),
+                ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ExcecaoBancoDados("Falha ao obter patios do banco de dados", nameof(Patio),
+                innerException: ex);
+        }
+    }
 
     public async Task<bool> Remover(Patio patio)
     {
@@ -70,11 +105,13 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover filial do banco de dados", nameof(patio), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover patio do banco de dados", nameof(patio),
+                ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar remoção de filial no banco de dados", nameof(patio), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar remoção de patio no banco de dados", nameof(patio),
+                innerException: ex);
         }
     }
 }

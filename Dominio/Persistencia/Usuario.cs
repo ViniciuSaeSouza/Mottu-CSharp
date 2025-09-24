@@ -4,56 +4,79 @@ namespace Dominio.Persistencia;
 
 public class Usuario
 {
-    public int Id { get; private set; }
-    public string FirebaseUid { get; private set; }
-    public string Email { get; private set; }
-    public string Nome { get; private set; }
+    public int Id { get; set; }
+    public string Email { get;  set; }
+    public string Nome { get; set; }
+    public string Senha { get; private set; }
     public DateTime DataCriacao { get; private set; }
-    public int? IdFilial { get; private set; }
-    public Patio Patio { get; private set; }
+    public int IdPatio { get; set; }
+    public Patio Patio { get; set; }
 
     // Para EF Core
     protected Usuario()
     {
     }
     
-    public Usuario(string firebaseUid, string email, string nome)
+    public Usuario(string nome, string email, string senha, int idPatio)
     {
-        ValidarUsuario(firebaseUid, email, nome);
-        FirebaseUid = firebaseUid;
-        Email = email;
-        Nome = nome;
+        ValidarUsuario(nome, email, senha);
+
+        Email = nome;
+        Nome = email;
+        Senha = senha;
         DataCriacao = DateTime.UtcNow;
+        IdPatio = idPatio;
     }
 
-    private void ValidarUsuario(string firebaseUid, string email, string nome)
+    private void ValidarUsuario( string nome, string email, string senha)
     {
-        // Validando cada campo individualmente para mensagens de erro mais específicas
-        if (string.IsNullOrEmpty(firebaseUid))
-            throw new ExcecaoDominio("FirebaseUid não pode ser vazio ou nulo", nameof(firebaseUid));
-            
         if (string.IsNullOrEmpty(email))
             throw new ExcecaoDominio("Email não pode ser vazio ou nulo", nameof(email));
             
         if (string.IsNullOrEmpty(nome))
             throw new ExcecaoDominio("Nome não pode ser vazio ou nulo", nameof(nome));
+        
+        if (string.IsNullOrEmpty(senha))
+            throw new ExcecaoDominio("Senha não pode ser vazio ou nulo", nameof(senha));
     }
-
     
-    // Método para associar o usuário a uma filial
-    public void AssociarFilial(int idFilial, Patio patio)
+    public void AssociarPatioAoUsuario(int idPatio, Patio patio)
     {
         if (patio == null)
-            throw new ExcecaoDominio("Filial não pode ser nula", nameof(patio));
+            throw new ExcecaoDominio("Pátio não pode ser nulo", nameof(patio));
             
-        IdFilial = idFilial;
+        IdPatio = idPatio;
         Patio = patio;
     }
     
-    
-    public void DesassociarFilial()
+    public void AlterarNome(string nome)
     {
-        IdFilial = null;
-        Patio = null;
+        if (string.IsNullOrEmpty(nome))
+            throw new ExcecaoDominio("Nome não pode ser vazio ou nulo", nameof(nome));
+            
+        Nome = nome;
+    }
+    
+    public void AlterarEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            throw new ExcecaoDominio("Email não pode ser vazio ou nulo", nameof(email));
+            
+        Email = email;
+    }
+    
+    public void AlterarSenha(string senha)
+    {
+        if (string.IsNullOrEmpty(senha))
+            throw new ExcecaoDominio("Senha não pode ser vazia ou nula", nameof(senha));
+            
+        Senha = senha;
+    }
+    
+    public void AlterarPatio(int idPatio)
+    {
+        if (idPatio <= 0)
+            throw new ExcecaoDominio("Id do pátio deve ser maior que zero", nameof(idPatio));
+        IdPatio = idPatio;
     }
 }

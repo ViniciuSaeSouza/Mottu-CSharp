@@ -1,6 +1,6 @@
-# Mottu API - Gestão de Motos e Filiais
+# Mottu API - Gestão de Motos e Patios
 
-API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utilizando Oracle, Entity Framework Core, Clean Architecture e princípios de DDD.
+API RESTful desenvolvida em .NET 8 para gerenciamento de motos e patios, utilizando Oracle, Entity Framework Core, Clean Architecture e princípios de DDD.
 
 *solução criada para o **Challenge Mottu***
 ---
@@ -17,8 +17,8 @@ API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utiliz
 ## 🚀 Funcionalidades
 
 - Cadastro, consulta, atualização e remoção de motos.
-- Cadastro, consulta, atualização e remoção de filiais.
-- Relacionamento muitos-para-um entre Moto e Filial.
+- Cadastro, consulta, atualização e remoção de patios.
+- Relacionamento muitos-para-um entre Moto e Patio.
 - Validações de domínio e unicidade de placa.
 - Documentação automática via Swagger/OpenAPI.
 - Respostas HTTP padronizadas (200, 201, 204, 400, 404, 409, 500, 503).
@@ -37,13 +37,13 @@ API RESTful desenvolvida em .NET 8 para gerenciamento de motos e filiais, utiliz
 - `PATCH /api/motos/{id}` — Atualiza parcialmente uma moto.
 - `DELETE /api/motos/{id}` — Remove uma moto.
 
-### Filiais
+### Patios
 
-- `GET /api/filial` — Lista todas as filiais (sem motos associadas).
-- `GET /api/filial/{id}` — Consulta uma filial pelo ID (inclui as motos associadas).
-- `POST /api/filial` — Cadastra uma nova filial.
-- `PATCH /api/filial/{id}` — Atualiza parcialmente uma filial.
-- `DELETE /api/filial/{id}` — Remove uma filial.
+- `GET /api/patio` — Lista todos os patios (sem motos associadas).
+- `GET /api/patio/{id}` — Consulta um patio pelo ID (inclui as motos associadas).
+- `POST /api/patio` — Cadastra um novo patio.
+- `PATCH /api/patio/{id}` — Atualiza parcialmente um patio.
+- `DELETE /api/patio/{id}` — Remove um patio.
 
 ---
 

@@ -7,6 +7,17 @@ using Infraestrutura.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Aplicacao.Servicos.Mottu;
+using Dominio.Interfaces.Mottu;
+using Dominio.Persistencia.Mottu;
+using Infraestrutura.Repositorios.Mottu;
+
+// TODO: adicionar carrapato
+// TODO: adicionar crud usuario
+// TODO: adicionar logica de vinculo usuario patio
+// TODO: adicionar logica de moto com patio
+// TODO: adicionar logica de moto com carrapato
+
 
 
 Env.Load();
@@ -20,12 +31,11 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
-    
-    swagger.SwaggerDoc("v1", new OpenApiInfo
+    swagger.SwaggerDoc("v2", new OpenApiInfo
     {
         Title = "API de filiais e motos Mottu",
-        Version = "v1",
-        Description = "API para gerenciar filiais e motos da Mottu nos p�tios",
+        Version = "v2",
+        Description = "API para gerenciar filiais e motos da Mottu nos pátios",
         Contact = new OpenApiContact
         {
             Name = "Prisma.Code",
@@ -41,7 +51,8 @@ builder.Services.AddSwaggerGen(swagger =>
 
 try
 {
-    var connectionString = Environment.GetEnvironmentVariable("Connection__String") ?? builder.Configuration.GetConnectionString("Oracle");
+    var connectionString = Environment.GetEnvironmentVariable("Connection__String") ??
+                           builder.Configuration.GetConnectionString("Oracle");
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseOracle(connectionString));
 }
@@ -50,22 +61,30 @@ catch (ArgumentNullException)
     throw new Exception("Falha ao buscar a variável de ambiente");
 }
 
-// Register repositories with their interfaces
+// Injeção de repositórios
 builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
+builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
+builder.Services.AddScoped<IRepositorio<Usuario>, UsuarioRepositorio>();
 
-// Register services
+
+// Injeção de serviços
 builder.Services.AddScoped<MotoServico>();
-builder.Services.AddScoped<FilialServico>();
-
+builder.Services.AddScoped<PatioServico>();
+builder.Services.AddScoped<MotoMottuServico>();
+builder.Services.AddScoped<UsuarioServico>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
+
+    });
 }
 
 app.UseHttpsRedirection();

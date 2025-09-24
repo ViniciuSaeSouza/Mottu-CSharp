@@ -67,15 +67,7 @@ namespace Aplicacao.Servicos
 
 
         private MotoLeituraDto MapearParaDto(Moto moto)
-            => new()
-            {
-                Id = moto.Id,
-                Placa = moto.Placa,
-                Modelo = moto.Modelo.ToString().ToUpper(),
-                NomeFilial = moto.Patio.Nome,
-                Chassi = moto.Chassi,
-                Zona = moto.Zona
-            };
+            => new(moto.Id, moto.Placa, moto.Modelo.ToString().ToUpper(), moto.Patio.Nome, moto.Chassi, moto.Zona);
 
         private async Task<Moto> ObterMotoOuLancar(int id)
         {
