@@ -21,7 +21,7 @@ public class PatioControlador : ControllerBase
     /// Obtém uma lista de todos os patios sem as motos associadas.
     /// </summary>
     /// <returns>
-    /// Retorna uma lista de objetos PatioLeituraDto representando os patios sem as motos associadas.
+    /// Retorna uma lista de objetos PatioLeituraDto representando os patios, suas motos e usuarios associados.
     /// Retorna 200 OK se os patios forem encontrados.
     /// </returns>
     [HttpGet]

@@ -24,11 +24,11 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
-    swagger.SwaggerDoc("v1", new OpenApiInfo
+    swagger.SwaggerDoc("v2", new OpenApiInfo
     {
         Title = "API de filiais e motos Mottu",
-        Version = "v1",
-        Description = "API para gerenciar filiais e motos da Mottu nos p�tios",
+        Version = "v2",
+        Description = "API para gerenciar filiais e motos da Mottu nos pátios",
         Contact = new OpenApiContact
         {
             Name = "Prisma.Code",
@@ -73,7 +73,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
+    });
 }
 
 app.UseHttpsRedirection();
