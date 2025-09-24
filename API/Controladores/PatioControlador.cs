@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controladores;
 
-[Route("api/[controller]")]
+[Route("api/patios")]
 [ApiController]
 [Tags("Patios")]
 public class PatioControlador : ControllerBase

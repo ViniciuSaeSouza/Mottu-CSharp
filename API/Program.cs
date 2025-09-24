@@ -58,12 +58,14 @@ catch (ArgumentNullException)
 builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
+builder.Services.AddScoped<IRepositorio<Usuario>, UsuarioRepositorio>();
 
 
 // Injeção de serviços
 builder.Services.AddScoped<MotoServico>();
 builder.Services.AddScoped<PatioServico>();
 builder.Services.AddScoped<MotoMottuServico>();
+builder.Services.AddScoped<UsuarioServico>();
 
 var app = builder.Build();
 
