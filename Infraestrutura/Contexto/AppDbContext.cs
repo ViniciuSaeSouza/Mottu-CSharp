@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Moto> Motos { get; set; }
     public DbSet<Patio> Patios { get; set; }
     public DbSet<MotoMottu> MotosMottu { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -23,5 +24,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new MotoMapping());
         modelBuilder.ApplyConfiguration(new PatioMapping());
         modelBuilder.ApplyConfiguration(new MotoMottuMapping());
+        modelBuilder.ApplyConfiguration(new UsuarioMapping());
     }
 }
