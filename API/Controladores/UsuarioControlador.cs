@@ -103,7 +103,7 @@ public class UsuarioControlador : ControllerBase
     /// Retorna 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<UsuarioLeituraDto>> CriarUsuario([FromBody] UsuarioCriarDto dto)
