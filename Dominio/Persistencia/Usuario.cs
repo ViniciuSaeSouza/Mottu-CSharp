@@ -28,7 +28,7 @@ public class Usuario
         IdPatio = idPatio;
     }
 
-    private void ValidarUsuario( string email, string nome, string senha)
+    private void ValidarUsuario( string nome, string email, string senha)
     {
         if (string.IsNullOrEmpty(email))
             throw new ExcecaoDominio("Email não pode ser vazio ou nulo", nameof(email));
