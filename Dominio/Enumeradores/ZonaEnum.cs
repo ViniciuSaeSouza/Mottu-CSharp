@@ -6,7 +6,7 @@
         ManutencaoRapida = 1,
         DanosEstruturais = 2,
         SemPlaca = 3,
-        BO = 4,
+        BoletimOcorrencia = 4,
         Aluguel = 5,
         MotorDefeituoso = 6,
     }

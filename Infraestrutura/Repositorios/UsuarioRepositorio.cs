@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestrutura.Repositorios;
 
-
 // TODO: SPRINT4 - Implementar paginação e filtros na listagem de usuários
 // TODO: SPRINT4 - Implementar método de busca de usuário por email || nome
 // TODO: SPRINT4 - Refatorar tratamento de exceções para evitar repetição de código
@@ -23,7 +22,7 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
     {
         try
         {
-            return await _contexto.Usuarios.ToListAsync();
+            return await _contexto.Usuarios.Include(u => u.Patio).ToListAsync();
         }
         catch (DbUpdateException ex)
         {
@@ -32,7 +31,8 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter usuários do banco de dados", nameof(Usuario), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter usuários do banco de dados",
+                nameof(Usuario), ex);
         }
     }
 
@@ -40,7 +40,8 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
     {
         try
         {
-            return await _contexto.Usuarios.FindAsync(id);
+            return await _contexto.Usuarios.Include(u => u.Patio)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
         catch (DbUpdateException ex)
         {
@@ -49,7 +50,8 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter usuário do banco de dados", nameof(Usuario), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter usuário do banco de dados", nameof(Usuario),
+                ex);
         }
     }
 
@@ -68,7 +70,8 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar usuário no banco de dados", nameof(Usuario), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar usuário no banco de dados",
+                nameof(Usuario), ex);
         }
     }
 
@@ -87,7 +90,8 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar usuário no banco de dados", nameof(Usuario), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar usuário no banco de dados",
+                nameof(Usuario), ex);
         }
     }
 
@@ -106,7 +110,8 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover usuário do banco de dados", nameof(Usuario), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover usuário do banco de dados",
+                nameof(Usuario), ex);
         }
     }
 }

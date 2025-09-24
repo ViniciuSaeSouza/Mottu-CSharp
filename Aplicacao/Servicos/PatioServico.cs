@@ -1,5 +1,6 @@
 ﻿using Aplicacao.DTOs.Patio;
 using Aplicacao.DTOs.Moto;
+using Aplicacao.DTOs.Usuario;
 using Aplicacao.Validacoes;
 using Dominio.Excecao;
 using Dominio.Interfaces;
@@ -21,15 +22,17 @@ public class PatioServico
     public async Task<IEnumerable<PatioLeituraDto>> ObterTodos()
     {
         var patios = await _patioRepositorio.ObterTodos();
+    
+        var patiosDto = patios.Select(p => new PatioLeituraDto(
+            p.Id,
+            p.Nome,
+            p.Endereco,
+            p.Motos.Select(m => new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), p.Nome, m.Chassi, m.Zona)).ToList(),
+            p.Usuarios.Select(u => new UsuarioLeituraDto(u.Id, u.Nome, u.Email, p.Nome, u.IdPatio)).ToList()
+        )).ToList();
+    
+        return patiosDto;
 
-        return patios.Select(p => new PatioLeituraDto
-        {
-            Id = p.Id,
-            Nome = p.Nome,
-            Endereco = p.Endereco,
-            Motos = p.Motos.Take(3).Select(m =>
-                new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), p.Nome, m.Chassi, m.Zona)).ToList()
-        }).ToList();
     }
 
     public async Task<PatioLeituraDto> ObterPorId(int id)
@@ -38,15 +41,13 @@ public class PatioServico
 
         ValidacaoEntidade.LancarSeNulo(patio, "Patio", id);
 
-        return new PatioLeituraDto
-        {
-            Id = patio.Id,
-            Nome = patio.Nome,
-            Endereco = patio.Endereco,
-            Motos = patio.Motos.Select(m =>
+        return new PatioLeituraDto(patio.Id, patio.Nome, patio.Endereco,
+            patio.Motos.Select(m =>
                     new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), patio.Nome, m.Chassi, m.Zona))
-                .ToList()
-        };
+                .ToList(),
+            patio.Usuarios.Select(u =>
+                new UsuarioLeituraDto(u.Id, u.Nome, u.Email, patio.Nome, u.IdPatio)).ToList()
+        );
     }
 
     public async Task<PatioLeituraDto> Criar(PatioCriarDto dto)
@@ -59,13 +60,8 @@ public class PatioServico
 
         await _patioRepositorio.Adicionar(patio);
 
-        return new PatioLeituraDto
-        {
-            Id = patio.Id,
-            Nome = patio.Nome,
-            Endereco = patio.Endereco,
-            Motos = new List<MotoLeituraDto>() // sempre inicializa vazio
-        };
+        return new PatioLeituraDto(patio.Id, patio.Nome, patio.Endereco, new List<MotoLeituraDto>(),
+            new List<UsuarioLeituraDto>());
     }
 
     public async Task<PatioLeituraDto> Atualizar(int id, PatioAtualizarDto dto)
@@ -79,15 +75,13 @@ public class PatioServico
 
         await _patioRepositorio.Atualizar(patio);
 
-        return new PatioLeituraDto
-        {
-            Id = patio.Id,
-            Nome = patio.Nome,
-            Endereco = patio.Endereco,
-            Motos = patio.Motos.Select(m =>
+        return new PatioLeituraDto(patio.Id, patio.Nome, patio.Endereco,
+            patio.Motos.Select(m =>
                     new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), patio.Nome, m.Chassi, m.Zona))
-                .ToList()
-        };
+                .ToList(),
+            patio.Usuarios.Select(u =>
+                new UsuarioLeituraDto(u.Id, u.Nome, u.Email, patio.Nome, u.IdPatio)).ToList()
+        );
     }
 
     public async Task Remover(int id)

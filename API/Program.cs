@@ -31,11 +31,11 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
-    swagger.SwaggerDoc("v1", new OpenApiInfo
+    swagger.SwaggerDoc("v2", new OpenApiInfo
     {
         Title = "API de filiais e motos Mottu",
-        Version = "v1",
-        Description = "API para gerenciar filiais e motos da Mottu nos p�tios",
+        Version = "v2",
+        Description = "API para gerenciar filiais e motos da Mottu nos pátios",
         Contact = new OpenApiContact
         {
             Name = "Prisma.Code",
@@ -65,12 +65,14 @@ catch (ArgumentNullException)
 builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
+builder.Services.AddScoped<IRepositorio<Usuario>, UsuarioRepositorio>();
 
 
 // Injeção de serviços
 builder.Services.AddScoped<MotoServico>();
 builder.Services.AddScoped<PatioServico>();
 builder.Services.AddScoped<MotoMottuServico>();
+builder.Services.AddScoped<UsuarioServico>();
 
 var app = builder.Build();
 
@@ -80,8 +82,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de filiais e motos Mottu v1");
-        c.RoutePrefix = string.Empty; // Define a rota raiz para acessar o Swagger UI
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
+
     });
 }
 
