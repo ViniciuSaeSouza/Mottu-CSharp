@@ -32,6 +32,7 @@ public class PatioServico
         )).ToList();
     
         return patiosDto;
+
     }
 
     public async Task<PatioLeituraDto> ObterPorId(int id)

@@ -4,6 +4,7 @@ using Aplicacao.DTOs.Usuario;
 
 namespace Aplicacao.DTOs.Patio;
 
+
 public record PatioLeituraDto(
     int Id,
     string Nome,
