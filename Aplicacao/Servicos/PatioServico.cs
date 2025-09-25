@@ -27,8 +27,8 @@ public class PatioServico
             p.Id,
             p.Nome,
             p.Endereco,
-            p.Motos.Select(m => new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), p.Nome, m.Chassi, m.Zona)).ToList(),
-            p.Usuarios.Select(u => new UsuarioLeituraDto(u.Id, u.Nome, u.Email, p.Nome, u.IdPatio)).ToList()
+            p.Motos.Take(10).Select(m => new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), p.Nome, m.Chassi, m.Zona)).ToList(),
+            p.Usuarios.Take(10).Select(u => new UsuarioLeituraDto(u.Id, u.Nome, u.Email, p.Nome, u.IdPatio)).ToList()
         )).ToList();
     
         return patiosDto;

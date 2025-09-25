@@ -36,6 +36,11 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         }
     }
 
+    public Task<(List<Usuario> Items, int TotalItems)> ObterTodosPaginado(int pagina, int totalPaginas)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Usuario?> ObterPorId(int id)
     {
         try

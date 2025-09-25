@@ -32,6 +32,11 @@ public class Repositorio<T> : IRepositorio<T> where T : class
         return entity;
     }
 
+    public Task<(List<T> Items, int TotalItems)> ObterTodosPaginado(int pagina, int totalPaginas)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<T?> ObterPorId(int id) => await _dbSet.FindAsync(id);
 
     public async Task<List<T>> ObterTodos() => await _dbSet.ToListAsync();
