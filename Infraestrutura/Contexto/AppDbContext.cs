@@ -21,9 +21,9 @@ public class AppDbContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new MotoMapping());
-        modelBuilder.ApplyConfiguration(new PatioMapping());
+        modelBuilder.ApplyConfiguration(new MotoMapeamento());
+        modelBuilder.ApplyConfiguration(new PatioMapeamento());
         modelBuilder.ApplyConfiguration(new MotoMottuMapping());
-        modelBuilder.ApplyConfiguration(new UsuarioMapping());
+        modelBuilder.ApplyConfiguration(new UsuarioMapeamento());
     }
 }

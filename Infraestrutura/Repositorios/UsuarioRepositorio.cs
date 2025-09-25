@@ -6,9 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestrutura.Repositorios;
 
-// TODO: SPRINT4 - Implementar paginação e filtros na listagem de usuários
 // TODO: SPRINT4 - Implementar método de busca de usuário por email || nome
-// TODO: SPRINT4 - Refatorar tratamento de exceções para evitar repetição de código
 public class UsuarioRepositorio : IRepositorio<Usuario>
 {
     private readonly AppDbContext _contexto;
