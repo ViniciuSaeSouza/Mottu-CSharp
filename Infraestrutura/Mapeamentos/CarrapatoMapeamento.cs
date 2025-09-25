@@ -14,7 +14,7 @@ public class CarrapatoMapeamento : IEntityTypeConfiguration<Carrapato>
 
         builder.Property(c => c.CodigoSerial)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(7);
 
         builder.HasIndex(c => c.CodigoSerial)
             .IsUnique();

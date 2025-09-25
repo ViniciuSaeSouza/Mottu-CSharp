@@ -22,7 +22,7 @@ public class Carrapato
     {
         CodigoSerial = codigoSerial;
         IdPatio = idPatio;
-        IdMoto = idMoto ?? -1;
+        IdMoto = idMoto;
         StatusBateria = StatusBateriaEnum.Alta;
         StatusDeUso = StatusDeUsoEnum.Disponivel;
     }

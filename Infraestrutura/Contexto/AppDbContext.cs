@@ -14,6 +14,8 @@ public class AppDbContext : DbContext
     public DbSet<MotoMottu> MotosMottu { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
 
+    public DbSet<Carrapato> Carrapatos { get; set; }
+    
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
         
@@ -25,5 +27,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PatioMapeamento());
         modelBuilder.ApplyConfiguration(new MotoMottuMapping());
         modelBuilder.ApplyConfiguration(new UsuarioMapeamento());
+        modelBuilder.ApplyConfiguration(new CarrapatoMapeamento());
     }
 }

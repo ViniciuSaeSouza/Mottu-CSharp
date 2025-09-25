@@ -44,7 +44,7 @@ public class MotoCarrapato
     
     public void DesvincularCarrapato(int idCarrapato)
     {
-        ValidarIds([idCarrapato], [nameof(idCarrapato)]);
+        ValidarIds([idCarrapato], [nameof(IdCarrapato)]);
         DataDeDesvinculamento = DateTime.Now;
     }
 }
