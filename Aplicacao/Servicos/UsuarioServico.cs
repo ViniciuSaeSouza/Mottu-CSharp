@@ -25,7 +25,7 @@ public class UsuarioServico
         var usuarios = await _repositorio.ObterTodos();
 
         return usuarios.Count > 0
-            ? usuarios.Select(u => new UsuarioLeituraDto(u.Id, u.Nome, u.Email, u.Patio.Nome, u.IdPatio)).ToList()
+            ? usuarios.Select(u => new UsuarioLeituraDto(u.Id, u.Nome, u.Email, u.Senha, u.Patio.Nome, u.IdPatio)).ToList()
             : Enumerable.Empty<UsuarioLeituraDto>();
     }
 
@@ -34,7 +34,7 @@ public class UsuarioServico
         var usuario = await _repositorio.ObterPorId(id);
         ValidacaoEntidade.LancarSeNulo(usuario, "Usuário", id);
 
-        return new UsuarioLeituraDto(usuario!.Id, usuario.Nome, usuario.Email, usuario.Patio.Nome, usuario.IdPatio);
+        return new UsuarioLeituraDto(usuario!.Id, usuario.Nome, usuario.Email, usuario.Senha, usuario.Patio.Nome, usuario.IdPatio);
     }
 
     public async Task<UsuarioLeituraDto> Criar(UsuarioCriarDto dto)
@@ -49,7 +49,7 @@ public class UsuarioServico
 
         await _repositorio.Adicionar(usuario);
 
-        return new UsuarioLeituraDto(usuario.Id, usuario.Nome, usuario.Email, usuario.Patio.Nome, usuario.IdPatio);
+        return new UsuarioLeituraDto(usuario.Id, usuario.Nome, usuario.Email,usuario.Senha, usuario.Patio.Nome, usuario.IdPatio);
     }
 
     public async Task<UsuarioLeituraDto> Atualizar(int id, UsuarioAtualizarDto dto)
@@ -64,7 +64,7 @@ public class UsuarioServico
 
         await _repositorio.Atualizar(usuario!);
 
-        return new UsuarioLeituraDto(usuario.Id, usuario.Nome, usuario.Email, usuario.Patio.Nome, usuario.IdPatio);
+        return new UsuarioLeituraDto(usuario.Id, usuario.Nome, usuario.Email,usuario.Senha, usuario.Patio.Nome, usuario.IdPatio);
     }
 
     public async Task Remover(int id)
