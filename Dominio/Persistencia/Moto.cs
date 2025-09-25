@@ -13,6 +13,14 @@ public class Moto
     public int idPatio { get; set; }
     public Patio Patio { get; set; }
 
+    public int IdCarrapato { get; set; }
+    public Carrapato Carrapato { get; set; }
+    
+    // Para EF Core
+    public Moto()
+    {
+    }
+    
     public Moto(string placa, string nomeModelo, int idPatio, string chassi, Patio patio)
     {
         ValidarNuloVazio(
@@ -31,11 +39,6 @@ public class Moto
         Zona = ZonaEnum.Saguao;
         Chassi = chassi.ToUpper();
     }
-
-    public Moto()
-    {
-    }
-
 
     private void ValidarChassi(string chassi)
     {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestrutura.Mapeamentos;
 
-public class PatioMapping : IEntityTypeConfiguration<Patio>
+public class PatioMapeamento : IEntityTypeConfiguration<Patio>
 {
     public void Configure(EntityTypeBuilder<Patio> builder)
     {
