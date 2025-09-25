@@ -22,17 +22,18 @@ public class PatioServico
     public async Task<IEnumerable<PatioLeituraDto>> ObterTodos()
     {
         var patios = await _patioRepositorio.ObterTodos();
-    
+
         var patiosDto = patios.Select(p => new PatioLeituraDto(
             p.Id,
             p.Nome,
             p.Endereco,
-            p.Motos.Take(10).Select(m => new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), p.Nome, m.Chassi, m.Zona)).ToList(),
-            p.Usuarios.Take(10).Select(u => new UsuarioLeituraDto(u.Id, u.Nome, u.Email, p.Nome, u.IdPatio)).ToList()
+            p.Motos.Take(10).Select(m =>
+                new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), p.Nome, m.Chassi, m.Zona)).ToList(),
+            p.Usuarios.Take(10).Select(u => new UsuarioLeituraDto(u.Id, u.Nome, u.Email, u.Senha, p.Nome, u.IdPatio))
+                .ToList()
         )).ToList();
-    
-        return patiosDto;
 
+        return patiosDto;
     }
 
     public async Task<PatioLeituraDto> ObterPorId(int id)
@@ -46,7 +47,7 @@ public class PatioServico
                     new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), patio.Nome, m.Chassi, m.Zona))
                 .ToList(),
             patio.Usuarios.Select(u =>
-                new UsuarioLeituraDto(u.Id, u.Nome, u.Email, patio.Nome, u.IdPatio)).ToList()
+                new UsuarioLeituraDto(u.Id, u.Nome, u.Email, u.Senha, patio.Nome, u.IdPatio)).ToList()
         );
     }
 
@@ -80,7 +81,7 @@ public class PatioServico
                     new MotoLeituraDto(m.Id, m.Placa, m.Modelo.ToString().ToUpper(), patio.Nome, m.Chassi, m.Zona))
                 .ToList(),
             patio.Usuarios.Select(u =>
-                new UsuarioLeituraDto(u.Id, u.Nome, u.Email, patio.Nome, u.IdPatio)).ToList()
+                new UsuarioLeituraDto(u.Id, u.Nome, u.Email, u.Senha, patio.Nome, u.IdPatio)).ToList()
         );
     }
 
