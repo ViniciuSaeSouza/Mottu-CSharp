@@ -30,7 +30,6 @@ public class MotosControlador : ControllerBase
     /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
     /// </returns>
     [HttpGet]
-    
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
