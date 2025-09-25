@@ -3,6 +3,7 @@ using Aplicacao.Validacoes;
 using Dominio.Enumeradores;
 using Dominio.Excecao;
 using Dominio.Interfaces;
+using Dominio.Modelo;
 using Dominio.Persistencia;
 using Infraestrutura.Repositorios;
 
@@ -19,12 +20,30 @@ namespace Aplicacao.Servicos
             _filialRepositorio = filialRepositorio;
         }
 
-        public async Task<IEnumerable<MotoLeituraDto>> ObterTodos()
-            => (await _motoRepositorio.ObterTodos())
-                .Select(MapearParaDto)
+        public async Task<IResultadoPaginado<MotoLeituraDto>> ObterTodos(int pagina, int tamanhoPagina)
+        {
+            ValidarParametrosDePaginacao(pagina, tamanhoPagina);
+
+            var motos = await _motoRepositorio.ObterTodos();
+
+            var totalMotos = motos.Count();
+
+            var motosPaginadas = motos
+                .Skip((pagina - 1) * tamanhoPagina)
+                .Take(tamanhoPagina)
+                .Select(m => MapearParaDto(m))
                 .ToList();
 
-        public async Task<MotoLeituraDto> ObterPorId(int id)
+            return new ResultadoPaginado<MotoLeituraDto>
+            {
+                Items = motosPaginadas,
+                Pagina = pagina,
+                TamanhoPagina = tamanhoPagina,
+                ContagemTotal = totalMotos
+            };
+        }
+
+    public async Task<MotoLeituraDto> ObterPorId(int id)
             => MapearParaDto(await ObterMotoOuLancar(id));
 
         public async Task<MotoLeituraDto> Criar(MotoCriarDto dto)
@@ -93,6 +112,12 @@ namespace Aplicacao.Servicos
         {
             if (!Enum.IsDefined(typeof(ModeloMotoEnum), modelo.ToUpper()))
                 throw new ExcecaoDominio("Modelo inválido.", nameof(modelo));
+        }
+
+        private void ValidarParametrosDePaginacao(int pagina, int tamanhoPagina)
+        {
+            if (pagina <= 0 || tamanhoPagina <= 0)
+                throw new ExcecaoDominio("Parâmetros de paginação devem ser maiores que zero.", nameof(pagina) + ", " + nameof(tamanhoPagina));
         }
     }
 }
