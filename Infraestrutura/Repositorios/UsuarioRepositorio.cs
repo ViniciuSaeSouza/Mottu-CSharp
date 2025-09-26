@@ -55,20 +55,6 @@ public class UsuarioRepositorio : IRepositorioUsuario
             return await _contexto.Usuarios.Include(u => u.Patio)
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
-        catch (OperationCanceledException ex)
-        {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter usuário do banco de dados", nameof(Usuario),
-                ex);
-        }
-    }
-    
-    public async Task<Usuario?> ObterPorEmail(string email)
-    {
-        try
-        {
-            return await _contexto.Usuarios.Include(u => u.Patio)
-                .FirstOrDefaultAsync(u => u.Email == email);
-        }
         catch (DbUpdateException ex)
         {
             throw new ExcecaoBancoDados("Falha ao obter usuário do banco de dados", nameof(Usuario),
