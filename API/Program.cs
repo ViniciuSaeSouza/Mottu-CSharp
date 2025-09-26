@@ -65,6 +65,7 @@ builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
 builder.Services.AddScoped<IRepositorio<Usuario>, UsuarioRepositorio>();
+builder.Services.AddScoped<IRepositorio<Carrapato>, CarrapatoRepositorio>();
 
 
 // Injeção de serviços
@@ -72,6 +73,7 @@ builder.Services.AddScoped<MotoServico>();
 builder.Services.AddScoped<PatioServico>();
 builder.Services.AddScoped<MotoMottuServico>();
 builder.Services.AddScoped<UsuarioServico>();
+builder.Services.AddScoped<CarrapatoServico>();
 
 var app = builder.Build();
 

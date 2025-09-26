@@ -20,7 +20,7 @@ public class Moto
     {
     }
     
-    public Moto(string placa, string nomeModelo, int idPatio, string chassi, Patio patio)
+    public Moto(string placa, string nomeModelo, int idPatio, string chassi, Patio patio, int idCarrapato)
     {
         ValidarNuloVazio(
             (nameof(placa), placa),
@@ -32,11 +32,11 @@ public class Moto
 
         Placa = placa.ToUpper();
         DefinirModelo(nomeModelo);
-        
         this.idPatio = idPatio;
         Patio = patio;
         Zona = ZonaEnum.Saguao;
         Chassi = chassi.ToUpper();
+        IdCarrapato = idCarrapato;
     }
 
     private void ValidarChassi(string chassi)

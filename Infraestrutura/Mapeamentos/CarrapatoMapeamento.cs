@@ -28,9 +28,5 @@ public class CarrapatoMapeamento : IEntityTypeConfiguration<Carrapato>
         builder.HasOne(c => c.Patio)
             .WithMany(p => p.Carrapatos)
             .HasForeignKey(c => c.IdPatio);
-
-        builder.HasOne(c => c.Moto)
-            .WithOne(m => m.Carrapato)
-            .OnDelete(DeleteBehavior.NoAction);
     }
 }
