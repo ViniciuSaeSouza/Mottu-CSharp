@@ -88,19 +88,29 @@ public class MotoRepositorio : IRepositorio<Moto>
         }
     }
 
-    public async Task<(List<Moto> Items, int TotalItems)> ObterTodosPaginado(int pagina, int tamanhoPagina)
+    public async Task<IResultadoPaginado<Moto>> ObterTodosPaginado(int pagina, int tamanhoPagina)
     {
+        
         var consulta = _contexto.Motos
             .Include(m => m.Patio)
-            .OrderBy(m => m.Id);
+            .OrderBy(m => m.Id)
+            .AsNoTracking();
 
         var totalMotos = await consulta.CountAsync();
         var motos = await consulta
             .Skip((pagina - 1) * tamanhoPagina)
             .Take(tamanhoPagina)
             .ToListAsync();
+
+        var motosPaginadas = new ResultadoPaginado<Moto>
+        {
+            ContagemTotal = totalMotos,
+            Pagina = pagina,
+            TamanhoPagina = tamanhoPagina,
+            Items = motos
+        };
         
-        return (motos, totalMotos);
+        return motosPaginadas;
     }
 
     public async Task<bool> Remover(Moto moto)

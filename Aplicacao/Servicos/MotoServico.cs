@@ -26,19 +26,16 @@ namespace Aplicacao.Servicos
         {
             ValidarParametrosDePaginacao(pagina, tamanhoPagina);
 
-            var (motos, totalMotos) = await _motoRepositorio.ObterTodosPaginado(pagina, tamanhoPagina);
+            var motosPaginadas = await _motoRepositorio.ObterTodosPaginado(pagina, tamanhoPagina);
 
-            var motosPaginadasDto = motos
-                .Select(m => MapearParaDto(m))
-                .ToList();
-
-            return new ResultadoPaginado<MotoLeituraDto>
+            var motosPaginadasDto = new ResultadoPaginado<MotoLeituraDto>
             {
-                Items = motosPaginadasDto,
-                Pagina = pagina,
-                TamanhoPagina = tamanhoPagina,
-                ContagemTotal = totalMotos
+                ContagemTotal = motosPaginadas.ContagemTotal,
+                Pagina = motosPaginadas.Pagina,
+                TamanhoPagina = motosPaginadas.TamanhoPagina,
+                Items = motosPaginadas.Items.Select(MapearParaDto).ToList()
             };
+            return motosPaginadasDto;
         }
 
         public async Task<MotoLeituraDto> ObterPorId(int id)

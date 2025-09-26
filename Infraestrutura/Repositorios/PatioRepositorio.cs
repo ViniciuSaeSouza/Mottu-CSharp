@@ -58,7 +58,7 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
     }
 
-    public Task<(List<Patio> Items, int TotalItems)> ObterTodosPaginado(int pagina, int totalPaginas)
+    public Task<IResultadoPaginado<Patio>> ObterTodosPaginado(int pagina, int totalPaginas)
     {
         throw new NotImplementedException();
     }

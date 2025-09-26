@@ -12,7 +12,6 @@ public class Moto
     public ZonaEnum Zona { get; set; }
     public int idPatio { get; set; }
     public Patio Patio { get; set; }
-
     public int IdCarrapato { get; set; }
     public Carrapato Carrapato { get; set; }
     
