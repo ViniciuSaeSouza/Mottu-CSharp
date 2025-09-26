@@ -65,7 +65,7 @@ builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
 builder.Services.AddScoped<IRepositorio<Usuario>, UsuarioRepositorio>();
-builder.Services.AddScoped<IRepositorio<Carrapato>, CarrapatoRepositorio>();
+builder.Services.AddScoped<IRepositorioCarrapato, CarrapatoRepositorio>();
 
 
 // Injeção de serviços

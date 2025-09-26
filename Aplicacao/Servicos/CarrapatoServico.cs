@@ -8,9 +8,9 @@ namespace Aplicacao.Servicos;
 
 public class CarrapatoServico
 {
-    private readonly IRepositorio<Carrapato> _repositorio;
+    private readonly IRepositorioCarrapato _repositorio;
 
-    public CarrapatoServico(IRepositorio<Carrapato> repositorio)
+    public CarrapatoServico(IRepositorioCarrapato repositorio)
     {
         _repositorio = repositorio;
     }

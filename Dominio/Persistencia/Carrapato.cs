@@ -11,6 +11,8 @@ public class Carrapato
     public int IdPatio { get; set; }
     public Patio Patio { get; set; }
 
+    public Moto MotoVinculada { get; set; }
+
     // Para EF Core
     protected Carrapato()
     {
@@ -23,6 +25,8 @@ public class Carrapato
         StatusBateria = StatusBateriaEnum.Alta;
         StatusDeUso = StatusDeUsoEnum.Disponivel;
     }
+    
+    
 
     // private void ValidarCriacao(string codigoSerial)
     // {

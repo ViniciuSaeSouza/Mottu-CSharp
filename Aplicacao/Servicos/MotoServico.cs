@@ -13,11 +13,14 @@ namespace Aplicacao.Servicos
     {
         private readonly IRepositorio<Moto> _motoRepositorio;
         private readonly IRepositorio<Patio> _filialRepositorio;
+        private readonly IRepositorioCarrapato _carrapatoRepositorio;
 
-        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Patio> filialRepositorio)
+        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Patio> filialRepositorio,
+            IRepositorioCarrapato carrapatoRepositorio)
         {
             _motoRepositorio = motoRepositorio;
             _filialRepositorio = filialRepositorio;
+            _carrapatoRepositorio = carrapatoRepositorio;
         }
 
         public async Task<List<Moto>> ObterTodos() => await _motoRepositorio.ObterTodos();
@@ -46,10 +49,17 @@ namespace Aplicacao.Servicos
             ValidarDtoNaoNulo(dto);
 
             var filial = await ObterFilialOuLancar(dto.IdFilial);
-            ValidarModelo(dto.Modelo);
 
-            var moto = new Moto(dto.Placa, dto.Modelo, dto.IdFilial, dto.Chassi, filial, dto.IdCarrapato);
+            var carrapato = await _carrapatoRepositorio.ObterPrimeiroCarrapatoDisponivel();
+            if (carrapato == null)
+                throw new ExcecaoDominio("Nenhum carrapato disponível no momento.", nameof(carrapato));
+            carrapato.StatusDeUso = StatusDeUsoEnum.EmUso;
+
+            ValidarModelo(dto.Modelo);
+            var moto = new Moto(dto.Placa, dto.Modelo, dto.IdFilial, dto.Chassi, filial, carrapato.Id);
             await _motoRepositorio.Adicionar(moto);
+
+            await _carrapatoRepositorio.Atualizar(carrapato);
 
             return MapearParaDto(moto);
         }
@@ -67,6 +77,7 @@ namespace Aplicacao.Servicos
                 var novaFilial = await ObterFilialOuLancar(dto.IdFilial.Value);
                 moto.AlterarFilial(dto.IdFilial.Value, novaFilial);
             }
+
             if (dto.IdCarrapato.HasValue)
             {
                 moto.IdCarrapato = dto.IdCarrapato.Value;
@@ -84,7 +95,8 @@ namespace Aplicacao.Servicos
 
 
         private MotoLeituraDto MapearParaDto(Moto moto)
-            => new(moto.Id, moto.Placa, moto.Modelo.ToString().ToUpper(), moto.Patio.Nome, moto.Chassi, moto.Zona, moto.IdCarrapato);
+            => new(moto.Id, moto.Placa, moto.Modelo.ToString().ToUpper(), moto.Patio.Nome, moto.Chassi, moto.Zona,
+                moto.IdCarrapato);
 
         private async Task<Moto> ObterMotoOuLancar(int id)
         {

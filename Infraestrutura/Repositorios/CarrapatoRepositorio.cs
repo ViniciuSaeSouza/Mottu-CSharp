@@ -1,4 +1,5 @@
-﻿using Dominio.Excecao;
+﻿using Dominio.Enumeradores;
+using Dominio.Excecao;
 using Dominio.Interfaces;
 using Dominio.Modelo;
 using Dominio.Persistencia;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infraestrutura.Repositorios;
 
 // TODO: Implementar os métodos do repositório 
-public class CarrapatoRepositorio : IRepositorio<Carrapato>
+public class CarrapatoRepositorio : IRepositorioCarrapato
 {
     private readonly AppDbContext _contexto;
 
@@ -59,6 +60,31 @@ public class CarrapatoRepositorio : IRepositorio<Carrapato>
         }
     }
 
+    public async Task<Carrapato?> ObterPrimeiroCarrapatoDisponivel()
+    {
+        try
+        {
+            var carrapatos = await _contexto.Carrapatos.ToListAsync();
+
+            var primeiroCarrapatoDisponivel = carrapatos
+                .Where(c => c.StatusDeUso == StatusDeUsoEnum.Disponivel)
+                .FirstOrDefault();
+            return primeiroCarrapatoDisponivel;
+
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ExcecaoBancoDados("Falha ao obter carrapato do banco de dados",
+                nameof(Carrapato), ex);
+        }
+        catch (OperationCanceledException exception)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter carrapato do banco de dados",
+                nameof(Carrapato), exception);
+        }
+        
+    }
+    
     public async Task<Carrapato?> ObterPorId(int id)
     {
         try
@@ -92,9 +118,29 @@ public class CarrapatoRepositorio : IRepositorio<Carrapato>
         }
     }
 
-    public Task<Carrapato> Atualizar(Carrapato carrapatoDto)
+    public async Task<Carrapato> Atualizar(Carrapato carrapato)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _contexto.Carrapatos.Update(carrapato);
+            await _contexto.SaveChangesAsync();
+            return carrapato;
+        }
+        catch (DbUpdateConcurrencyException exception)
+        {
+            throw new ExcecaoBancoDados("Falha de concorrência ao atualizar carrapato no banco de dados",
+                nameof(Carrapato), exception);
+        }
+        catch (OperationCanceledException exception)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar carrapato no banco de dados",
+                nameof(Carrapato), exception);
+        }
+        catch (DbUpdateException exception)
+        {
+            throw new ExcecaoBancoDados("Falha ao atualizar carrapato no banco de dados",
+                nameof(Carrapato), exception);
+        }
     }
 
     public async Task<bool> Remover(Carrapato carrapato)
