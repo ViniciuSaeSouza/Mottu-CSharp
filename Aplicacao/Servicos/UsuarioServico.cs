@@ -1,20 +1,18 @@
-﻿using Aplicacao.DTOs.Patio;
-using Aplicacao.DTOs.Usuario;
+﻿using Aplicacao.DTOs.Usuario;
 using Aplicacao.Validacoes;
 using Dominio.Excecao;
 using Dominio.Interfaces;
 using Dominio.Persistencia;
-using Infraestrutura.Repositorios;
 
 namespace Aplicacao.Servicos;
 
 //TODO: Adicionar validações específicas do usuário (e.g., email único, formato de email, tamanho da senha, etc.)
 public class UsuarioServico
 {
-    private readonly IRepositorio<Usuario> _repositorio;
+    private readonly IRepositorioUsuario _repositorio;
     private readonly IRepositorio<Patio> _patioRepositorio;
 
-    public UsuarioServico(IRepositorio<Usuario> repositorio, IRepositorio<Patio> patioRepositorio)
+    public UsuarioServico(IRepositorioUsuario repositorio, IRepositorio<Patio> patioRepositorio)
     {
         _repositorio = repositorio;
         _patioRepositorio = patioRepositorio;
@@ -35,6 +33,21 @@ public class UsuarioServico
         ValidacaoEntidade.LancarSeNulo(usuario, "Usuário", id);
 
         return new UsuarioLeituraDto(usuario!.Id, usuario.Nome, usuario.Email, usuario.Senha, usuario.Patio.Nome, usuario.IdPatio);
+    }
+
+    public async Task<UsuarioLeituraDto> ObterPorEmail(string email)
+    {
+        try
+        {
+            var usuario = await _repositorio.ObterPorEmail(email);
+            ValidacaoEntidade.LancarSeNulo(usuario, "Usuário", email);
+
+            return new UsuarioLeituraDto(usuario!.Id, usuario.Nome, usuario.Email, usuario.Senha, usuario.Patio.Nome, usuario.IdPatio);
+        }
+        catch (Exception ex)
+        {
+            throw new ExcecaoDominio("Erro ao obter usuário por email.", nameof(email));
+        }
     }
 
     public async Task<UsuarioLeituraDto> Criar(UsuarioCriarDto dto)
@@ -74,5 +87,36 @@ public class UsuarioServico
         ValidacaoEntidade.LancarSeNulo(usuario, "Usuário", id);
 
         await _repositorio.Remover(usuario!);
+    }
+
+    public async Task<UsuarioLeituraDto> AutenticarLogin(UsuarioLoginDto usuarioLoginDto)
+    {
+        var email = usuarioLoginDto.email;
+        var senha = usuarioLoginDto.senha;
+        
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ExcecaoDominio("Email não pode ser vazio.", nameof(email));
+        }
+        if (string.IsNullOrWhiteSpace(senha))
+        {
+            throw new ExcecaoDominio("Senha não pode ser vazia.", nameof(senha));
+        }
+        
+        var usuario = await _repositorio.ObterPorEmail(email);
+
+        if (usuario == null)
+        {
+            throw new ExcecaoEntidadeNaoEncontrada("Usuário não encontrado.", email);
+        }
+        
+        if (usuario.Senha != senha)
+        {
+            throw new ExcecaoDominio("Senha inválida.", nameof(senha));
+        }
+        
+        var usuarioDto = new UsuarioLeituraDto(usuario.Id, usuario.Nome, usuario.Email, usuario.Senha, usuario.Patio.Nome, usuario.IdPatio);
+        
+        return usuarioDto;
     }
 }
