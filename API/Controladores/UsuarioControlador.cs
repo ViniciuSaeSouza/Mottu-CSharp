@@ -211,4 +211,59 @@ public class UsuarioControlador : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
+
+    /// <summary>
+    /// Autentica um usuário com email e senha.
+    /// </summary>
+    /// <param name="email">O email do usuário.</param>
+    /// <param name="senha">A senha do usuário.</param>
+    /// <returns>
+    /// Retorna 200 OK com os detalhes do usuário autenticado.
+    /// Retorna 400 Bad Request se os dados fornecidos forem inválidos.
+    /// Retorna 401 Unauthorized se a autenticação falhar.
+    /// Retorna 404 Not Found se o usuário com o email fornecido não for encontrado
+    /// Retorna 500 Internal Server Error se ocorrer um erro interno no servidor.
+    /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
+    /// </returns>
+    [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<IActionResult> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
+    {
+        try
+        {
+            var resultado = await _servico.AutenticarLogin(usuarioLoginDto);
+            if (!resultado.status)
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized, (usuarioLoginDto.email, usuarioLoginDto.senha));
+            }
+
+            return Ok(resultado.usuarioDto);
+        }
+        catch (ExcecaoEntidadeNaoEncontrada ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+        }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+        
+    }
 }

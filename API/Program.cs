@@ -64,7 +64,7 @@ catch (ArgumentNullException)
 builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
-builder.Services.AddScoped<IRepositorio<Usuario>, UsuarioRepositorio>();
+builder.Services.AddScoped<IRepositorioUsuario, UsuarioRepositorio>();
 builder.Services.AddScoped<IRepositorioCarrapato, CarrapatoRepositorio>();
 
 

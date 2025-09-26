@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infraestrutura.Repositorios;
 
 // TODO: SPRINT4 - Implementar método de busca de usuário por email || nome
-public class UsuarioRepositorio : IRepositorio<Usuario>
+public class UsuarioRepositorio : IRepositorioUsuario
 {
     private readonly AppDbContext _contexto;
 
@@ -45,6 +45,25 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
         {
             return await _contexto.Usuarios.Include(u => u.Patio)
                 .FirstOrDefaultAsync(u => u.Id == id);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ExcecaoBancoDados("Falha ao obter usuário do banco de dados", nameof(Usuario),
+                innerException: ex);
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter usuário do banco de dados", nameof(Usuario),
+                ex);
+        }
+    }
+    
+    public async Task<Usuario?> ObterPorEmail(string email)
+    {
+        try
+        {
+            return await _contexto.Usuarios.Include(u => u.Patio)
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
         catch (DbUpdateException ex)
         {
@@ -117,4 +136,5 @@ public class UsuarioRepositorio : IRepositorio<Usuario>
                 nameof(Usuario), ex);
         }
     }
+    
 }
