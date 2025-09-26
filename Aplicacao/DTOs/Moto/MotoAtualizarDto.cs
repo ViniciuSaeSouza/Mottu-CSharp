@@ -8,6 +8,6 @@ public class MotoAtualizarDto
     public string? Modelo { get; set; }
     public int? IdPatio { get; set; }
     public int? IdCarrapato { get; set; }
-    public ZonaEnum Zona { get; set; }
+    public int? Zona { get; set; }
     public MotoAtualizarDto() { }
 }

@@ -71,6 +71,11 @@ namespace Aplicacao.Servicos
             ValidacaoEntidade.ValidarValor(dto.Modelo, ValidarModelo);
             ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);
             ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca);
+            if (dto.Zona != null)
+            {
+                moto.AlterarZona((int)dto.Zona);
+            }
+
 
             if (dto.IdPatio.HasValue)
             {

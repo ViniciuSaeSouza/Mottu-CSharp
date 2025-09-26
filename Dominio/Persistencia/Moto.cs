@@ -99,6 +99,15 @@ public class Moto
         idPatio = novoIdFilial;
         Patio = novoPatio;
     }
+    
+    public void AlterarZona(int zona)
+    {
+        if (!Enum.IsDefined(typeof(ZonaEnum), zona))
+        {
+            throw new ExcecaoDominio("Zona inválida.", nameof(zona));
+        }
+        Zona = (ZonaEnum)zona;
+    }
 
     public void DefinirZona(ZonaEnum zona)
     {
