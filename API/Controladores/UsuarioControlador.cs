@@ -211,4 +211,52 @@ public class UsuarioControlador : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
+
+    /// <summary>
+    /// Autentica um usuário com email e senha.
+    /// </summary>
+    /// <param name="usuarioLoginDto">Os dados de login do usuário (email e senha).</param>
+    /// <returns>
+    /// Retorna 200 OK com os detalhes do usuário autenticado.
+    /// Retorna 401 Unauthorized se a autenticação falhar.
+    /// Retorna 404 Not Found se o usuário com o email fornecido não for encontrado
+    /// Retorna 500 Internal Server Error se ocorrer um erro interno no servidor.
+    /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
+    /// </returns>
+    [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<IActionResult> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
+    {
+        try
+        {
+            var resultado = await _servico.AutenticarLogin(usuarioLoginDto);
+            return Ok(resultado);
+        }
+        catch (ExcecaoEntidadeNaoEncontrada ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+        }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status401Unauthorized, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+        
+    }
 }

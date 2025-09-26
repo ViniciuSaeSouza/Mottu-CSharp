@@ -102,14 +102,14 @@ namespace Aplicacao.Servicos
         {
             var moto = await _motoRepositorio.ObterPorId(id);
             ValidacaoEntidade.LancarSeNulo(moto, "Moto", id);
-            return moto;
+            return moto!;
         }
 
         private async Task<Patio> ObterFilialOuLancar(int id)
         {
             var filial = await _filialRepositorio.ObterPorId(id);
             ValidacaoEntidade.LancarSeNulo(filial, "Filial", id);
-            return filial;
+            return filial!;
         }
 
         private void ValidarDtoNaoNulo(object dto)
