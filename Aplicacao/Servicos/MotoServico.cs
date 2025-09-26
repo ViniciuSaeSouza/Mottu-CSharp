@@ -72,10 +72,10 @@ namespace Aplicacao.Servicos
             ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);
             ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca);
 
-            if (dto.IdFilial.HasValue)
+            if (dto.IdPatio.HasValue)
             {
-                var novaFilial = await ObterFilialOuLancar(dto.IdFilial.Value);
-                moto.AlterarFilial(dto.IdFilial.Value, novaFilial);
+                var novaFilial = await ObterFilialOuLancar(dto.IdPatio.Value);
+                moto.AlterarFilial(dto.IdPatio.Value, novaFilial);
             }
 
             if (dto.IdCarrapato.HasValue)
