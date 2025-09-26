@@ -143,6 +143,48 @@ public class MotosControlador : ControllerBase
     }
 
     /// <summary>
+    /// Atualiza uma moto existente pelo ID.
+    /// </summary>
+    /// <param name="id">ID da moto a ser atualizada</param>
+    /// <param name="dto">Dados para atualização da moto</param>
+    /// <returns>
+    /// Retorna 200 OK com a moto atualizada, 404 Not Found se não existir, 400 Bad Request se inválido, 500 ou 503 em caso de erro.</returns>
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<MotoLeituraDto>> AtualizarMoto(int id, [FromBody] MotoAtualizarDto dto)
+    {
+        try
+        {
+            var moto = await _motoServico.Atualizar(id, dto);
+            return Ok(moto);
+        }
+        catch (ExcecaoEntidadeNaoEncontrada ex)
+        {
+            Console.WriteLine($"Moto de id {id} não encontrada para atualização: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = $"Nenhuma moto encontrada para o id {id}" });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha ao atualizar moto de id {id} no banco de dados: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine($"Erro de validação ao atualizar moto: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Falha interna da aplicação ao atualizar moto {id}: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
+        }
+    }
+
+    /// <summary>
     /// Retorna a moto com as informações atualizadas.
     /// </summary>
     /// <param name="id"> ID da moto a ser atualizada </param>

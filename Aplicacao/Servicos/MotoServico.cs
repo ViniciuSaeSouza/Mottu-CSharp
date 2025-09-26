@@ -26,19 +26,16 @@ namespace Aplicacao.Servicos
         {
             ValidarParametrosDePaginacao(pagina, tamanhoPagina);
 
-            var (motos, totalMotos) = await _motoRepositorio.ObterTodosPaginado(pagina, tamanhoPagina);
+            var motosPaginadas = await _motoRepositorio.ObterTodosPaginado(pagina, tamanhoPagina);
 
-            var motosPaginadasDto = motos
-                .Select(m => MapearParaDto(m))
-                .ToList();
-
-            return new ResultadoPaginado<MotoLeituraDto>
+            var motosPaginadasDto = new ResultadoPaginado<MotoLeituraDto>
             {
-                Items = motosPaginadasDto,
-                Pagina = pagina,
-                TamanhoPagina = tamanhoPagina,
-                ContagemTotal = totalMotos
+                ContagemTotal = motosPaginadas.ContagemTotal,
+                Pagina = motosPaginadas.Pagina,
+                TamanhoPagina = motosPaginadas.TamanhoPagina,
+                Items = motosPaginadas.Items.Select(MapearParaDto).ToList()
             };
+            return motosPaginadasDto;
         }
 
         public async Task<MotoLeituraDto> ObterPorId(int id)
@@ -51,7 +48,7 @@ namespace Aplicacao.Servicos
             var filial = await ObterFilialOuLancar(dto.IdFilial);
             ValidarModelo(dto.Modelo);
 
-            var moto = new Moto(dto.Placa, dto.Modelo, dto.IdFilial, dto.Chassi, filial);
+            var moto = new Moto(dto.Placa, dto.Modelo, dto.IdFilial, dto.Chassi, filial, dto.IdCarrapato);
             await _motoRepositorio.Adicionar(moto);
 
             return MapearParaDto(moto);
@@ -65,11 +62,14 @@ namespace Aplicacao.Servicos
             ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);
             ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca);
 
-
             if (dto.IdFilial.HasValue)
             {
                 var novaFilial = await ObterFilialOuLancar(dto.IdFilial.Value);
                 moto.AlterarFilial(dto.IdFilial.Value, novaFilial);
+            }
+            if (dto.IdCarrapato.HasValue)
+            {
+                moto.IdCarrapato = dto.IdCarrapato.Value;
             }
 
             await _motoRepositorio.Atualizar(moto);
@@ -84,7 +84,7 @@ namespace Aplicacao.Servicos
 
 
         private MotoLeituraDto MapearParaDto(Moto moto)
-            => new(moto.Id, moto.Placa, moto.Modelo.ToString().ToUpper(), moto.Patio.Nome, moto.Chassi, moto.Zona);
+            => new(moto.Id, moto.Placa, moto.Modelo.ToString().ToUpper(), moto.Patio.Nome, moto.Chassi, moto.Zona, moto.IdCarrapato);
 
         private async Task<Moto> ObterMotoOuLancar(int id)
         {

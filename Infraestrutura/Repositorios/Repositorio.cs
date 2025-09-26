@@ -32,7 +32,7 @@ public class Repositorio<T> : IRepositorio<T> where T : class
         return entity;
     }
 
-    public Task<(List<T> Items, int TotalItems)> ObterTodosPaginado(int pagina, int totalPaginas)
+    public Task<IResultadoPaginado<T>> ObterTodosPaginado(int pagina, int totalPaginas)
     {
         throw new NotImplementedException();
     }

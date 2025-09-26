@@ -58,7 +58,7 @@ public class PatioRepositorio : IRepositorio<Patio>
         }
     }
 
-    public Task<(List<Patio> Items, int TotalItems)> ObterTodosPaginado(int pagina, int totalPaginas)
+    public Task<IResultadoPaginado<Patio>> ObterTodosPaginado(int pagina, int totalPaginas)
     {
         throw new NotImplementedException();
     }
@@ -86,7 +86,10 @@ public class PatioRepositorio : IRepositorio<Patio>
     {
         try
         {
-            return await _context.Patios.OrderBy(f => f.Id).ToListAsync();
+            return await _context.Patios
+                .Include(p => p.Motos)
+                .Include(p => p.Usuarios)
+                .OrderBy(f => f.Id).ToListAsync();
         }
         catch (OperationCanceledException ex)
         {

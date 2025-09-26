@@ -6,7 +6,7 @@ public interface IRepositorio<T> where T : class
 {
     Task<List<T>> ObterTodos();
     
-    Task<(List<T> Items, int TotalItems)> ObterTodosPaginado(int pagina, int totalPaginas);
+    Task<IResultadoPaginado<T>> ObterTodosPaginado(int pagina, int totalPaginas);
 
     Task<T?> ObterPorId(int id);
 
