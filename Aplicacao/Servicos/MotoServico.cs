@@ -52,7 +52,7 @@ namespace Aplicacao.Servicos
         {
             ValidarDtoNaoNulo(dto);
 
-            var motoExistente = new MotoMottu();
+            MotoMottu? motoExistente = null;
             
             if (dto.Placa != null)
             {
