@@ -19,6 +19,7 @@ public class ModelosControlador : ControllerBase
     /// </returns>
     [HttpGet]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
+    [ProducesResponseType(statusCode: StatusCodes.Status500InternalServerError)]
     public IActionResult Listar()
     {
         try
