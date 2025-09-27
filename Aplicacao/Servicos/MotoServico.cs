@@ -66,7 +66,10 @@ namespace Aplicacao.Servicos
                 if (motoExistente == null)
                     throw new ExcecaoDominio($"Não foi possível localizar uma moto com o chassi: {dto.Chassi}.", nameof(dto.Chassi));
             }
-            
+            else
+            {
+                throw new ExcecaoDominio("É necessário informar pelo menos a placa ou o chassi da moto.", nameof(dto));
+            }
             
             var patio = await ObterFilialOuLancar(dto.IdPatio);
 
