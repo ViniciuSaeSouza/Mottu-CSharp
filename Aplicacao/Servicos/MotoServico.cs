@@ -7,7 +7,6 @@ using Dominio.Interfaces.Mottu;
 using Dominio.Modelo;
 using Dominio.Persistencia;
 using Dominio.Persistencia.Mottu;
-using Infraestrutura.Repositorios;
 
 namespace Aplicacao.Servicos
 {
