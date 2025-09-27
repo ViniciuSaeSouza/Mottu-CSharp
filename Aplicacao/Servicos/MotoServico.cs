@@ -3,8 +3,10 @@ using Aplicacao.Validacoes;
 using Dominio.Enumeradores;
 using Dominio.Excecao;
 using Dominio.Interfaces;
+using Dominio.Interfaces.Mottu;
 using Dominio.Modelo;
 using Dominio.Persistencia;
+using Dominio.Persistencia.Mottu;
 using Infraestrutura.Repositorios;
 
 namespace Aplicacao.Servicos
@@ -14,13 +16,15 @@ namespace Aplicacao.Servicos
         private readonly IRepositorio<Moto> _motoRepositorio;
         private readonly IRepositorio<Patio> _filialRepositorio;
         private readonly IRepositorioCarrapato _carrapatoRepositorio;
+        private readonly IMottuRepositorio _mottuRepositorio;
 
         public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Patio> filialRepositorio,
-            IRepositorioCarrapato carrapatoRepositorio)
+            IRepositorioCarrapato carrapatoRepositorio, IMottuRepositorio mottuRepositorio)
         {
             _motoRepositorio = motoRepositorio;
             _filialRepositorio = filialRepositorio;
             _carrapatoRepositorio = carrapatoRepositorio;
+            _mottuRepositorio = mottuRepositorio;
         }
 
         public async Task<List<Moto>> ObterTodos() => await _motoRepositorio.ObterTodos();
@@ -48,15 +52,36 @@ namespace Aplicacao.Servicos
         {
             ValidarDtoNaoNulo(dto);
 
-            var filial = await ObterFilialOuLancar(dto.IdFilial);
+            var motoExistente = new MotoMottu();
+            
+            if (dto.Placa != null)
+            {
+                motoExistente = await _mottuRepositorio.ObterPorPlacaAssincrono(dto.Placa);
+                if (motoExistente == null)
+                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com a placa {dto.Placa}", nameof(dto.Placa));
+            }
+            else if (dto.Chassi != null)
+            {
+                motoExistente = await _mottuRepositorio.ObterPorChassiAssincrono(dto.Chassi);
+                if (motoExistente == null)
+                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com o chassi: {dto.Chassi}.", nameof(dto.Chassi));
+            }
+            
+            
+            var patio = await ObterFilialOuLancar(dto.IdPatio);
 
             var carrapato = await _carrapatoRepositorio.ObterPrimeiroCarrapatoDisponivel();
             if (carrapato == null)
                 throw new ExcecaoDominio("Nenhum carrapato disponível no momento.", nameof(carrapato));
             carrapato.StatusDeUso = StatusDeUsoEnum.EmUso;
 
-            ValidarModelo(dto.Modelo);
-            var moto = new Moto(dto.Placa, dto.Modelo, dto.IdFilial, dto.Chassi, filial, carrapato.Id);
+            var moto = new Moto(
+                placa: motoExistente.Placa,
+                modelo: motoExistente.Modelo,
+                idPatio: dto.IdPatio,
+                chassi: motoExistente.Chassi,
+                patio: patio,
+                idCarrapato: carrapato.Id);
             await _motoRepositorio.Adicionar(moto);
 
             await _carrapatoRepositorio.Atualizar(carrapato);
@@ -67,10 +92,14 @@ namespace Aplicacao.Servicos
         public async Task<MotoLeituraDto> Atualizar(int id, MotoAtualizarDto dto)
         {
             var moto = await ObterMotoOuLancar(id);
-
-            ValidacaoEntidade.ValidarValor(dto.Modelo, ValidarModelo);
-            ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);
+            
             ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca);
+
+            if (dto.Modelo != null)
+            {
+                moto.AlterarModelo(modelo: dto.Modelo);
+            }
+            
             if (dto.Zona != null)
             {
                 moto.AlterarZona((int)dto.Zona);

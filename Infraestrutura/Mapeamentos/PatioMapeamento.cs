@@ -26,7 +26,7 @@ public class PatioMapeamento : IEntityTypeConfiguration<Patio>
 
         builder.HasMany(p => p.Motos)
             .WithOne(m => m.Patio)
-            .HasForeignKey(m => m.idPatio);
+            .HasForeignKey(m => m.IdPatio);
         
         builder.HasMany(p => p.Usuarios)
             .WithOne(u => u.Patio)

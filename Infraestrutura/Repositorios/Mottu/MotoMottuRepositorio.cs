@@ -26,10 +26,6 @@ public class MotoMottuRepositorio : IMottuRepositorio
             throw new ExcecaoBancoDados("Falha, operação cancelada ao listar motos da base da mottu",
                 nameof(MotoMottu), ex);
         }
-        catch (DbUpdateException ex)
-        {
-            throw new ExcecaoBancoDados("Falha ao listar motos da base da mottu", nameof(MotoMottu), ex);
-        }
     }
 
     public async Task<MotoMottu?> ObterPorIdAssincrono(int id)
@@ -43,9 +39,32 @@ public class MotoMottuRepositorio : IMottuRepositorio
             throw new ExcecaoBancoDados("Falha, operação cancelada ao obter moto por id na base da mottu",
                 nameof(MotoMottu), ex);
         }
-        catch (DbUpdateException ex)
+    }
+
+    public Task<MotoMottu?> ObterPorPlacaAssincrono(string placa)
+    {
+        try
         {
-            throw new ExcecaoBancoDados("Falha ao obter moto por id na base da mottu", nameof(MotoMottu), ex);
+            return _context.MotosMottu.FirstOrDefaultAsync(m => m.Placa == placa);
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter moto por placa na base da mottu",
+                nameof(MotoMottu), ex);
+        }
+    }
+
+    public async Task<MotoMottu?> ObterPorChassiAssincrono(string chassi)
+    {
+        try
+        {
+            var moto = await _context.MotosMottu.FirstOrDefaultAsync(m => m.Chassi == chassi);
+            return moto;
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter moto por chassi na base da mottu",
+                nameof(MotoMottu), ex);
         }
     }
 }
