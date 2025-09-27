@@ -34,7 +34,7 @@ public class MotoMapeamento : IEntityTypeConfiguration<Moto>
 
         builder.HasOne(m => m.Patio)
             .WithMany(f => f.Motos)
-            .HasForeignKey(m => m.idPatio)
+            .HasForeignKey(m => m.IdPatio)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(m => m.Carrapato)
