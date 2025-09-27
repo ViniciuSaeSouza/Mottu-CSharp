@@ -41,11 +41,11 @@ public class MotoMottuRepositorio : IMottuRepositorio
         }
     }
 
-    public Task<MotoMottu?> ObterPorPlacaAssincrono(string placa)
+    public async Task<MotoMottu?> ObterPorPlacaAssincrono(string placa)
     {
         try
         {
-            return _context.MotosMottu.FirstOrDefaultAsync(m => m.Placa == placa);
+            return await _context.MotosMottu.FirstOrDefaultAsync(m => m.Placa == placa);
         }
         catch (OperationCanceledException ex)
         {
