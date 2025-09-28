@@ -174,12 +174,11 @@ namespace Aplicacao.Servicos
                     nameof(pagina) + ", " + nameof(tamanhoPagina));
         }
 
-        private async Task<bool> ValidarMotoJaCadastradaAssincrono(MotoMottu motoMottu)
+        private async Task ValidarMotoJaCadastradaAssincrono(MotoMottu motoMottu)
         {
             var moto = await _motoRepositorio.ObterPorPlacaAssincrono(motoMottu.Placa);
             if (moto != null)
                 throw new ExcecaoDominio($"Moto com placa {motoMottu.Placa} já cadastrada no pátio {moto.Patio.Nome}.", nameof(motoMottu.Placa));
-            return true;
         }
     }
 }
