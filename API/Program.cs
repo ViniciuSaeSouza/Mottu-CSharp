@@ -61,7 +61,7 @@ catch (ArgumentNullException)
 }
 
 // Injeção de repositórios
-builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
+builder.Services.AddScoped<IMotoRepositorio, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
 builder.Services.AddScoped<IRepositorioUsuario, UsuarioRepositorio>();

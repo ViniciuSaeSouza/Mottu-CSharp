@@ -1,3 +1,4 @@
+using Dominio;
 using Dominio.Excecao;
 using Dominio.Interfaces;
 using Dominio.Modelo;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestrutura.Repositorios;
 
-public class MotoRepositorio : IRepositorio<Moto>
+public class MotoRepositorio : IMotoRepositorio
 {
     private readonly AppDbContext _contexto;
 
@@ -60,7 +61,7 @@ public class MotoRepositorio : IRepositorio<Moto>
     {
         try
         {
-            return await _contexto.Motos.Include(m => m.Patio).FirstOrDefaultAsync(m => m.Id == id);
+            return await _contexto.Motos.Include(m => m.Patio).Include(m => m.Carrapato).FirstOrDefaultAsync(m => m.Id == id);
         }
         catch (OperationCanceledException ex)
         {
@@ -112,6 +113,23 @@ public class MotoRepositorio : IRepositorio<Moto>
         
         return motosPaginadas;
     }
+    
+    public async Task<Moto?> ObterPorPlaca(string placa)
+    {
+        try
+        {
+            return await _contexto.Motos.Include(m => m.Patio).FirstOrDefaultAsync(m => m.Placa == placa);
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter moto do banco de dados", nameof(Moto), ex);
+        }
+        catch (Exception ex)
+        {
+            throw new ExcecaoBancoDados($"Falha ao obter moto do banco de dados pela placa {placa}", nameof(Moto), innerException: ex);
+        }
+    }
+
     public async Task<bool> Remover(Moto moto)
     {
         try
@@ -130,5 +148,38 @@ public class MotoRepositorio : IRepositorio<Moto>
             throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto),
                 innerException: ex);
         }
+    }
+
+    public Task<List<Moto>> ListarAssincrono()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Moto?> ObterPorIdAssincrono(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Moto?> ObterPorPlacaAssincrono(string placa)
+    {
+        try
+        {
+            var moto = _contexto.Motos.Include(m => m.Patio).FirstOrDefaultAsync(m => m.Placa == placa);
+            return moto;
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter moto do banco de dados", nameof(Moto), ex);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            throw new ExcecaoBancoDados($"Falha ao obter moto do banco de dados pela placa {placa}", nameof(Moto), innerException: ex);
+        }
+    }
+
+    public Task<Moto?> ObterPorChassiAssincrono(string chassi)
+    {
+        throw new NotImplementedException();
     }
 }

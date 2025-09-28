@@ -1,7 +1,7 @@
 ﻿using Dominio.Interfaces;
 using Dominio.Persistencia;
 
-namespace Dominio;
+namespace Dominio.Interfaces;
 
 public interface IMotoRepositorio : IRepositorio<Moto>
 {

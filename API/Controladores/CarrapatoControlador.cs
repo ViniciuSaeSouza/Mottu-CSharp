@@ -35,7 +35,7 @@ public class CarrapatoControlador : ControllerBase
         catch (ExcecaoBancoDados ex)
         {
             Console.WriteLine($"Falha ao buscar carrapatos: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
         }
         catch (Exception ex)
         {
