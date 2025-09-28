@@ -12,12 +12,12 @@ namespace Aplicacao.Servicos
 {
     public class MotoServico
     {
-        private readonly IRepositorio<Moto> _motoRepositorio;
+        private readonly IMotoRepositorio _motoRepositorio;
         private readonly IRepositorio<Patio> _filialRepositorio;
         private readonly IRepositorioCarrapato _carrapatoRepositorio;
         private readonly IMottuRepositorio _mottuRepositorio;
 
-        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Patio> filialRepositorio,
+        public MotoServico(IMotoRepositorio motoRepositorio, IRepositorio<Patio> filialRepositorio,
             IRepositorioCarrapato carrapatoRepositorio, IMottuRepositorio mottuRepositorio)
         {
             _motoRepositorio = motoRepositorio;
@@ -51,25 +51,29 @@ namespace Aplicacao.Servicos
         {
             ValidarDtoNaoNulo(dto);
 
-            MotoMottu? motoExistente = null;
-            
+            MotoMottu? motoMottu = null;
+
             if (dto.Placa != null)
             {
-                motoExistente = await _mottuRepositorio.ObterPorPlacaAssincrono(dto.Placa);
-                if (motoExistente == null)
-                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com a placa {dto.Placa}", nameof(dto.Placa));
+                motoMottu = await _mottuRepositorio.ObterPorPlacaAssincrono(dto.Placa);
+                if (motoMottu == null)
+                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com a placa {dto.Placa}",
+                        nameof(dto.Placa));
             }
             else if (dto.Chassi != null)
             {
-                motoExistente = await _mottuRepositorio.ObterPorChassiAssincrono(dto.Chassi);
-                if (motoExistente == null)
-                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com o chassi: {dto.Chassi}.", nameof(dto.Chassi));
+                motoMottu = await _mottuRepositorio.ObterPorChassiAssincrono(dto.Chassi);
+                if (motoMottu == null)
+                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com o chassi: {dto.Chassi}.",
+                        nameof(dto.Chassi));
             }
             else
-            {
+            {   
                 throw new ExcecaoDominio("É necessário informar pelo menos a placa ou o chassi da moto.", nameof(dto));
             }
-            
+
+            await ValidarMotoJaCadastradaAssincrono(motoMottu);
+
             var patio = await ObterFilialOuLancar(dto.IdPatio);
 
             var carrapato = await _carrapatoRepositorio.ObterPrimeiroCarrapatoDisponivel();
@@ -78,10 +82,10 @@ namespace Aplicacao.Servicos
             carrapato.StatusDeUso = StatusDeUsoEnum.EmUso;
 
             var moto = new Moto(
-                placa: motoExistente.Placa,
-                modelo: motoExistente.Modelo,
+                placa: motoMottu.Placa,
+                modelo: motoMottu.Modelo,
                 idPatio: dto.IdPatio,
-                chassi: motoExistente.Chassi,
+                chassi: motoMottu.Chassi,
                 patio: patio,
                 idCarrapato: carrapato.Id);
             await _motoRepositorio.Adicionar(moto);
@@ -94,14 +98,14 @@ namespace Aplicacao.Servicos
         public async Task<MotoLeituraDto> Atualizar(int id, MotoAtualizarDto dto)
         {
             var moto = await ObterMotoOuLancar(id);
-            
+
             ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca);
 
             if (dto.Modelo != null)
             {
                 moto.AlterarModelo(modelo: dto.Modelo);
             }
-            
+
             if (dto.Zona != null)
             {
                 moto.AlterarZona((int)dto.Zona);
@@ -126,6 +130,9 @@ namespace Aplicacao.Servicos
         public async Task Remover(int id)
         {
             var moto = await ObterMotoOuLancar(id);
+            var carrapato = moto.Carrapato;
+            carrapato.StatusDeUso = StatusDeUsoEnum.Disponivel;
+            await _carrapatoRepositorio.Atualizar(carrapato);
             await _motoRepositorio.Remover(moto);
         }
 
@@ -165,6 +172,13 @@ namespace Aplicacao.Servicos
             if (pagina <= 0 || tamanhoPagina <= 0)
                 throw new ExcecaoDominio("Parâmetros de paginação devem ser maiores que zero.",
                     nameof(pagina) + ", " + nameof(tamanhoPagina));
+        }
+
+        private async Task ValidarMotoJaCadastradaAssincrono(MotoMottu motoMottu)
+        {
+            var moto = await _motoRepositorio.ObterPorPlacaAssincrono(motoMottu.Placa);
+            if (moto != null)
+                throw new ExcecaoDominio($"Moto com placa {motoMottu.Placa} já cadastrada no pátio {moto.Patio.Nome}.", nameof(motoMottu.Placa));
         }
     }
 }
