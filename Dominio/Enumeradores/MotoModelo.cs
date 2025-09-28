@@ -4,5 +4,5 @@ public enum ModeloMotoEnum
 {
     SPORT = 1,
     E = 2,
-    POP = 3,
+    POP = 3
 }

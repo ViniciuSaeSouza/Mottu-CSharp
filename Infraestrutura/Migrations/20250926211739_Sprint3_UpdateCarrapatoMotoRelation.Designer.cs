@@ -3,6 +3,7 @@ using System;
 using Infraestrutura.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 
@@ -11,9 +12,11 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace Infraestrutura.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250926211739_Sprint3_UpdateCarrapatoMotoRelation")]
+    partial class Sprint3_UpdateCarrapatoMotoRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,9 +73,6 @@ namespace Infraestrutura.Migrations
                     b.Property<int>("IdCarrapato")
                         .HasColumnType("NUMBER(10)");
 
-                    b.Property<int>("IdPatio")
-                        .HasColumnType("NUMBER(10)");
-
                     b.Property<int>("Modelo")
                         .HasColumnType("NUMBER(10)");
 
@@ -84,6 +84,9 @@ namespace Infraestrutura.Migrations
                     b.Property<int>("Zona")
                         .HasColumnType("NUMBER(10)");
 
+                    b.Property<int>("idPatio")
+                        .HasColumnType("NUMBER(10)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Chassi")
@@ -92,10 +95,10 @@ namespace Infraestrutura.Migrations
                     b.HasIndex("IdCarrapato")
                         .IsUnique();
 
-                    b.HasIndex("IdPatio");
-
                     b.HasIndex("Placa")
                         .IsUnique();
+
+                    b.HasIndex("idPatio");
 
                     b.ToTable("MOTOS", (string)null);
                 });
@@ -216,7 +219,7 @@ namespace Infraestrutura.Migrations
 
                     b.HasOne("Dominio.Persistencia.Patio", "Patio")
                         .WithMany("Motos")
-                        .HasForeignKey("IdPatio")
+                        .HasForeignKey("idPatio")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

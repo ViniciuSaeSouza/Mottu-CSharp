@@ -1,5 +1,6 @@
 using Dominio.Excecao;
 using Dominio.Interfaces;
+using Dominio.Modelo;
 using Dominio.Persistencia;
 using Infraestrutura.Contexto;
 using Microsoft.EntityFrameworkCore;
@@ -8,28 +9,30 @@ namespace Infraestrutura.Repositorios;
 
 public class MotoRepositorio : IRepositorio<Moto>
 {
-    private readonly AppDbContext _context;
+    private readonly AppDbContext _contexto;
 
-    public MotoRepositorio(AppDbContext context)
+    public MotoRepositorio(AppDbContext contexto)
     {
-        _context = context;
+        _contexto = contexto;
     }
 
     public async Task<Moto> Adicionar(Moto moto)
     {
         try
         {
-            await _context.Motos.AddAsync(moto);
-            await _context.SaveChangesAsync();
+            await _contexto.Motos.AddAsync(moto);
+            await _contexto.SaveChangesAsync();
             return moto;
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao adicionar moto no banco de dados", nameof(moto),
+                ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração no banco de dados", nameof(moto),
+                innerException: ex);
         }
     }
 
@@ -37,17 +40,19 @@ public class MotoRepositorio : IRepositorio<Moto>
     {
         try
         {
-            _context.Motos.Update(moto);
-            await _context.SaveChangesAsync();
+            _contexto.Motos.Update(moto);
+            await _contexto.SaveChangesAsync();
             return moto;
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao atualizar moto no banco de dados", nameof(moto),
+                ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto),
+                innerException: ex);
         }
     }
 
@@ -55,7 +60,7 @@ public class MotoRepositorio : IRepositorio<Moto>
     {
         try
         {
-            return await _context.Motos.Include(m => m.Patio).FirstOrDefaultAsync(m => m.Id == id);
+            return await _contexto.Motos.Include(m => m.Patio).FirstOrDefaultAsync(m => m.Id == id);
         }
         catch (OperationCanceledException ex)
         {
@@ -71,7 +76,7 @@ public class MotoRepositorio : IRepositorio<Moto>
     {
         try
         {
-            return await _context.Motos.Include(m => m.Patio).OrderBy(m => m.Id).ToListAsync();
+            return await _contexto.Motos.Include(m => m.Patio).OrderBy(m => m.Id).ToListAsync();
         }
         catch (OperationCanceledException ex)
         {
@@ -81,24 +86,49 @@ public class MotoRepositorio : IRepositorio<Moto>
         {
             throw new ExcecaoBancoDados("Falha ao obter motos do banco de dados", nameof(Moto), innerException: ex);
         }
-        
     }
 
+    public async Task<IResultadoPaginado<Moto>> ObterTodosPaginado(int pagina, int tamanhoPagina)
+    {
+        
+        var consulta = _contexto.Motos
+            .Include(m => m.Patio)
+            .OrderBy(m => m.Id)
+            .AsNoTracking();
+
+        var totalMotos = await consulta.CountAsync();
+        var motos = await consulta
+            .Skip((pagina - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
+            .ToListAsync();
+
+        var motosPaginadas = new ResultadoPaginado<Moto>
+        {
+            ContagemTotal = totalMotos,
+            Pagina = pagina,
+            TamanhoPagina = tamanhoPagina,
+            Items = motos
+        };
+        
+        return motosPaginadas;
+    }
     public async Task<bool> Remover(Moto moto)
     {
         try
         {
-            _context.Motos.Remove(moto);
-            await _context.SaveChangesAsync();
+            _contexto.Motos.Remove(moto);
+            await _contexto.SaveChangesAsync();
             return true;
         }
         catch (OperationCanceledException ex)
         {
-            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover moto no banco de dados", nameof(moto), ex);
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao remover moto no banco de dados", nameof(moto),
+                ex);
         }
         catch (DbUpdateException ex)
         {
-            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto), innerException: ex);
+            throw new ExcecaoBancoDados("Falha ao salvar alteração de moto no banco de dados", nameof(moto),
+                innerException: ex);
         }
     }
 }

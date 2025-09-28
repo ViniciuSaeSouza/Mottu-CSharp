@@ -9,6 +9,7 @@ public class Patio
     public string Endereco { get; private set; }
     public List<Moto> Motos { get; private set; }
     public List<Usuario> Usuarios { get; set; }
+    public List<Carrapato> Carrapatos { get; set; }
 
     public Patio(string nome, string endereco)
     {

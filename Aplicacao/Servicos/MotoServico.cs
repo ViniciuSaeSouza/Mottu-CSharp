@@ -3,8 +3,10 @@ using Aplicacao.Validacoes;
 using Dominio.Enumeradores;
 using Dominio.Excecao;
 using Dominio.Interfaces;
+using Dominio.Interfaces.Mottu;
+using Dominio.Modelo;
 using Dominio.Persistencia;
-using Infraestrutura.Repositorios;
+using Dominio.Persistencia.Mottu;
 
 namespace Aplicacao.Servicos
 {
@@ -12,17 +14,35 @@ namespace Aplicacao.Servicos
     {
         private readonly IRepositorio<Moto> _motoRepositorio;
         private readonly IRepositorio<Patio> _filialRepositorio;
+        private readonly IRepositorioCarrapato _carrapatoRepositorio;
+        private readonly IMottuRepositorio _mottuRepositorio;
 
-        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Patio> filialRepositorio)
+        public MotoServico(IRepositorio<Moto> motoRepositorio, IRepositorio<Patio> filialRepositorio,
+            IRepositorioCarrapato carrapatoRepositorio, IMottuRepositorio mottuRepositorio)
         {
             _motoRepositorio = motoRepositorio;
             _filialRepositorio = filialRepositorio;
+            _carrapatoRepositorio = carrapatoRepositorio;
+            _mottuRepositorio = mottuRepositorio;
         }
 
-        public async Task<IEnumerable<MotoLeituraDto>> ObterTodos()
-            => (await _motoRepositorio.ObterTodos())
-                .Select(MapearParaDto)
-                .ToList();
+        public async Task<List<Moto>> ObterTodos() => await _motoRepositorio.ObterTodos();
+
+        public async Task<IResultadoPaginado<MotoLeituraDto>> ObterTodosPaginado(int pagina, int tamanhoPagina)
+        {
+            ValidarParametrosDePaginacao(pagina, tamanhoPagina);
+
+            var motosPaginadas = await _motoRepositorio.ObterTodosPaginado(pagina, tamanhoPagina);
+
+            var motosPaginadasDto = new ResultadoPaginado<MotoLeituraDto>
+            {
+                ContagemTotal = motosPaginadas.ContagemTotal,
+                Pagina = motosPaginadas.Pagina,
+                TamanhoPagina = motosPaginadas.TamanhoPagina,
+                Items = motosPaginadas.Items.Select(MapearParaDto).ToList()
+            };
+            return motosPaginadasDto;
+        }
 
         public async Task<MotoLeituraDto> ObterPorId(int id)
             => MapearParaDto(await ObterMotoOuLancar(id));
@@ -31,11 +51,42 @@ namespace Aplicacao.Servicos
         {
             ValidarDtoNaoNulo(dto);
 
-            var filial = await ObterFilialOuLancar(dto.IdFilial);
-            ValidarModelo(dto.Modelo);
+            MotoMottu? motoExistente = null;
+            
+            if (dto.Placa != null)
+            {
+                motoExistente = await _mottuRepositorio.ObterPorPlacaAssincrono(dto.Placa);
+                if (motoExistente == null)
+                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com a placa {dto.Placa}", nameof(dto.Placa));
+            }
+            else if (dto.Chassi != null)
+            {
+                motoExistente = await _mottuRepositorio.ObterPorChassiAssincrono(dto.Chassi);
+                if (motoExistente == null)
+                    throw new ExcecaoDominio($"Não foi possível localizar uma moto com o chassi: {dto.Chassi}.", nameof(dto.Chassi));
+            }
+            else
+            {
+                throw new ExcecaoDominio("É necessário informar pelo menos a placa ou o chassi da moto.", nameof(dto));
+            }
+            
+            var patio = await ObterFilialOuLancar(dto.IdPatio);
 
-            var moto = new Moto(dto.Placa, dto.Modelo, dto.IdFilial, dto.Chassi, filial);
+            var carrapato = await _carrapatoRepositorio.ObterPrimeiroCarrapatoDisponivel();
+            if (carrapato == null)
+                throw new ExcecaoDominio("Nenhum carrapato disponível no momento.", nameof(carrapato));
+            carrapato.StatusDeUso = StatusDeUsoEnum.EmUso;
+
+            var moto = new Moto(
+                placa: motoExistente.Placa,
+                modelo: motoExistente.Modelo,
+                idPatio: dto.IdPatio,
+                chassi: motoExistente.Chassi,
+                patio: patio,
+                idCarrapato: carrapato.Id);
             await _motoRepositorio.Adicionar(moto);
+
+            await _carrapatoRepositorio.Atualizar(carrapato);
 
             return MapearParaDto(moto);
         }
@@ -43,16 +94,29 @@ namespace Aplicacao.Servicos
         public async Task<MotoLeituraDto> Atualizar(int id, MotoAtualizarDto dto)
         {
             var moto = await ObterMotoOuLancar(id);
-
-            ValidacaoEntidade.ValidarValor(dto.Modelo, ValidarModelo);
-            ValidacaoEntidade.AlterarValor(dto.Modelo, moto.AlterarModelo);
+            
             ValidacaoEntidade.AlterarValor(dto.Placa, moto.AlterarPlaca);
 
-
-            if (dto.IdFilial.HasValue)
+            if (dto.Modelo != null)
             {
-                var novaFilial = await ObterFilialOuLancar(dto.IdFilial.Value);
-                moto.AlterarFilial(dto.IdFilial.Value, novaFilial);
+                moto.AlterarModelo(modelo: dto.Modelo);
+            }
+            
+            if (dto.Zona != null)
+            {
+                moto.AlterarZona((int)dto.Zona);
+            }
+
+
+            if (dto.IdPatio.HasValue)
+            {
+                var novaFilial = await ObterFilialOuLancar(dto.IdPatio.Value);
+                moto.AlterarFilial(dto.IdPatio.Value, novaFilial);
+            }
+
+            if (dto.IdCarrapato.HasValue)
+            {
+                moto.IdCarrapato = dto.IdCarrapato.Value;
             }
 
             await _motoRepositorio.Atualizar(moto);
@@ -67,20 +131,21 @@ namespace Aplicacao.Servicos
 
 
         private MotoLeituraDto MapearParaDto(Moto moto)
-            => new(moto.Id, moto.Placa, moto.Modelo.ToString().ToUpper(), moto.Patio.Nome, moto.Chassi, moto.Zona);
+            => new(moto.Id, moto.Placa, moto.Modelo.ToString().ToUpper(), moto.Patio.Nome, moto.Chassi, moto.Zona,
+                moto.IdCarrapato);
 
         private async Task<Moto> ObterMotoOuLancar(int id)
         {
             var moto = await _motoRepositorio.ObterPorId(id);
             ValidacaoEntidade.LancarSeNulo(moto, "Moto", id);
-            return moto;
+            return moto!;
         }
 
         private async Task<Patio> ObterFilialOuLancar(int id)
         {
             var filial = await _filialRepositorio.ObterPorId(id);
             ValidacaoEntidade.LancarSeNulo(filial, "Filial", id);
-            return filial;
+            return filial!;
         }
 
         private void ValidarDtoNaoNulo(object dto)
@@ -93,6 +158,13 @@ namespace Aplicacao.Servicos
         {
             if (!Enum.IsDefined(typeof(ModeloMotoEnum), modelo.ToUpper()))
                 throw new ExcecaoDominio("Modelo inválido.", nameof(modelo));
+        }
+
+        private void ValidarParametrosDePaginacao(int pagina, int tamanhoPagina)
+        {
+            if (pagina <= 0 || tamanhoPagina <= 0)
+                throw new ExcecaoDominio("Parâmetros de paginação devem ser maiores que zero.",
+                    nameof(pagina) + ", " + nameof(tamanhoPagina));
         }
     }
 }

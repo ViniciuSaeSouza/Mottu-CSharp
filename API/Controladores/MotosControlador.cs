@@ -1,6 +1,7 @@
 ﻿using Aplicacao.DTOs.Moto;
 using Aplicacao.Servicos;
 using Dominio.Excecao;
+using Dominio.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controladores;
@@ -18,10 +19,13 @@ public class MotosControlador : ControllerBase
     }
 
     /// <summary>
-    /// Retorna a lista de motos cadastradas no sistema.
+    /// Obtém uma lista paginada de todas as motos.
     /// </summary>
+    /// <param name="pagina">Número da página a ser retornada (padrão: 1)</param>
+    /// <param name="tamanhoPagina">Número de itens por página (padrão: 10)</param>
     /// <returns>
-    /// Retorna 200 OK com a lista de motos cadastradas.
+    /// Retorna uma lista paginada de objetos MotoLeituraDto representando as motos.
+    /// Retorna 200 OK se as motos forem encontradas.
     /// Retorna 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// Retorna 503 Service Unavailable se o serviço estiver temporariamente indisponível.
     /// </returns>
@@ -29,17 +33,22 @@ public class MotosControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<MotoLeituraDto>>> GetMotos()
+    public async Task<ActionResult<IResultadoPaginado<MotoLeituraDto>>> GetMotos([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
     {
         try
         {
-            var motos = await _motoServico.ObterTodos();
+            var motos = await _motoServico.ObterTodosPaginado(pagina, tamanhoPagina);
             return Ok(motos);
         }
         catch (ExcecaoBancoDados ex)
         {
             Console.WriteLine($"Falha ao buscar todas as motos no banco de dados: {ex.Message}\n{ex.StackTrace}");
             return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine($"Erro de validação ao buscar motos: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest(new { mensagem = ex.Message });
         }
         catch (Exception ex)
         {
@@ -129,6 +138,48 @@ public class MotosControlador : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine($"Erro não tratado ao criar moto: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
+        }
+    }
+
+    /// <summary>
+    /// Atualiza uma moto existente pelo ID.
+    /// </summary>
+    /// <param name="id">ID da moto a ser atualizada</param>
+    /// <param name="dto">Dados para atualização da moto</param>
+    /// <returns>
+    /// Retorna 200 OK com a moto atualizada, 404 Not Found se não existir, 400 Bad Request se inválido, 500 ou 503 em caso de erro.</returns>
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<MotoLeituraDto>> AtualizarMoto(int id, [FromBody] MotoAtualizarDto dto)
+    {
+        try
+        {
+            var moto = await _motoServico.Atualizar(id, dto);
+            return Ok(moto);
+        }
+        catch (ExcecaoEntidadeNaoEncontrada ex)
+        {
+            Console.WriteLine($"Moto de id {id} não encontrada para atualização: {ex.Message}\n{ex.StackTrace}");
+            return NotFound(new { mensagem = $"Nenhuma moto encontrada para o id {id}" });
+        }
+        catch (ExcecaoBancoDados ex)
+        {
+            Console.WriteLine($"Falha ao atualizar moto de id {id} no banco de dados: {ex.Message}\n{ex.StackTrace}");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+        }
+        catch (ExcecaoDominio ex)
+        {
+            Console.WriteLine($"Erro de validação ao atualizar moto: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest(new { mensagem = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Falha interna da aplicação ao atualizar moto {id}: {ex.Message}\n{ex.StackTrace}");
             return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }

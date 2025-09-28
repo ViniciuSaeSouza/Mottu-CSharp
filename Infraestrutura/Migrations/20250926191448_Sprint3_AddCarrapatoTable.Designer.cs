@@ -3,6 +3,7 @@ using System;
 using Infraestrutura.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 
@@ -11,9 +12,11 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace Infraestrutura.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250926191448_Sprint3_AddCarrapatoTable")]
+    partial class Sprint3_AddCarrapatoTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +37,9 @@ namespace Infraestrutura.Migrations
                         .IsRequired()
                         .HasMaxLength(7)
                         .HasColumnType("NVARCHAR2(7)");
+
+                    b.Property<int?>("IdMoto")
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<int>("IdPatio")
                         .HasColumnType("NUMBER(10)");
@@ -70,9 +76,6 @@ namespace Infraestrutura.Migrations
                     b.Property<int>("IdCarrapato")
                         .HasColumnType("NUMBER(10)");
 
-                    b.Property<int>("IdPatio")
-                        .HasColumnType("NUMBER(10)");
-
                     b.Property<int>("Modelo")
                         .HasColumnType("NUMBER(10)");
 
@@ -84,6 +87,9 @@ namespace Infraestrutura.Migrations
                     b.Property<int>("Zona")
                         .HasColumnType("NUMBER(10)");
 
+                    b.Property<int>("idPatio")
+                        .HasColumnType("NUMBER(10)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Chassi")
@@ -92,10 +98,10 @@ namespace Infraestrutura.Migrations
                     b.HasIndex("IdCarrapato")
                         .IsUnique();
 
-                    b.HasIndex("IdPatio");
-
                     b.HasIndex("Placa")
                         .IsUnique();
+
+                    b.HasIndex("idPatio");
 
                     b.ToTable("MOTOS", (string)null);
                 });
@@ -209,14 +215,14 @@ namespace Infraestrutura.Migrations
             modelBuilder.Entity("Dominio.Persistencia.Moto", b =>
                 {
                     b.HasOne("Dominio.Persistencia.Carrapato", "Carrapato")
-                        .WithOne("MotoVinculada")
+                        .WithOne("Moto")
                         .HasForeignKey("Dominio.Persistencia.Moto", "IdCarrapato")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Dominio.Persistencia.Patio", "Patio")
                         .WithMany("Motos")
-                        .HasForeignKey("IdPatio")
+                        .HasForeignKey("idPatio")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -238,8 +244,7 @@ namespace Infraestrutura.Migrations
 
             modelBuilder.Entity("Dominio.Persistencia.Carrapato", b =>
                 {
-                    b.Navigation("MotoVinculada")
-                        .IsRequired();
+                    b.Navigation("Moto");
                 });
 
             modelBuilder.Entity("Dominio.Persistencia.Patio", b =>
