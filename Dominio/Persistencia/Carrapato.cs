@@ -28,9 +28,4 @@ public class Carrapato
     
     
 
-    // private void ValidarCriacao(string codigoSerial)
-    // {
-    //     ValidarCodigoSerial(codigoSerial);
-    //     
-    // }
 }
