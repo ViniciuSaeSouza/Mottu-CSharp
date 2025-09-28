@@ -180,6 +180,19 @@ public class MotoRepositorio : IMotoRepositorio
 
     public Task<Moto?> ObterPorChassiAssincrono(string chassi)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var moto = _contexto.Motos.Include(m => m.Patio).FirstOrDefaultAsync(m => m.Chassi == chassi);
+            return moto;
+        }
+        catch (OperationCanceledException ex)
+        {
+            throw new ExcecaoBancoDados("Falha, operação cancelada ao obter moto do banco de dados", nameof(Moto), ex);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            throw new ExcecaoBancoDados($"Falha ao obter moto do banco de dados pelo chassi {chassi}", nameof(Moto), innerException: ex);
+        }
     }
 }
