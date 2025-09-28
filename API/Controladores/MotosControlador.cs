@@ -122,7 +122,7 @@ public class MotosControlador : ControllerBase
         }
         catch (ExcecaoDominio ex)
         {
-            Console.WriteLine($"Erro de validação ao criar moto: {ex.Message}\n{ex.StackTrace}");
+            Console.WriteLine($"Erro ao criar moto: {ex.Message}\n{ex.StackTrace}");
             return BadRequest(new { mensagem = ex.Message });
         }
         catch (ExcecaoEntidadeNaoEncontrada ex)

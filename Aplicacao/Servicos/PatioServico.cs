@@ -11,9 +11,9 @@ namespace Aplicacao.Servicos;
 public class PatioServico
 {
     private readonly IRepositorio<Patio> _patioRepositorio;
-    private readonly IRepositorio<Moto> _motoRepositorio;
+    private readonly IMotoRepositorio _motoRepositorio;
 
-    public PatioServico(IRepositorio<Patio> patioRepositorio, IRepositorio<Moto> motoRepositorio)
+    public PatioServico(IRepositorio<Patio> patioRepositorio, IMotoRepositorio motoRepositorio)
     {
         _patioRepositorio = patioRepositorio;
         _motoRepositorio = motoRepositorio;
