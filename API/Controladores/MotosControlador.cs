@@ -19,7 +19,7 @@ public class MotosControlador : ControllerBase
     }
 
     /// <summary>
-    /// Obtém uma lista paginada de todas as motos.
+    /// Obtém uma lista paginada de todas as motos cadastradas em um pátio.
     /// </summary>
     /// <param name="pagina">Número da página a ser retornada (padrão: 1)</param>
     /// <param name="tamanhoPagina">Número de itens por página (padrão: 10)</param>
