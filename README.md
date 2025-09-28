@@ -41,8 +41,8 @@ API RESTful desenvolvida em .NET 8 para gerenciamento de motos e patios, utiliza
 - `DELETE /api/motos/{id}` — Remove uma moto.
 
 ### Patios (`api/patios`)
-- `GET /api/patios` — Lista todos os patios (sem motos associadas).
-- `GET /api/patios/{id}` — Consulta um patio pelo ID (pode incluir dados relacionados conforme DTO).
+- `GET /api/patios` — Lista todos os patios (com até 10 motos e 10 usuários por pátio).
+- `GET /api/patios/{id}` — Consulta um patio pelo ID (inclui motos e usuários do pátio).
 - `POST /api/patios` — Cadastra um novo patio.
 - `PATCH /api/patios/{id}` — Atualiza parcialmente um patio.
 - `DELETE /api/patios/{id}` — Remove um patio.
@@ -142,7 +142,11 @@ Passos:
 ```
 docker pull saesminerais/mottu:3.6.7
 ```
-2) Execute o container (GitBash / Linux):
+2) Execute o container (Windows CMD):
+```
+docker run -d --name mottu-api -p 8080:8080 -e Connection__String="Data Source=HOST:1521/SERVICE;User ID=USUARIO;Password=SENHA" saesminerais/mottu:3.6.7
+```
+2.1) Execute o container (GitBash / Linux):
 ```
 docker run -d \
 --name mottu-api \
@@ -163,6 +167,7 @@ Acesse o Swagger: http://localhost:8080/swagger
 ### Motos
 
 - Criar moto — `POST /api/motos`
+Request
 ```json
 {
   "placa": "ABC1D23",
@@ -170,7 +175,21 @@ Acesse o Swagger: http://localhost:8080/swagger
   "idPatio": 1
 }
 ```
+Response 201
+```json
+{
+  "id": 1,
+  "placa": "ABC1D23",
+  "modelo": "POP",
+  "nomePatio": "Pátio Central",
+  "chassi": "9BWZZZ377VT004251",
+  "zona": 0,
+  "idCarrapato": 3
+}
+```
+
 - Atualizar moto (PUT) — `PUT /api/motos/1`
+Request
 ```json
 {
   "placa": "DEF4G56",
@@ -180,13 +199,33 @@ Acesse o Swagger: http://localhost:8080/swagger
   "zona": 1
 }
 ```
+Response 200 (mesma forma do GET por id)
+```json
+{
+  "id": 1,
+  "placa": "DEF4G56",
+  "modelo": "E",
+  "nomePatio": "Pátio Central",
+  "chassi": "9BWZZZ377VT004251",
+  "zona": 1,
+  "idCarrapato": 3
+}
+```
+Observações:
+- `modelo` no request é numérico (enum: 1=SPORT, 2=E, 3=POP). No response, vem como string UPPERCASE.
+- `zona` é numérico (enum: 0=Saguao, 1=ManutencaoRapida, 2=DanosEstruturais, 3=SemPlaca, 4=BoletimOcorrencia, 5=Aluguel, 6=MotorDefeituoso).
+
 - Atualizar parcialmente (PATCH) — `PATCH /api/motos/1`
+Request
 ```json
 {
   "placa": "DEF4G56"
 }
 ```
+Response 200 — corpo igual ao GET por id.
+
 - Listar motos (paginação) — `GET /api/motos?pagina=1&tamanhoPagina=10`
+Response 200
 ```json
 {
   "temProximo": true,
@@ -195,7 +234,7 @@ Acesse o Swagger: http://localhost:8080/swagger
     {
       "id": 1,
       "placa": "ABC1D23",
-      "modelo": "HondaBiz",
+      "modelo": "SPORT",
       "nomePatio": "Pátio Central",
       "chassi": "9BWZZZ377VT004251",
       "zona": 0,
@@ -210,22 +249,70 @@ Acesse o Swagger: http://localhost:8080/swagger
 ```
 
 ### Patios
+
 - Criar patio — `POST /api/patios`
+Request
 ```json
 {
   "nome": "Pátio Central",
   "endereco": "Av. Brasil, 1000"
 }
 ```
+Response 201
+```json
+{
+  "id": 1,
+  "nome": "Pátio Central",
+  "endereco": "Av. Brasil, 1000",
+  "motos": [],
+  "usuarios": []
+}
+```
+
+- Obter patio — `GET /api/patios/1`
+Response 200 (motos/usuarios conforme dados)
+```json
+{
+  "id": 1,
+  "nome": "Pátio Central",
+  "endereco": "Av. Brasil, 1000",
+  "motos": [
+    {
+      "id": 1,
+      "placa": "ABC1D23",
+      "modelo": "POP",
+      "nomePatio": "Pátio Central",
+      "chassi": "9BWZZZ377VT004251",
+      "zona": 0,
+      "idCarrapato": 3
+    }
+  ],
+  "usuarios": [
+    {
+      "idUsuario": 10,
+      "nome": "João Silva",
+      "email": "joao@empresa.com",
+      "senha": "Senha@123",
+      "nomePatio": "Pátio Central",
+      "idPatio": 1
+    }
+  ]
+}
+```
+
 - Atualizar parcialmente — `PATCH /api/patios/1`
+Request
 ```json
 {
   "endereco": "Av. Brasil, 1500"
 }
 ```
+Response 200 — corpo igual ao GET por id.
 
 ### Usuários
+
 - Criar usuário — `POST /api/usuarios`
+Request
 ```json
 {
   "nome": "João Silva",
@@ -234,26 +321,95 @@ Acesse o Swagger: http://localhost:8080/swagger
   "idPatio": 1
 }
 ```
+Response 201
+```json
+{
+  "idUsuario": 10,
+  "nome": "João Silva",
+  "email": "joao@empresa.com",
+  "senha": "Senha@123",
+  "nomePatio": "Pátio Central",
+  "idPatio": 1
+}
+```
+
+- Atualizar usuário — `PUT /api/usuarios/10`
+Request
+```json
+{
+  "nome": "João S. Silva",
+  "email": "joaos@empresa.com",
+  "senha": "NovaSenha@123"
+}
+```
+Response 200 — mesmo formato do criar.
+
 - Login — `POST /api/usuarios/login`
+Request
 ```json
 {
   "email": "joao@empresa.com",
   "senha": "Senha@123"
 }
 ```
+Response 200
+```json
+{
+  "idUsuario": 10,
+  "nome": "João Silva",
+  "email": "joao@empresa.com",
+  "senha": "Senha@123",
+  "nomePatio": "Pátio Central",
+  "idPatio": 1
+}
+```
 
 ### Carrapatos
+
 - Criar carrapato — `POST /api/carrapatos`
+Request
 ```json
 {
   "codigoSerial": "CAR-0001-XYZ",
   "idPatio": 1
 }
 ```
+Response 201
+```json
+{
+  "id": 3,
+  "codigoSerial": "CAR-0001-XYZ",
+  "statusBateria": "Alta",
+  "statusDeUso": "Disponivel",
+  "idPatio": 1
+}
+```
 
 ### Listas auxiliares
+
 - Modelos de moto — `GET /api/modelos-moto`
+Response 200
+```json
+[
+  { "id": 1, "nome": "SPORT" },
+  { "id": 2, "nome": "E" },
+  { "id": 3, "nome": "POP" }
+]
+```
+
 - Zonas — `GET /api/zonas`
+Response 200
+```json
+[
+  { "id": 0, "nome": "Saguao" },
+  { "id": 1, "nome": "ManutencaoRapida" },
+  { "id": 2, "nome": "DanosEstruturais" },
+  { "id": 3, "nome": "SemPlaca" },
+  { "id": 4, "nome": "BoletimOcorrencia" },
+  { "id": 5, "nome": "Aluguel" },
+  { "id": 6, "nome": "MotorDefeituoso" }
+]
+```
 
 ---
 
