@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infraestrutura.Mapeamentos;
 
-public class MotoMapping : IEntityTypeConfiguration<Moto>
+public class MotoMapeamento : IEntityTypeConfiguration<Moto>
 {
     public void Configure(EntityTypeBuilder<Moto> builder)
     {
@@ -34,7 +34,12 @@ public class MotoMapping : IEntityTypeConfiguration<Moto>
 
         builder.HasOne(m => m.Patio)
             .WithMany(f => f.Motos)
-            .HasForeignKey(m => m.idPatio)
+            .HasForeignKey(m => m.IdPatio)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(m => m.Carrapato)
+            .WithOne(c => c.MotoVinculada)
+            .HasForeignKey<Moto>(m => m.IdCarrapato)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

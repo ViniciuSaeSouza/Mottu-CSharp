@@ -21,8 +21,8 @@ public class Usuario
     {
         ValidarUsuario(nome, email, senha);
 
-        Email = nome;
-        Nome = email;
+        Nome = nome;
+        Email = email;
         Senha = senha;
         DataCriacao = DateTime.UtcNow;
         IdPatio = idPatio;

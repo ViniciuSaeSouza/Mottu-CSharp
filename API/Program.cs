@@ -12,12 +12,11 @@ using Dominio.Interfaces.Mottu;
 using Dominio.Persistencia.Mottu;
 using Infraestrutura.Repositorios.Mottu;
 
-// TODO: adicionar carrapato
-// TODO: adicionar crud usuario
 // TODO: adicionar logica de vinculo usuario patio
 // TODO: adicionar logica de moto com patio
 // TODO: adicionar logica de moto com carrapato
-
+// TODO: adicionar logica de carrapato com patio
+// 
 
 
 Env.Load();
@@ -62,10 +61,11 @@ catch (ArgumentNullException)
 }
 
 // Injeção de repositórios
-builder.Services.AddScoped<IRepositorio<Moto>, MotoRepositorio>();
+builder.Services.AddScoped<IMotoRepositorio, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
-builder.Services.AddScoped<IRepositorio<Usuario>, UsuarioRepositorio>();
+builder.Services.AddScoped<IRepositorioUsuario, UsuarioRepositorio>();
+builder.Services.AddScoped<IRepositorioCarrapato, CarrapatoRepositorio>();
 
 
 // Injeção de serviços
@@ -73,6 +73,7 @@ builder.Services.AddScoped<MotoServico>();
 builder.Services.AddScoped<PatioServico>();
 builder.Services.AddScoped<MotoMottuServico>();
 builder.Services.AddScoped<UsuarioServico>();
+builder.Services.AddScoped<CarrapatoServico>();
 
 var app = builder.Build();
 
@@ -83,7 +84,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
-
     });
 }
 

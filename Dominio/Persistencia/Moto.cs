@@ -10,32 +10,32 @@ public class Moto
     public string Chassi { get; private set; }
     public ModeloMotoEnum Modelo { get; private set; }
     public ZonaEnum Zona { get; set; }
-    public int idPatio { get; set; }
+    public int IdPatio { get; set; }
     public Patio Patio { get; set; }
-
-    public Moto(string placa, string nomeModelo, int idPatio, string chassi, Patio patio)
+    public int IdCarrapato { get; set; }
+    public Carrapato Carrapato { get; set; }
+    
+    // Para EF Core
+    public Moto()
+    {
+    }
+    
+    public Moto(string placa, ModeloMotoEnum modelo, int idPatio, string chassi, Patio patio, int idCarrapato)
     {
         ValidarNuloVazio(
             (nameof(placa), placa),
-            (nameof(nomeModelo), nomeModelo),
             (nameof(chassi), chassi)
         );
         ValidarPlaca(placa);
         ValidarChassi(chassi);
-
         Placa = placa.ToUpper();
-        DefinirModelo(nomeModelo);
-        
-        this.idPatio = idPatio;
+        DefinirModelo((int)modelo);
+        this.IdPatio = idPatio;
         Patio = patio;
         Zona = ZonaEnum.Saguao;
         Chassi = chassi.ToUpper();
+        IdCarrapato = idCarrapato;
     }
-
-    public Moto()
-    {
-    }
-
 
     private void ValidarChassi(string chassi)
     {
@@ -63,20 +63,18 @@ public class Moto
         }
     }
 
-    private void ValidarModelo(string nomeModelo)
+    private void ValidarModelo(int? modelo)
     {
-        var modeloUpper = nomeModelo.ToUpper();
-
-        if (!Enum.IsDefined(typeof(ModeloMotoEnum), modeloUpper))
+        if (!Enum.IsDefined(typeof(ModeloMotoEnum), modelo))
         {
-            throw new ExcecaoDominio("Modelo inválido.", nameof(nomeModelo));
+            throw new ExcecaoDominio("Modelo inválido.", nameof(modelo));
         }
     }
 
-    private void DefinirModelo(string nomeModelo)
+    private void DefinirModelo(int modelo)
     {
-        ValidarModelo(nomeModelo);
-        Modelo = Enum.Parse<ModeloMotoEnum>(nomeModelo.ToUpper(), ignoreCase: true);
+        ValidarModelo(modelo);
+        Modelo = (ModeloMotoEnum)Enum.Parse(typeof(ModeloMotoEnum), modelo.ToString());
     }
 
     public void AlterarPlaca(string novaPlaca)
@@ -86,16 +84,25 @@ public class Moto
         Placa = novaPlaca.ToUpper();
     }
 
-    public void AlterarModelo(string novoModelo)
+    public void AlterarModelo(int? modelo)
     {
-        ValidarNuloVazio((nameof(novoModelo), novoModelo));
-        DefinirModelo(novoModelo);
+        ValidarNuloVazio((nameof(modelo), modelo));
+        DefinirModelo((int)modelo!);
     }
 
     public void AlterarFilial(int novoIdFilial, Patio novoPatio)
     {
-        idPatio = novoIdFilial;
+        IdPatio = novoIdFilial;
         Patio = novoPatio;
+    }
+    
+    public void AlterarZona(int zona)
+    {
+        if (!Enum.IsDefined(typeof(ZonaEnum), zona))
+        {
+            throw new ExcecaoDominio("Zona inválida.", nameof(zona));
+        }
+        Zona = (ZonaEnum)zona;
     }
 
     public void DefinirZona(ZonaEnum zona)
