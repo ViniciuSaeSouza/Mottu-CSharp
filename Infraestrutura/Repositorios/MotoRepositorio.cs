@@ -114,7 +114,6 @@ public class MotoRepositorio : IMotoRepositorio
         return motosPaginadas;
     }
     
-    
     public async Task<Moto?> ObterPorPlaca(string placa)
     {
         try
@@ -130,8 +129,7 @@ public class MotoRepositorio : IMotoRepositorio
             throw new ExcecaoBancoDados($"Falha ao obter moto do banco de dados pela placa {placa}", nameof(Moto), innerException: ex);
         }
     }
-    
-    
+
     public async Task<bool> Remover(Moto moto)
     {
         try
