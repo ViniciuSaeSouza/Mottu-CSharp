@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(swagger =>
 
 try
 {
-    var connectionString = Environment.GetEnvironmentVariable("Connection__String") ??
+    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle") ??
                            builder.Configuration.GetConnectionString("Oracle");
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseOracle(connectionString));

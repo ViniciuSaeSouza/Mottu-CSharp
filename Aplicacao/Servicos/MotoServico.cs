@@ -103,7 +103,8 @@ namespace Aplicacao.Servicos
 
             if (dto.Modelo != null)
             {
-                moto.AlterarModelo(modelo: dto.Modelo);
+                moto.Modelo = dto.Modelo.Value;
+                ValidarModelo(dto.Modelo.ToString()!);
             }
 
             if (dto.Zona != null)
