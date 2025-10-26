@@ -24,7 +24,7 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = "";
+string? connectionString = null;
 
 // Add services to the container.
 builder.Services.AddControllers();
