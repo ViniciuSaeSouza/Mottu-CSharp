@@ -104,8 +104,8 @@ public class CarrapatoControlador : ControllerBase
     /// Exemplo de payload:
     /// <example>
     /// {
-    ///   "nome": "Carrapato A",
-    ///   "descricao": "Exemplo de carrapato"
+    ///   "CodigoSerial": "ABC123",
+    ///   "IdPatio": 42
     /// }
     /// </example>
     /// </remarks>
