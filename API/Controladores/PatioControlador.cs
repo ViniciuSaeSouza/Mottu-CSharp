@@ -268,3 +268,17 @@ public class PatioControlador : ControllerBase
         return links;
     }
 }
+
+    private List<Link> CriarLinks(PatioLeituraDto patio)
+    {
+        var links = new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(GetPatio), new { id = patio.Id }) ?? string.Empty, Method = "GET" },
+            new Link { Rel = "update", Href = Url.Link(nameof(PatchPatio), new { id = patio.Id }) ?? string.Empty, Method = "PATCH" },
+            new Link { Rel = "delete", Href = Url.Link(nameof(DeletaPatio), new { id = patio.Id }) ?? string.Empty, Method = "DELETE" },
+            new Link { Rel = "collection", Href = Url.Link(nameof(GetPatios), null) ?? string.Empty, Method = "GET" }
+        };
+
+        return links;
+    }
+}
