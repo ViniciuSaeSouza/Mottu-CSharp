@@ -1,8 +1,8 @@
 ﻿using Aplicacao.DTOs.Usuario;
 using Aplicacao.Servicos;
 using Dominio.Excecao;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores;
 
@@ -27,21 +27,31 @@ public class UsuarioControlador : ControllerBase
     /// Retorna 200 OK com a lista de usuários cadastrados.
     /// Retorna 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// </returns>
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet(Name = nameof(ListarUsuarios))]
+    [ProducesResponseType(typeof(Recurso<IEnumerable<UsuarioLeituraDto>>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<List<UsuarioLeituraDto>>> ListarUsuarios()
+    public async Task<ActionResult<Recurso<IEnumerable<UsuarioLeituraDto>>>> ListarUsuarios()
     {
         try
         {
             var usuarios = await _servico.ObterTodos();
-            
-            return Ok(usuarios);
+
+            var recurso = new Recurso<IEnumerable<UsuarioLeituraDto>>
+            {
+                Dados = usuarios,
+                Links = new List<Link>
+                {
+                    new Link { Rel = "self", Href = Url.Link(nameof(ListarUsuarios), null) ?? string.Empty, Method = "GET" },
+                    new Link { Rel = "create", Href = Url.Link(nameof(CriarUsuario), null) ?? string.Empty, Method = "POST" }
+                }
+            };
+
+            return Ok(recurso);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return Problem("Erro interno do servidor");
         }
     }
@@ -55,27 +65,34 @@ public class UsuarioControlador : ControllerBase
     /// 404 Not Found se o usuário com o ID fornecido não for encontrado.
     /// 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// </returns>
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("{id:int}", Name = nameof(ObterUsuarioPorId))]
+    [ProducesResponseType(typeof(Recurso<UsuarioLeituraDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<UsuarioLeituraDto>> ObterUsuarioPorId(int id)
+    public async Task<ActionResult<Recurso<UsuarioLeituraDto>>> ObterUsuarioPorId(int id)
     {
         try
         {
             var usuario = await _servico.ObterPorId(id);
-            return Ok(usuario);
+
+            var recurso = new Recurso<UsuarioLeituraDto>
+            {
+                Dados = usuario,
+                Links = CriarLinks(usuario)
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return BadRequest("Dados de requisição inválidos");
         }
         catch (ExcecaoEntidadeNaoEncontrada ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return NotFound($"Nenhum usuário encontrado para o id {id}");
         }
         catch (Exception ex)
@@ -95,16 +112,23 @@ public class UsuarioControlador : ControllerBase
     /// 400 Bad Request se os dados fornecidos forem inválidos.
     /// 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// </returns>
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [HttpPost(Name = nameof(CriarUsuario))]
+    [ProducesResponseType(typeof(Recurso<UsuarioLeituraDto>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<UsuarioLeituraDto>> CriarUsuario([FromBody] UsuarioCriarDto dto)
+    public async Task<ActionResult<Recurso<UsuarioLeituraDto>>> CriarUsuario([FromBody] UsuarioCriarDto dto)
     {
         try
         {
             var usuario = await _servico.Criar(dto);
-            return CreatedAtAction(nameof(ObterUsuarioPorId), new { id = usuario.IdUsuario }, usuario);
+
+            var recurso = new Recurso<UsuarioLeituraDto>
+            {
+                Dados = usuario,
+                Links = CriarLinks(usuario)
+            };
+
+            return CreatedAtAction(nameof(ObterUsuarioPorId), new { id = usuario.IdUsuario }, recurso);
         }
         catch (ExcecaoBancoDados ex)
         {
@@ -131,29 +155,35 @@ public class UsuarioControlador : ControllerBase
     /// 400 Bad Request se os dados fornecidos forem inválidos.
     /// 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// </returns>
-    [HttpPut("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("{id:int}", Name = nameof(AtualizarUsuario))]
+    [ProducesResponseType(typeof(Recurso<UsuarioLeituraDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<UsuarioLeituraDto>> AtualizarUsuario(int id, [FromBody] UsuarioAtualizarDto dto)
+    public async Task<ActionResult<Recurso<UsuarioLeituraDto>>> AtualizarUsuario(int id, [FromBody] UsuarioAtualizarDto dto)
     {
         try
         {
             var usuario = await _servico.Atualizar(id, dto);
-            
-            return Ok(usuario);
+
+            var recurso = new Recurso<UsuarioLeituraDto>
+            {
+                Dados = usuario,
+                Links = CriarLinks(usuario)
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            return BadRequest("Dados da requisição inválidos.");
+            return BadRequest("Dados de requisição inválidos.");
         }
         catch (ExcecaoEntidadeNaoEncontrada ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return NotFound($"Nenhum usuário encontrado para o id {id}");
         }
         catch (Exception ex)
@@ -174,7 +204,7 @@ public class UsuarioControlador : ControllerBase
     /// 400 Bad Request se os dados fornecidos forem inválido
     /// 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// </returns>
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}", Name = nameof(DeletarUsuario))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -184,13 +214,13 @@ public class UsuarioControlador : ControllerBase
         try
         {
             await _servico.Remover(id);
-            
+
             return NoContent();
         }
         catch (ExcecaoDominio ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
         catch (ExcecaoEntidadeNaoEncontrada ex)
@@ -202,7 +232,7 @@ public class UsuarioControlador : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return  Problem("Erro interno do servidor.");
         }
     }
@@ -216,7 +246,7 @@ public class UsuarioControlador : ControllerBase
     /// 401 Unauthorized se a autenticação falhar.
     /// 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// </returns>
-    [HttpPost("login")]
+    [HttpPost("login", Name = nameof(Login))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -247,5 +277,18 @@ public class UsuarioControlador : ControllerBase
             return Problem("Erro interno do servidor.");
         }
         
+    }
+
+    private List<Link> CriarLinks(UsuarioLeituraDto usuario)
+    {
+        var links = new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(ObterUsuarioPorId), new { id = usuario.IdUsuario }) ?? string.Empty, Method = "GET" },
+            new Link { Rel = "update", Href = Url.Link(nameof(AtualizarUsuario), new { id = usuario.IdUsuario }) ?? string.Empty, Method = "PUT" },
+            new Link { Rel = "delete", Href = Url.Link(nameof(DeletarUsuario), new { id = usuario.IdUsuario }) ?? string.Empty, Method = "DELETE" },
+            new Link { Rel = "collection", Href = Url.Link(nameof(ListarUsuarios), null) ?? string.Empty, Method = "GET" }
+        };
+
+        return links;
     }
 }

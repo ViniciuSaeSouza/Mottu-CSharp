@@ -2,6 +2,7 @@
 using Aplicacao.Servicos;
 using Dominio.Excecao;
 using Microsoft.AspNetCore.Mvc;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores;
 
@@ -27,16 +28,26 @@ public class PatioControlador : ControllerBase
     /// 200 OK se os pátios forem encontrados.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet(Name = nameof(GetPatios))]
+    [ProducesResponseType(typeof(Recurso<IEnumerable<PatioLeituraDto>>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<PatioLeituraDto>>> GetPatios()
+    public async Task<ActionResult<Recurso<IEnumerable<PatioLeituraDto>>>> GetPatios()
     {
         try
         {
             var patios = await _patioServico.ObterTodos();
-            
-            return Ok(patios);
+
+            var recurso = new Recurso<IEnumerable<PatioLeituraDto>>
+            {
+                Dados = patios,
+                Links = new List<Link>
+                {
+                    new Link { Rel = "self", Href = Url.Link(nameof(GetPatios), null) ?? string.Empty, Method = "GET" },
+                    new Link { Rel = "create", Href = Url.Link(nameof(CriarPatio), null) ?? string.Empty, Method = "POST" }
+                }
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
@@ -47,7 +58,7 @@ public class PatioControlador : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return Problem("Erro interno do servidor.");
         }
     }
@@ -65,23 +76,29 @@ public class PatioControlador : ControllerBase
     /// 404 Not Found em caso de pátio não encontrado.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("{id}", Name = nameof(GetPatio))]
+    [ProducesResponseType(typeof(Recurso<PatioLeituraDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PatioLeituraDto>> GetPatio(int id)
+    public async Task<ActionResult<Recurso<PatioLeituraDto>>> GetPatio(int id)
     {
         try
         {
             var patio = await _patioServico.ObterPorId(id);
-            
-            return Ok(patio);
+
+            var recurso = new Recurso<PatioLeituraDto>
+            {
+                Dados = patio,
+                Links = CriarLinks(patio)
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return BadRequest("Dados de requisição inválidos.");
         }
         catch (ExcecaoEntidadeNaoEncontrada ex)
@@ -93,7 +110,7 @@ public class PatioControlador : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return Problem("Erro interno do servidor.");    
         }
     }
@@ -110,17 +127,23 @@ public class PatioControlador : ControllerBase
     /// 400 se o objeto patioCreateDto não for passado corretamente no corpo.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [HttpPost(Name = nameof(CriarPatio))]
+    [ProducesResponseType(typeof(Recurso<PatioLeituraDto>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PatioLeituraDto>> CriarPatio([FromBody] PatioCriarDto patioCreateDto)
+    public async Task<ActionResult<Recurso<PatioLeituraDto>>> CriarPatio([FromBody] PatioCriarDto patioCreateDto)
     {
         try
         {
             var patio = await _patioServico.Criar(patioCreateDto);
-            
-            return CreatedAtAction(nameof(GetPatio), new { id = patio.Id }, patio);
+
+            var recurso = new Recurso<PatioLeituraDto>
+            {
+                Dados = patio,
+                Links = CriarLinks(patio)
+            };
+
+            return CreatedAtAction(nameof(GetPatio), new { id = patio.Id }, recurso);
         }
         catch (ExcecaoDominio ex)
         {
@@ -131,7 +154,7 @@ public class PatioControlador : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return Problem("Erro interno do servidor.");
         }
     }
@@ -148,8 +171,8 @@ public class PatioControlador : ControllerBase
     /// 400 Bad Request se o objeto patioUpdateDto não for passado corretamente no corpo.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpPatch("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPatch("{id}", Name = nameof(PatchPatio))]
+    [ProducesResponseType(typeof(Recurso<PatioLeituraDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -158,8 +181,14 @@ public class PatioControlador : ControllerBase
         try
         {
             var patioAtualizado = await _patioServico.Atualizar(id, patioUpdateDto);
-            
-            return Ok(patioAtualizado);
+
+            var recurso = new Recurso<PatioLeituraDto>
+            {
+                Dados = patioAtualizado,
+                Links = CriarLinks(patioAtualizado)
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
@@ -176,7 +205,7 @@ public class PatioControlador : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
+
             return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
         }
     }
@@ -193,7 +222,7 @@ public class PatioControlador : ControllerBase
     /// Retorna 400 Bad Request se o ID for inválido (não for um número inteiro).
     /// 500 em caso de erro.
     /// </returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}", Name = nameof(DeletaPatio))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -203,7 +232,7 @@ public class PatioControlador : ControllerBase
         try
         {
             await _patioServico.Remover(id);
-            
+
             return NoContent();
         }
         catch (ExcecaoDominio ex)
@@ -224,5 +253,19 @@ public class PatioControlador : ControllerBase
             
             return  Problem("Erro interno do servidor");
         }
+    }
+}
+
+    private List<Link> CriarLinks(PatioLeituraDto patio)
+    {
+        var links = new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(GetPatio), new { id = patio.Id }) ?? string.Empty, Method = "GET" },
+            new Link { Rel = "update", Href = Url.Link(nameof(PatchPatio), new { id = patio.Id }) ?? string.Empty, Method = "PATCH" },
+            new Link { Rel = "delete", Href = Url.Link(nameof(DeletaPatio), new { id = patio.Id }) ?? string.Empty, Method = "DELETE" },
+            new Link { Rel = "collection", Href = Url.Link(nameof(GetPatios), null) ?? string.Empty, Method = "GET" }
+        };
+
+        return links;
     }
 }

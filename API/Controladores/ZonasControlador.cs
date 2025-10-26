@@ -1,5 +1,6 @@
 ﻿using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores;
 
@@ -18,12 +19,8 @@ public class ZonasControlador : ControllerBase
     /// <summary>
     /// Obtém a lista de zonas disponíveis.
     /// </summary>
-    /// <returns>
-    /// Uma lista de objetos representando as zonas, cada um contendo um Id e um Nome.
-    /// Em caso de erro, retorna um status 500 com uma mensagem de erro.
-    /// </returns>
-    [HttpGet]
-    [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
+    [HttpGet(Name = nameof(ObterZonas))]
+    [ProducesResponseType(typeof(Recurso<IEnumerable<object>>), StatusCodes.Status200OK)]
     [ProducesResponseType(statusCode: StatusCodes.Status500InternalServerError)]
     public ActionResult<IEnumerable<object>> ObterZonas()
     {
@@ -31,10 +28,19 @@ public class ZonasControlador : ControllerBase
         {
             var zonas = Enum.GetValues(typeof(ZonaEnum))
                 .Cast<ZonaEnum>()
-                .Select(z => new { Id = z, Nome = z.ToString() })
+                .Select(z => new { Id = (int)z, Nome = z.ToString() })
                 .ToList();
 
-            return Ok(zonas);
+            var recurso = new Recurso<IEnumerable<object>>
+            {
+                Dados = zonas,
+                Links = new List<Link>
+                {
+                    new Link { Rel = "self", Href = Url.Link(nameof(ObterZonas), null) ?? string.Empty, Method = "GET" }
+                }
+            };
+
+            return Ok(recurso);
 
         }
         catch (Exception ex)
