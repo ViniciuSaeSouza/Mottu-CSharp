@@ -1,4 +1,5 @@
-﻿using Aplicacao.DTOs.Moto;
+﻿using Aplicacao.Abstracoes;
+using Aplicacao.DTOs.Moto;
 using Aplicacao.Validacoes;
 using Dominio.Enumeradores;
 using Dominio.Excecao;
@@ -45,7 +46,11 @@ namespace Aplicacao.Servicos
         }
 
         public async Task<MotoLeituraDto> ObterPorId(int id)
-            => MapearParaDto(await ObterMotoOuLancar(id));
+        {
+           var motoDto =  MapearParaDto(await ObterMotoOuLancar(id));
+           
+           return motoDto;
+        }
 
         public async Task<MotoLeituraDto> Criar(MotoCriarDto dto)
         {
@@ -103,7 +108,8 @@ namespace Aplicacao.Servicos
 
             if (dto.Modelo != null)
             {
-                moto.AlterarModelo(modelo: dto.Modelo);
+                moto.Modelo = dto.Modelo.Value;
+                ValidarModelo(dto.Modelo.ToString()!);
             }
 
             if (dto.Zona != null)
