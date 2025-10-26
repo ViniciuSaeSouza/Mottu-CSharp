@@ -8,6 +8,13 @@ namespace API.Controladores;
 [Tags("Zonas")]
 public class ZonasControlador : ControllerBase  
 {
+    private readonly ILogger<ZonasControlador> _logger;
+
+    public ZonasControlador(ILogger<ZonasControlador>  logger)
+    {
+        _logger = logger;
+    }
+    
     /// <summary>
     /// Obtém a lista de zonas disponíveis.
     /// </summary>
@@ -32,8 +39,9 @@ public class ZonasControlador : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Erro ao listar zonas: " + ex.StackTrace);
-            return StatusCode(statusCode: 500, value: new { mensagem = "Ocorreu um erro ao listar as zonas.", detalhes = ex.Message });
+            _logger.LogError(ex, ex.Message);
+
+            return Problem("Erro interno do servidor");
         }
     }
 }

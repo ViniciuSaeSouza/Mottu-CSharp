@@ -2,6 +2,8 @@
 using Aplicacao.Servicos;
 using Dominio.Excecao;
 using Microsoft.AspNetCore.Mvc;
+using Aplicacao.Abstracoes;
+using Dominio.Interfaces;
 
 namespace API.Controladores;
 
@@ -11,36 +13,44 @@ namespace API.Controladores;
 public class CarrapatoControlador : ControllerBase
 {
     private readonly CarrapatoServico _servico;
+    private readonly ILogger<CarrapatoControlador> _logger;
 
-    public CarrapatoControlador(CarrapatoServico servico)
+    public CarrapatoControlador(CarrapatoServico servico, ILogger<CarrapatoControlador>  logger)
     {
         _servico = servico;
+        _logger = logger;
     }
 
     /// <summary>
-    /// Lista todos os carrapatos cadastrados.
+    /// Lista todos os carrapatos cadastrados (paginado).
     /// </summary>
-    /// <returns>Retorna 200 OK com a lista de carrapatos, 500 Internal Server Error ou 503 Service Unavailable em caso de erro.</returns>
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    /// <param name="pagina">Número da página (padrão: 1).</param>
+    /// <param name="tamanhoPagina">Tamanho da página (padrão: 10).</param>
+    /// <returns>
+    /// 200 OK com a página de carrapatos e links HATEOAS.
+    /// </returns>
+    [HttpGet(Name = nameof(GetTodos))]
+    [ProducesResponseType(typeof(Recurso<IResultadoPaginado<CarrapatoLeituraDto>>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<CarrapatoLeituraDto>>> GetTodos()
+    public async Task<ActionResult<Recurso<IResultadoPaginado<CarrapatoLeituraDto>>>> GetTodos([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
     {
         try
         {
-            var carrapatos = await _servico.ObterTodos();
-            return Ok(carrapatos);
-        }
-        catch (ExcecaoBancoDados ex)
-        {
-            Console.WriteLine($"Falha ao buscar carrapatos: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            var carrapatos = await _servico.ObterTodosPaginado(pagina, tamanhoPagina);
+
+            var recurso = new Recurso<IResultadoPaginado<CarrapatoLeituraDto>>
+            {
+                Dados = carrapatos,
+                Links = this.CriarLinksPaginados(carrapatos, tamanhoPagina, pagina)
+            };
+
+            return Ok(recurso);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro interno: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno ao buscar carrapatos");
+            _logger.LogError(ex, ex.Message);
+
+            return Problem("Erro interno do servidor.");
         }
     }
 
@@ -49,31 +59,40 @@ public class CarrapatoControlador : ControllerBase
     /// </summary>
     /// <param name="id">Id do carrapato</param>
     /// <returns>Retorna 200 OK com o carrapato, 404 Not Found se não existir, 500 ou 503 em caso de erro.</returns>
-    [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("{id}", Name = nameof(GetPorId))]
+    [ProducesResponseType(typeof(Recurso<CarrapatoLeituraDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<CarrapatoLeituraDto>> GetPorId(int id)
+    public async Task<ActionResult<Recurso<CarrapatoLeituraDto>>> GetPorId(int id)
     {
         try
         {
             var carrapato = await _servico.ObterPorId(id);
-            return Ok(carrapato);
+
+            var recurso = new Recurso<CarrapatoLeituraDto>
+            {
+                Dados = carrapato,
+                Links = this.CriarLinks(carrapato)
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoEntidadeNaoEncontrada)
         {
             return NotFound();
         }
-        catch (ExcecaoBancoDados ex)
+        catch (ExcecaoDominio ex)
         {
-            Console.WriteLine($"Falha ao buscar carrapato: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest($"Dados da requisição inválidos: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro interno: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno ao buscar carrapato");
+            _logger.LogError(ex, ex.Message);
+
+            return Problem("Erro interno do servidor.");
         }
     }
 
@@ -81,27 +100,44 @@ public class CarrapatoControlador : ControllerBase
     /// Cria um novo carrapato.
     /// </summary>
     /// <param name="dto">Dados para criação do carrapato</param>
-    /// <returns>Retorna 201 Created com o carrapato criado, 500 ou 503 em caso de erro.</returns>
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    /// <remarks>
+    /// Exemplo de payload:
+    /// <example>
+    /// {
+    ///   "nome": "Carrapato A",
+    ///   "descricao": "Exemplo de carrapato"
+    /// }
+    /// </example>
+    /// </remarks>
+    [HttpPost(Name = nameof(Criar))]
+    [ProducesResponseType(typeof(Recurso<CarrapatoLeituraDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<CarrapatoLeituraDto>> Criar([FromBody] CarrapatoCriarDto dto)
+    public async Task<ActionResult<Recurso<CarrapatoLeituraDto>>> Criar([FromBody] CarrapatoCriarDto dto)
     {
         try
         {
             var criado = await _servico.Criar(dto);
-            return CreatedAtAction(nameof(GetPorId), new { id = criado.Id }, criado);
+
+            var recurso = new Recurso<CarrapatoLeituraDto>
+            {
+                Dados = criado,
+                Links = this.CriarLinks(criado)
+            };
+
+            return CreatedAtAction(nameof(GetPorId), new { id = criado.Id }, recurso);
         }
-        catch (ExcecaoBancoDados ex)
+        catch (ExcecaoDominio ex)
         {
-            Console.WriteLine($"Falha ao criar carrapato: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest($"Dados da requisição inválidos: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro interno: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno ao criar carrapato");
+            _logger.LogError(ex, ex.Message);
+
+            return Problem(ex.Message);
         }
     }
 
@@ -110,32 +146,51 @@ public class CarrapatoControlador : ControllerBase
     /// </summary>
     /// <param name="id">Id do carrapato</param>
     /// <param name="dto">Dados para atualização</param>
-    /// <returns>Retorna 200 OK com o carrapato atualizado, 404 Not Found se não existir, 500 ou 503 em caso de erro.</returns>
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    /// <remarks>
+    /// Exemplo de payload para atualização:
+    /// <example>
+    /// {
+    ///   "nome": "Carrapato Atualizado",
+    ///   "descricao": "Descrição atualizada"
+    /// }
+    /// </example>
+    /// </remarks>
+    [HttpPut("{id}", Name = nameof(Atualizar))]
+    [ProducesResponseType(typeof(Recurso<CarrapatoLeituraDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<CarrapatoLeituraDto>> Atualizar(int id, [FromBody] CarrapatoCriarDto dto)
+    public async Task<ActionResult<Recurso<CarrapatoLeituraDto>>> Atualizar(int id, [FromBody] CarrapatoCriarDto dto)
     {
         try
         {
-            var atualizado = await _servico.Atualizar(id, dto);
-            return Ok(atualizado);
+            var carrapatoAtualizado = await _servico.Atualizar(id, dto);
+
+            var recurso = new Recurso<CarrapatoLeituraDto>
+            {
+                Dados = carrapatoAtualizado,
+                Links = this.CriarLinks(carrapatoAtualizado)
+            };
+
+            return Ok(recurso);
         }
-        catch (ExcecaoEntidadeNaoEncontrada)
+        catch (ExcecaoEntidadeNaoEncontrada ex)
         {
-            return NotFound();
+            _logger.LogError(ex, ex.Message);
+
+            return NotFound($"Não foi possível encontrar nenhum carrapato para o id {id}");
         }
-        catch (ExcecaoBancoDados ex)
+        catch (ExcecaoDominio ex)
         {
-            Console.WriteLine($"Falha ao atualizar carrapato: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest($"Dados da requisição inválidos: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro interno: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno ao atualizar carrapato");
+            _logger.LogError(ex, ex.Message);
+
+            return Problem("Erro interno do servidor.");
         }
     }
 
@@ -143,29 +198,75 @@ public class CarrapatoControlador : ControllerBase
     /// Remove um carrapato pelo id.
     /// </summary>
     /// <param name="id">Id do carrapato</param>
-    /// <returns>Retorna 204 No Content se removido, 404 Not Found se não existir, 500 ou 503 em caso de erro.</returns>
-    [HttpDelete("{id}")]
+    /// <returns>
+    /// Retorna 204 No Content se removido
+    /// 404 Not Found se não existir
+    /// 500 em caso de erro.
+    /// </returns>
+    [HttpDelete("{id}", Name = nameof(Remover))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Remover(int id)
     {
         try
         {
-            var removido = await _servico.Remover(id);
-            if (!removido) return NotFound();
+            await _servico.Remover(id);
+
             return NoContent();
         }
-        catch (ExcecaoBancoDados ex)
+        catch (ExcecaoDominio ex)
         {
-            Console.WriteLine($"Falha ao remover carrapato: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de banco de dados indisponível");
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest($"Dados da requisição inválidos: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro interno: {ex.Message}\n{ex.StackTrace}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno ao remover carrapato");
+            _logger.LogError(ex, ex.Message);
+
+            return Problem("Erro interno do servidor.");
         }
     }
+
+    private List<Link> CriarLinks(CarrapatoLeituraDto carrapato)
+    {
+        var links = new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(GetPorId), new { id = carrapato.Id }) ?? string.Empty, Method = "GET" },
+            new Link { Rel = "update", Href = Url.Link(nameof(Atualizar), new { id = carrapato.Id }) ?? string.Empty, Method = "PUT" },
+            new Link { Rel = "delete", Href = Url.Link(nameof(Remover), new { id = carrapato.Id }) ?? string.Empty, Method = "DELETE" },
+            new Link { Rel = "collection", Href = Url.Link(nameof(GetTodos), null) ?? string.Empty, Method = "GET" }
+        };
+
+        return links;
+    }
+
+    private List<Link> CriarLinksPaginados(IResultadoPaginado<CarrapatoLeituraDto> carrapatosPaginados, int tamanho, int pagina)
+    {
+        var links = new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(GetTodos), new { pagina, tamanhoPagina = tamanho }) ?? string.Empty, Method = "GET" },
+            new Link { Rel = "first", Href = Url.Link(nameof(GetTodos), new { pagina = 1, tamanhoPagina = tamanho }) ?? string.Empty, Method = "GET" }
+        };
+
+        var paginaAtual = carrapatosPaginados.Pagina;
+        var totalPaginas = carrapatosPaginados.TotalPaginas;
+
+        if (paginaAtual < totalPaginas)
+        {
+            links.Add(new Link { Rel = "next", Href = Url.Link(nameof(GetTodos), new { pagina = paginaAtual + 1, tamanhoPagina = tamanho }) ?? string.Empty, Method = "GET" });
+        }
+
+        if (paginaAtual > 1)
+        {
+            links.Add(new Link { Rel = "prev", Href = Url.Link(nameof(GetTodos), new { pagina = paginaAtual - 1, tamanhoPagina = tamanho }) ?? string.Empty, Method = "GET" });
+        }
+
+        links.Add(new Link { Rel = "last", Href = Url.Link(nameof(GetTodos), new { pagina = totalPaginas, tamanhoPagina = tamanho }) ?? string.Empty, Method = "GET" });
+
+        return links;
+    }
 }
+
+

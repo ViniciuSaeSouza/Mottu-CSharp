@@ -89,7 +89,7 @@ public class MotoRepositorio : IMotoRepositorio
         }
     }
 
-    public async Task<IResultadoPaginado<Moto>> ObterTodosPaginado(int pagina, int tamanhoPagina)
+    public async Task<IResultadoPaginado<Moto>> ObterTodosPaginado(int pagina, int tamanho)
     {
         
         var consulta = _contexto.Motos
@@ -99,15 +99,15 @@ public class MotoRepositorio : IMotoRepositorio
 
         var totalMotos = await consulta.CountAsync();
         var motos = await consulta
-            .Skip((pagina - 1) * tamanhoPagina)
-            .Take(tamanhoPagina)
+            .Skip((pagina - 1) * tamanho)
+            .Take(tamanho)
             .ToListAsync();
 
         var motosPaginadas = new ResultadoPaginado<Moto>
         {
             ContagemTotal = totalMotos,
             Pagina = pagina,
-            TamanhoPagina = tamanhoPagina,
+            TamanhoPagina = tamanho,
             Items = motos
         };
         
