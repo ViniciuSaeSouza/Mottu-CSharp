@@ -30,13 +30,13 @@ public class CarrapatoServico
         var carrapatosPaginadosDto = new ResultadoPaginado<CarrapatoLeituraDto>
         {
             ContagemTotal = carrapatosPaginados.ContagemTotal,
-            
+
             Pagina = carrapatosPaginados.Pagina,
-            
+
             Items = carrapatosPaginados.Items.Select(MapearParaDto).ToList(),
-            
+
             TamanhoPagina = carrapatosPaginados.TamanhoPagina,
-        }
+        };
 
         return carrapatosPaginadosDto;
     }

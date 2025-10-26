@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile> <!--Adicionado depois, habilita a geração de documentação XML do swagger.-->
+		<NoWarn>1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

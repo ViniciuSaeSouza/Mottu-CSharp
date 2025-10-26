@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Aplicacao.Abstracoes;
+﻿using Aplicacao.Abstracoes;
 using Aplicacao.DTOs.Moto;
 using Aplicacao.Servicos;
 using Dominio.Excecao;

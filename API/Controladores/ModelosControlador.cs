@@ -1,8 +1,8 @@
 ﻿using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores;
-
 
 [ApiController]
 [Route("api/modelos-moto")]
@@ -16,7 +16,6 @@ public class ModelosControlador : ControllerBase
         _logger = logger;
     }
     
-    
     /// <summary>
     /// Lista todos os modelos de moto disponíveis.
     /// </summary>
@@ -25,9 +24,9 @@ public class ModelosControlador : ControllerBase
     /// 200 em caso de sucesso
     /// 500 em caso de erro.
     /// </returns>
-    [HttpGet]
-    [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
-    [ProducesResponseType(statusCode: StatusCodes.Status500InternalServerError)]
+    [HttpGet(Name = nameof(Listar))]
+    [ProducesResponseType(typeof(Recurso<IEnumerable<object>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult Listar()
     {
         try
@@ -37,7 +36,16 @@ public class ModelosControlador : ControllerBase
                 .Cast<ModeloMotoEnum>()
                 .Select(m => new { id = (int)m, nome = m.ToString() });
 
-            return Ok(modelos);
+            var recurso = new Recurso<IEnumerable<object>>
+            {
+                Dados = modelos,
+                Links = new List<Link>
+                {
+                    new Link { Rel = "self", Href = Url.Link(nameof(Listar), null) ?? string.Empty, Method = "GET" }
+                }
+            };
+
+            return Ok(recurso);
         }
         catch (Exception ex)
         {
