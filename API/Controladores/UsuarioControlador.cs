@@ -201,7 +201,7 @@ public class UsuarioControlador : ControllerBase
     /// <returns>
     /// 204 No Content se o usuário for removido com sucesso.
     /// 404 Not Found se o usuário com o ID fornecido não for encontrado.
-    /// 400 Bad Request se os dados fornecidos forem inválido
+    /// 400 Bad Request se os dados fornecidos forem inválidos
     /// 500 Internal Server Error se ocorrer um erro interno no servidor.
     /// </returns>
     [HttpDelete("{id:int}", Name = nameof(DeletarUsuario))]
