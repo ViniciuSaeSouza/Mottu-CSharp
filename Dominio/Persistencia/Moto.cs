@@ -8,7 +8,7 @@ public class Moto
     public int Id { get; private set; }
     public string Placa { get; private set; }
     public string Chassi { get; private set; }
-    public ModeloMotoEnum Modelo { get; set; }
+    public ModeloMotoEnum Modelo { get; private set; }
     public ZonaEnum Zona { get; set; }
     public int IdPatio { get; set; }
     public Patio Patio { get; set; }
