@@ -137,7 +137,7 @@ public class CarrapatoControlador : ControllerBase
         {
             _logger.LogError(ex, ex.Message);
 
-            return Problem(ex.Message);
+            return Problem("Erro interno do servidor.");
         }
     }
 
