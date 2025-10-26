@@ -7,26 +7,31 @@ using Infraestrutura.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using API.Saude;
 using Aplicacao.Servicos.Mottu;
 using Dominio.Interfaces.Mottu;
-using Dominio.Persistencia.Mottu;
+using HealthChecks.UI.Client;
 using Infraestrutura.Repositorios.Mottu;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 // TODO: adicionar logica de vinculo usuario patio
 // TODO: adicionar logica de moto com patio
 // TODO: adicionar logica de moto com carrapato
 // TODO: adicionar logica de carrapato com patio
-// 
-
 
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = "";
+
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddHealthChecks();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
@@ -50,7 +55,7 @@ builder.Services.AddSwaggerGen(swagger =>
 
 try
 {
-    var connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle") ??
+    connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle") ??
                            builder.Configuration.GetConnectionString("Oracle");
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseOracle(connectionString));
@@ -67,13 +72,20 @@ builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
 builder.Services.AddScoped<IRepositorioUsuario, UsuarioRepositorio>();
 builder.Services.AddScoped<IRepositorioCarrapato, CarrapatoRepositorio>();
 
-
 // Injeção de serviços
 builder.Services.AddScoped<MotoServico>();
 builder.Services.AddScoped<PatioServico>();
 builder.Services.AddScoped<MotoMottuServico>();
 builder.Services.AddScoped<UsuarioServico>();
 builder.Services.AddScoped<CarrapatoServico>();
+
+// HealthCheck
+builder.Services.AddHealthChecks()
+    .AddOracle(
+        connectionString: connectionString,
+        name: "Oracle",
+        tags: new[] { "ready", "oracle-database" })
+    .AddCheck<CarrapatoHealthCheck>("carrapato_repositorio", tags: new[] { "ready" });
 
 var app = builder.Build();
 
@@ -88,6 +100,21 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseHttpsRedirection();
+
+
+// Liveness: retorna 200 so se o app estiver rodando
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false, // sem check de dependencia, so liveness
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+// Readiness: verifica dependencias com tag "ready"
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = registration => registration.Tags.Contains("ready"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseAuthorization();
 
