@@ -150,8 +150,8 @@ public class CarrapatoControlador : ControllerBase
     /// Exemplo de payload para atualização:
     /// <example>
     /// {
-    ///   "nome": "Carrapato Atualizado",
-    ///   "descricao": "Descrição atualizada"
+    ///   "CodigoSerial": "ABC123XYZ",
+    ///   "IdPatio": 42
     /// }
     /// </example>
     /// </remarks>
