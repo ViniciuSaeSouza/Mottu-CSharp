@@ -7,6 +7,7 @@ using Infraestrutura.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using API;
 using API.Saude;
 using Aplicacao.Servicos.Mottu;
 using Dominio.Interfaces.Mottu;
@@ -14,6 +15,12 @@ using HealthChecks.UI.Client;
 using Infraestrutura.Repositorios.Mottu;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 // TODO: adicionar logica de vinculo usuario patio
 // TODO: adicionar logica de moto com patio
@@ -28,28 +35,49 @@ string? connectionString = null;
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Versão da API
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader(); // usa segmento /v{version}/
+});
+
+// Explorer para versões (necessário para o Swagger)
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV"; // ex: v1, v1.0
+    options.SubstituteApiVersionInUrl = true;
+});
+
+// Registrar configurador que cria um SwaggerDoc por versão
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
+// Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddHealthChecks();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
-    swagger.SwaggerDoc("v2", new OpenApiInfo
-    {
-        Title = "API de filiais e motos Mottu",
-        Version = "v2",
-        Description = "API para gerenciar filiais e motos da Mottu nos pátios",
-        Contact = new OpenApiContact
-        {
-            Name = "Prisma.Code",
-            Email = "prismacode3@gmail.com"
-        },
-    });
-
+    // XML comments
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     swagger.IncludeXmlComments(xmlPath);
+
+    // Inclui controllers nas docs corretas por versão
+    swagger.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        // Use the ApiExplorer-assigned GroupName (e.g. "v1") to decide which actions belong to each Swagger doc.
+        // apiDesc.GroupName is populated by the VersionedApiExplorer when AddVersionedApiExplorer is registered.
+        if (!string.IsNullOrEmpty(apiDesc.GroupName))
+            return string.Equals(apiDesc.GroupName, docName, StringComparison.OrdinalIgnoreCase);
+
+        // If no group name is present, include the endpoint only in the default doc (optional).
+        return false;
+    });
 });
 
 
@@ -85,7 +113,9 @@ builder.Services.AddHealthChecks()
         connectionString: connectionString,
         name: "Oracle",
         tags: new[] { "ready", "oracle-database" })
-    .AddCheck<CarrapatoHealthCheck>("carrapato_repositorio", tags: new[] { "ready" });
+    .AddCheck<CarrapatoHealthCheck>(
+        "carrapato_repositorio",
+        tags: new[] { "ready" });
 
 var app = builder.Build();
 
@@ -93,9 +123,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
+
+    // mostra todas as versões do Swagger dinamicamente
+    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"API de filiais e motos Mottu {description.GroupName}");
+        }
     });
 }
 
