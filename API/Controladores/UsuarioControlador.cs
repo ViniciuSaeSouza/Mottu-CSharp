@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controladores;
 
 [ApiController]
-[Route("api/usuarios")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/usuarios")]
 [Tags("Usuários")]
 public class UsuarioControlador : ControllerBase
 {

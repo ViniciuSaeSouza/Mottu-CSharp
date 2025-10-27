@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controladores;
 
-[Route("api/motos")]
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/motos")]
 [Tags("Motos")]
 public class MotosControlador : ControllerBase
 {
