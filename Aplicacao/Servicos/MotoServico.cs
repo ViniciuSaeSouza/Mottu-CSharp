@@ -47,9 +47,7 @@ namespace Aplicacao.Servicos
 
         public async Task<MotoLeituraDto> ObterPorId(int id)
         {
-           var motoDto =  MapearParaDto(await ObterMotoOuLancar(id));
-           
-           return motoDto;
+            return MapearParaDto(await ObterMotoOuLancar(id));
         }
 
         public async Task<MotoLeituraDto> Criar(MotoCriarDto dto)
