@@ -1,4 +1,5 @@
-﻿using Aplicacao.DTOs.Moto;
+﻿using Aplicacao.Abstracoes;
+using Aplicacao.DTOs.Moto;
 using Aplicacao.Validacoes;
 using Dominio.Enumeradores;
 using Dominio.Excecao;
@@ -45,7 +46,9 @@ namespace Aplicacao.Servicos
         }
 
         public async Task<MotoLeituraDto> ObterPorId(int id)
-            => MapearParaDto(await ObterMotoOuLancar(id));
+        {
+            return MapearParaDto(await ObterMotoOuLancar(id));
+        }
 
         public async Task<MotoLeituraDto> Criar(MotoCriarDto dto)
         {

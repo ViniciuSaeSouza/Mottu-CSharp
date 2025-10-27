@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Infraestrutura\Infraestrutura.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.Oracle" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.10" />
+  </ItemGroup>
+
 </Project>

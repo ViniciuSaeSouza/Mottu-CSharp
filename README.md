@@ -33,6 +33,91 @@ A solução foi estruturada seguindo os princípios da Clean Architecture e Doma
 - Respostas HTTP padronizadas (200, 201, 204, 400, 401, 404, 500, 503).
 - Uso de DTOs para entrada e saída de dados.
 - Injeção de dependência e separação por camadas.
+- **Health Checks para monitoramento de saúde da aplicação e banco de dados.**
+
+---
+
+## 🏥 Health Checks
+
+A API implementa endpoints de health checks para monitoramento da saúde da aplicação, ideal para uso com Kubernetes, Docker, ou qualquer sistema de orquestração.
+
+### Endpoints Disponíveis
+
+#### 1. Health Check Completo
+```
+GET /health
+```
+
+Retorna o status geral da aplicação, incluindo:
+- Conexão com banco de dados Oracle (DbContext)
+- Verificação direta da conexão Oracle
+- Status da API
+
+**Resposta de Sucesso (200 OK):**
+```json
+{
+  "status": "Healthy",
+  "totalDuration": "00:00:00.1234567",
+  "entries": {
+    "oracle-db": {
+      "status": "Healthy",
+      "duration": "00:00:00.0567890",
+      "tags": ["db", "oracle", "database"]
+    },
+    "oracle-connection": {
+      "status": "Healthy",
+      "duration": "00:00:00.0456789",
+      "tags": ["db", "oracle", "sql"]
+    },
+    "api-health": {
+      "status": "Healthy",
+      "description": "API está funcionando corretamente",
+      "duration": "00:00:00.0001234",
+      "tags": ["api", "ready"]
+    }
+  }
+}
+```
+
+**Resposta de Falha (503 Service Unavailable):**
+```json
+{
+  "status": "Unhealthy",
+  "totalDuration": "00:00:05.1234567",
+  "entries": {
+    "oracle-db": {
+      "status": "Unhealthy",
+      "description": "Cannot connect to database",
+      "duration": "00:00:05.0567890",
+      "exception": "Oracle.ManagedDataAccess.Client.OracleException: ...",
+      "tags": ["db", "oracle", "database"]
+    }
+  }
+}
+```
+
+#### 2. Readiness Check
+```
+GET /health/ready
+```
+
+Verifica se a aplicação está pronta para receber tráfego. Valida todas as dependências críticas (banco de dados, serviços externos, etc.).
+
+**Uso:** Utilize em `readinessProbe` do Kubernetes ou health checks de load balancers.
+
+**Status Codes:**
+- `200 OK` — Aplicação pronta para receber requisições
+- `503 Service Unavailable` — Aplicação não está pronta (banco de dados indisponível, etc.)
+
+#### 3. Liveness Check
+```
+GET /health/live
+```
+
+Verifica se a aplicação está rodando (não verifica dependências externas). Retorna sempre `200 OK` se o processo estiver ativo.
+
+**Status Codes:**
+- `200 OK` — Aplicação está rodando
 
 ---
 
@@ -425,5 +510,3 @@ Response 200
 - Vinícius Saes de Souza - RM 554456
 
 > “Faça o teu melhor, na condição que você tem, enquanto você não tem condições melhores, para fazer melhor ainda.” — Mario Sergio Cortella
-
-
