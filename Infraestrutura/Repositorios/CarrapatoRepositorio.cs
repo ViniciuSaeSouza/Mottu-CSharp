@@ -31,7 +31,7 @@ public class CarrapatoRepositorio : IRepositorioCarrapato
         }
     }
 
-    public async Task<IResultadoPaginado<Carrapato>> ObterTodosPaginado(int pagina, int totalPaginas)
+    public async Task<IResultadoPaginado<Carrapato>> ObterTodosPaginado(int pagina, int tamanho)
     {
         try
         {
@@ -39,8 +39,8 @@ public class CarrapatoRepositorio : IRepositorioCarrapato
 
             var totalRegistros = await consulta.CountAsync();
             var carrapatos = await consulta
-                .Skip((pagina - 1) * totalPaginas)
-                .Take(totalPaginas)
+                .Skip((pagina - 1) * tamanho)
+                .Take(tamanho)
                 .ToListAsync();
 
             var carrapatosPaginados = new ResultadoPaginado<Carrapato>
@@ -48,7 +48,7 @@ public class CarrapatoRepositorio : IRepositorioCarrapato
                 ContagemTotal = totalRegistros,
                 Pagina = pagina,
                 Items = carrapatos,
-                TamanhoPagina = totalPaginas
+                TamanhoPagina = tamanho
             };
 
             return carrapatosPaginados;
@@ -67,8 +67,7 @@ public class CarrapatoRepositorio : IRepositorioCarrapato
             var carrapatos = await _contexto.Carrapatos.ToListAsync();
 
             var primeiroCarrapatoDisponivel = carrapatos
-                .Where(c => c.StatusDeUso == StatusDeUsoEnum.Disponivel)
-                .FirstOrDefault();
+                .FirstOrDefault(c => c.StatusDeUso == StatusDeUsoEnum.Disponivel);
             return primeiroCarrapatoDisponivel;
 
         }

@@ -10,7 +10,7 @@ namespace Infraestrutura.Contexto
         public AppDbContext CreateDbContext(string[] args)
         {
             // Caminho absoluto para garantir que o arquivo seja encontrado
-            var appSettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "API", "appsettings.development.json");
+            var appSettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "API", "appsettings.json");
             if (!File.Exists(appSettingsPath))
                 throw new FileNotFoundException($"Arquivo de configuração não encontrado: {appSettingsPath}");
 
