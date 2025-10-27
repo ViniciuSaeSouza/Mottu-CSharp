@@ -63,7 +63,6 @@ public class CarrapatoControlador : ControllerBase
     [ProducesResponseType(typeof(Recurso<CarrapatoLeituraDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Recurso<CarrapatoLeituraDto>>> GetPorId(int id)
     {
         try
