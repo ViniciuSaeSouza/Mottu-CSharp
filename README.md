@@ -267,7 +267,7 @@ services:
 
 ## 🧪 Testes e Cobertura
 
-Adicionei um projeto de testes xUnit na solução para a camada de aplicação em `Tests/Aplicacao.Tests`. Atualmente ele contém testes iniciais para o serviço `UsuarioServico` (arquivo `UsuarioServicoTests.cs`), cobrindo o método `AutenticarLogin` — caminho feliz e cenários de erro (email/senha vazios, usuário não encontrado, senha inválida).
+Adicionei um projeto de testes xUnit na solução para a camada de aplicação em `TestsAplicacao.Tests`. Atualmente ele contém apenas o arquivo vazio `UnitTest1.cs` e ainda não possui testes para o serviço `UsuarioServico`.
 
 Objetivo desta seção:
 - Explicar como executar os testes localmente (Windows CMD e Git Bash).
