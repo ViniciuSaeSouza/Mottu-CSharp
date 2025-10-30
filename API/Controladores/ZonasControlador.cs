@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controladores;
 
 [ApiController]
-[Route("api/zonas")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/zonas")]
 [Tags("Zonas")]
 public class ZonasControlador : ControllerBase  
 {
