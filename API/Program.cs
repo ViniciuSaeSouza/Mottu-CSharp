@@ -41,7 +41,7 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
-    options.ApiVersionReader = new UrlSegmentApiVersionReader(); // usa segmento /v{version}/
+    options.ApiVersionReader = new UrlSegmentApiVersionReader(); // usa segmento '/api/v{version}/resource' no padrão das rotas dos controllers
 });
 
 // Explorer para versões (necessário para o Swagger)
