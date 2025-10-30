@@ -251,6 +251,100 @@ Notas:
 
 Acesse o Swagger: http://localhost:8080/swagger
 
+```yaml
+version: "3.8"
+services:
+  mottu:
+    image: saesminerais/mottu:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - Connection__String=Data Source=host.docker.internal:1521/SERVICE;User ID=USUARIO;Password=SENHA
+    restart: unless-stopped
+```
+
+---
+
+## 🧪 Testes e Cobertura
+
+Adicionei um projeto de testes xUnit na solução para a camada de aplicação em `TestsAplicacao.Tests`. Atualmente ele contém apenas o arquivo vazio `UnitTest1.cs` e ainda não possui testes para o serviço `UsuarioServico`.
+
+Objetivo desta seção:
+- Explicar como executar os testes localmente (Windows CMD e Git Bash).
+- Mostrar como coletar cobertura (coverlet) e gerar relatório HTML (reportgenerator).
+- Dar dicas rápidas de troubleshooting quando `dotnet` não for encontrado no terminal.
+
+Pré-requisitos
+- .NET SDK 8 instalado e disponível no PATH.
+- (Opcional) `dotnet-reportgenerator-globaltool` para gerar HTML a partir do arquivo de cobertura.
+
+Executando todos os testes (com coleta de cobertura)
+
+Windows CMD:
+```cmd
+cd C:\caminho\para\seu\repo\CSharp
+dotnet restore
+dotnet test Tests\Aplicacao.Tests\Aplicacao.Tests.csproj --collect:"XPlat Code Coverage"
+```
+
+Git Bash (Linux-like):
+```bash
+cd /c/caminho/para/seu/repo/CSharp
+dotnet restore
+dotnet test Tests/Aplicacao.Tests/Aplicacao.Tests.csproj --collect:"XPlat Code Coverage"
+```
+
+Após a execução, o arquivo de cobertura normalmente é gerado em:
+```
+Tests/Aplicacao.Tests/TestResults/<GUID>/coverage.cobertura.xml
+```
+
+Gerando um relatório HTML legível (reportgenerator)
+1) Instale a ferramenta (uma vez):
+```bash
+dotnet tool install --global dotnet-reportgenerator-globaltool
+# certifique-se que ~/.dotnet/tools esteja no PATH do terminal
+```
+2) Gere o relatório (a partir da raiz do repositório):
+```bash
+reportgenerator -reports:"Tests/Aplicacao.Tests/TestResults/*/coverage.cobertura.xml" -targetdir:"coverage-report" -reporttypes:Html
+```
+3) Abra o relatório no Windows:
+```bash
+cmd.exe /c "start coverage-report\\index.htm"
+# ou abra a pasta coverage-report no Explorer
+explorer.exe coverage-report
+```
+
+Executando um único teste (filtro)
+```cmd
+dotnet test Tests\Aplicacao.Tests\Aplicacao.Tests.csproj --filter "FullyQualifiedName~Aplicacao.Tests.UsuarioServicoTests.AutenticarLogin_Sucesso_RetornaUsuarioDto"
+```
+
+Dicas de troubleshooting
+- Se `dotnet` não for encontrado no Git Bash, verifique:
+```bash
+which dotnet || echo "dotnet not found by which"
+cmd.exe /c "dotnet --info"
+```
+Se `cmd.exe /c "dotnet --info"` funcionar mas `which dotnet` não, adicione `C:\Program Files\dotnet` ao PATH do Git Bash (arquivo `~/.bashrc`):
+```bash
+export PATH="$PATH:/c/Program Files/dotnet"
+export PATH="$PATH:$HOME/.dotnet/tools"  # se usar tools globais
+```
+- Limpar cache NuGet (se ocorrerem erros de restore):
+```cmd
+dotnet nuget locals all --clear
+dotnet restore
+```
+
+Sugestão opcional: integração contínua (GitHub Actions)
+- Recomendo criar um workflow que execute `dotnet test --collect:"XPlat Code Coverage"` e publique o relatório como artifact. Posso gerar um arquivo de workflow pronto se desejar.
+
+Locais relevantes
+- Projeto de testes: `Tests/Aplicacao.Tests/`
+- Testes adicionados: `Tests/Aplicacao.Tests/UsuarioServicoTests.cs`
+
 ---
 
 ## 📑 Exemplos de Uso dos Endpoints
