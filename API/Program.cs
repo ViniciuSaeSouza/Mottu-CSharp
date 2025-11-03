@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Servicos;
-using API.ML;
 using Asp.Versioning;
 using Dominio.Interfaces.Mottu;
 using Infraestrutura.Repositorios.Mottu;
