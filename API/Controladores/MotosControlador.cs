@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
-[Route("api/motos")]
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/motos")]
 [Tags("Motos")]
 [Authorize]
 public class MotosControlador : ControllerBase

@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace API.Controladores;
 
 [ApiController]
-[Route("api/carrapatos")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/carrapatos")]
 [Tags("Carrapatos")]
 [Authorize]
 public class CarrapatoControlador : ControllerBase

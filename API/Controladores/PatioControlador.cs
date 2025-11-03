@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
-[Route("api/patios")]
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/patios")]
 [Tags("Patios")]
 [Authorize]
 public class PatioControlador : ControllerBase

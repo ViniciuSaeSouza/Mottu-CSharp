@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace API.Controladores;
 
 [ApiController]
-[Route("api/zonas")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/zonas")]
 [Tags("Zonas")]
 [AllowAnonymous]
 public class ZonasControlador : ControllerBase  
