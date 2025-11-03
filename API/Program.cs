@@ -196,23 +196,15 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de filiais e motos Mottu v1");
-        c.DefaultModelsExpandDepth(1);
-        c.DisplayRequestDuration();
-    });
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
+    c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de filiais e motos Mottu v1");
+    c.DefaultModelsExpandDepth(1);
+    c.DisplayRequestDuration();
+});
 
 // HTTPS Redirection - but allow JWT authentication to work first
 app.UseRouting();
@@ -261,5 +253,4 @@ app.MapControllers();
 
 app.Run();
 
-// Make Program class accessible for integration tests
 public partial class Program { }

@@ -32,9 +32,9 @@ dotnet run --project API
 ```
 
 4) Acessar a documentação
-- Swagger UI: https://localhost:7099/swagger
-- v1: https://localhost:7099/swagger/v1/swagger.json
-- v2: https://localhost:7099/swagger/v2/swagger.json
+- Swagger UI: https://localhost:7018/swagger
+- v1: https://localhost:7018/swagger/v1/swagger.json
+- v2: https://localhost:7018/swagger/v2/swagger.json
 
 ## Configuração
 Variáveis de ambiente suportadas:
