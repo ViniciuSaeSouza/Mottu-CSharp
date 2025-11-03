@@ -4,6 +4,7 @@ using Aplicacao.Servicos;
 using Dominio.Excecao;
 using Dominio.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
@@ -11,6 +12,7 @@ namespace API.Controladores;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/motos")]
 [Tags("Motos")]
+[Authorize]
 public class MotosControlador : ControllerBase
 {
     private readonly MotoServico _motoServico;

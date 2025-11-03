@@ -4,6 +4,7 @@ using Dominio.Excecao;
 using Microsoft.AspNetCore.Mvc;
 using Aplicacao.Abstracoes;
 using Dominio.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
@@ -11,6 +12,7 @@ namespace API.Controladores;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/carrapatos")]
 [Tags("Carrapatos")]
+[Authorize]
 public class CarrapatoControlador : ControllerBase
 {
     private readonly CarrapatoServico _servico;

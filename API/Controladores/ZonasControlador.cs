@@ -1,5 +1,6 @@
 ﻿using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
@@ -7,6 +8,7 @@ namespace API.Controladores;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/zonas")]
 [Tags("Zonas")]
+[AllowAnonymous]
 public class ZonasControlador : ControllerBase  
 {
     private readonly ILogger<ZonasControlador> _logger;

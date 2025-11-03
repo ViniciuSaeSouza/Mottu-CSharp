@@ -1,5 +1,6 @@
 ﻿using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
@@ -7,6 +8,7 @@ namespace API.Controladores;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/modelos-moto")]
 [Tags("Modelos das Motos")]
+[AllowAnonymous]
 public class ModelosControlador : ControllerBase
 {
     private readonly ILogger<ModelosControlador> _logger;

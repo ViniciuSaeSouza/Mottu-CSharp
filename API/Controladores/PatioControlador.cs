@@ -2,6 +2,7 @@
 using Aplicacao.Servicos;
 using Dominio.Excecao;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
@@ -9,6 +10,7 @@ namespace API.Controladores;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/patios")]
 [Tags("Patios")]
+[Authorize]
 public class PatioControlador : ControllerBase
 {
     private readonly PatioServico _patioServico;
@@ -105,6 +107,15 @@ public class PatioControlador : ControllerBase
     /// <param name="patioCreateDto">
     /// Dto de criação do pátio, contendo os dados necessários para criar um novo pátio.
     /// </param>
+    /// <remarks>
+    /// Exemplo de payload:
+    /// <example>
+    /// {
+    ///   "nome": "Ipiranga",
+    ///   "endereco": "Rua dos Pátios, 123 - São Paulo/SP"
+    /// }
+    /// </example>
+    /// </remarks>
     /// <returns>
     /// Retorna um objeto PatioLeituraDto representando o pátio criado.
     /// 201 Created se o pátio for criado com sucesso
@@ -142,6 +153,15 @@ public class PatioControlador : ControllerBase
     /// </summary>
     /// <param name="id">ID do pátio a ser atualizado</param>
     /// <param name="patioUpdateDto">Objeto contendo um ou mais atributos de um patio</param>
+    /// <remarks>
+    /// Exemplo de payload (atualização parcial):
+    /// <example>
+    /// {
+    ///   "nome": "Ipiranga Centro",
+    ///   "endereco": "Av. Central, 456 - São Paulo/SP"
+    /// }
+    /// </example>
+    /// </remarks>
     /// <returns>
     /// Retorna um objeto PatioLeituraDto representando o pátio atualizado.
     /// 200 OK se o pátio for atualizado com sucesso.
