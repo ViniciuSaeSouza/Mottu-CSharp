@@ -198,7 +198,6 @@ builder.Services.AddScoped<CarrapatoServico>();
 
 // JWT e ML.NET Services
 builder.Services.AddScoped<JwtService>();
-builder.Services.AddSingleton<MotoMLService>();
 
 // HealthCheck
 builder.Services.AddHealthChecks()
