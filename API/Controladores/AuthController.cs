@@ -57,7 +57,7 @@ namespace API.Controladores
                 });
             }
 
-            return Unauthorized(new ApiMensagemDto { Mensagem = "Usuário ou senha inválidos" });
+            return Unauthorized(new { Mensagem = "Usuário ou senha inválidos" });
         }
 
         /// <summary>
