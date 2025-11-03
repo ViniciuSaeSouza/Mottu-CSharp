@@ -222,11 +222,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // HTTPS redirection after authentication
-// Temporarily disable HTTPS redirection for development debugging
-// if (!app.Environment.IsDevelopment())
-// {
-//     app.UseHttpsRedirection();
-// }
+// Enable HTTPS redirection in production to prevent man-in-the-middle attacks.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 // Health Checks endpoints
 app.MapHealthChecks("/health", new HealthCheckOptions
