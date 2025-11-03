@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestrutura.Repositorios;
 
-// TODO: Implementar os métodos do repositório 
 public class CarrapatoRepositorio : IRepositorioCarrapato
 {
     private readonly AppDbContext _contexto;

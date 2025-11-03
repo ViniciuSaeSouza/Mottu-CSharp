@@ -3,12 +3,14 @@ using Aplicacao.Servicos;
 using Dominio.Excecao;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
 [ApiController]
 [Route("api/usuarios")]
 [Tags("Usuários")]
+[Authorize]
 public class UsuarioControlador : ControllerBase
 {
     private readonly UsuarioServico _servico;
@@ -90,6 +92,17 @@ public class UsuarioControlador : ControllerBase
     /// Cria um novo usuário com os dados fornecidos.
     /// </summary>
     /// <param name="dto">Os dados do usuário a serem criados.</param>
+    /// <remarks>
+    /// Exemplo de payload:
+    /// <example>
+    /// {
+    ///   "nome": "João Silva",
+    ///   "email": "joao.silva@mottu.com",
+    ///   "senha": "SenhaForte@123",
+    ///   "idPatio": 1
+    /// }
+    /// </example>
+    /// </remarks>
     /// <returns>
     /// 201 Created com os detalhes do usuário criado.
     /// 400 Bad Request se os dados fornecidos forem inválidos.
@@ -125,6 +138,16 @@ public class UsuarioControlador : ControllerBase
     /// </summary>
     /// <param name="id">O ID do usuário a ser atualizado.</param>
     /// <param name="dto">Os dados do usuário a serem atualizados.</param>
+    /// <remarks>
+    /// Exemplo de payload:
+    /// <example>
+    /// {
+    ///   "nome": "João da Silva",
+    ///   "email": "joao.silva@mottu.com",
+    ///   "senha": "NovaSenha@123"
+    /// }
+    /// </example>
+    /// </remarks>
     /// <returns>
     /// 200 OK com os detalhes do usuário atualizado.
     /// 404 Not Found se o usuário com o ID fornecido não for encontrado.
@@ -220,7 +243,8 @@ public class UsuarioControlador : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
+    [AllowAnonymous]
+    public async Task<IActionResult> Login([FromBody] Aplicacao.DTOs.Usuario.UsuarioLoginDto usuarioLoginDto)
     {
         try
         {
