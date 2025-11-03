@@ -7,19 +7,18 @@ using Infraestrutura.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using API;
 using API.Saude;
-using Aplicacao.Servicos.Mottu;
-using Dominio.Interfaces.Mottu;
 using HealthChecks.UI.Client;
-using Infraestrutura.Repositorios.Mottu;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using API.Servicos;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Dominio.Interfaces.Mottu;
+using Infraestrutura.Repositorios.Mottu;
 
 // TODO: adicionar logica de vinculo usuario patio
 // TODO: adicionar logica de moto com patio
@@ -35,33 +34,107 @@ string? connectionString = null;
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Versão da API
-builder.Services.AddApiVersioning(options =>
+// JWT Configuration
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "MinhaChaveSecretaSuperSeguraParaJWT123456";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MottuAPI";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "MottuAPI";
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.FromMinutes(5), // Allow 5 minutes clock skew
+            RequireExpirationTime = true,
+            RequireSignedTokens = true
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// API Versioning
+builder.Services.AddApiVersioning(opt =>
 {
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ReportApiVersions = true;
-    options.ApiVersionReader = new UrlSegmentApiVersionReader(); // usa segmento '/api/v{version}/resource' no padrão das rotas dos controllers
+    opt.DefaultApiVersion = new ApiVersion(2, 0);
+    opt.AssumeDefaultVersionWhenUnspecified = true;
+    opt.ApiVersionReader = ApiVersionReader.Combine(
+        new QueryStringApiVersionReader("version"),
+        new HeaderApiVersionReader("X-Version"),
+        new UrlSegmentApiVersionReader()
+    );
+}).AddApiExplorer(setup =>
+{
+    setup.GroupNameFormat = "'v'VVV";
+    setup.SubstituteApiVersionInUrl = true;
 });
 
-// Explorer para versões (necessário para o Swagger)
-builder.Services.AddVersionedApiExplorer(options =>
-{
-    options.GroupNameFormat = "'v'VVV"; // ex: v1.0
-    options.SubstituteApiVersionInUrl = true;
-});
-
-// Registrar configurador que cria um SwaggerDoc por versão
-builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+builder.Services.AddHealthChecks();
 
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddHealthChecks();
-
 builder.Services.AddSwaggerGen(swagger =>
 {
-    // XML comments
+    swagger.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API de filiais e motos Mottu",
+        Version = "v1",
+        Description = "API para gerenciar filiais e motos da Mottu nos pátios - Versão 1",
+        Contact = new OpenApiContact
+        {
+            Name = "Prisma.Code",
+            Email = "prismacode3@gmail.com"
+        },
+    });
+
+    swagger.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Title = "API de filiais e motos Mottu",
+        Version = "v2",
+        Description = "API para gerenciar filiais e motos da Mottu nos pátios - Versão 2 com ML.NET e JWT",
+        Contact = new OpenApiContact
+        {
+            Name = "Prisma.Code",
+            Email = "prismacode3@gmail.com"
+        },
+    });
+
+    // JWT Configuration for Swagger
+    swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    swagger.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "bearer",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     swagger.IncludeXmlComments(xmlPath);
@@ -79,11 +152,14 @@ builder.Services.AddSwaggerGen(swagger =>
     });
 });
 
-
 try
 {
-    connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle") ??
+    connectionString = Environment.GetEnvironmentVariable("Connection__String") ??
                            builder.Configuration.GetConnectionString("Oracle");
+    
+    if (string.IsNullOrEmpty(connectionString))
+        throw new ArgumentNullException(nameof(connectionString), "Connection string cannot be null or empty");
+        
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseOracle(connectionString));
 }
@@ -95,49 +171,68 @@ catch (ArgumentNullException)
 // Injeção de repositórios
 builder.Services.AddScoped<IMotoRepositorio, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
-builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
 builder.Services.AddScoped<IRepositorioUsuario, UsuarioRepositorio>();
 builder.Services.AddScoped<IRepositorioCarrapato, CarrapatoRepositorio>();
 
 // Injeção de serviços
 builder.Services.AddScoped<MotoServico>();
 builder.Services.AddScoped<PatioServico>();
-builder.Services.AddScoped<MotoMottuServico>();
 builder.Services.AddScoped<UsuarioServico>();
 builder.Services.AddScoped<CarrapatoServico>();
+
+// JWT e ML.NET Services
+builder.Services.AddScoped<JwtService>();
 
 // HealthCheck
 builder.Services.AddHealthChecks()
     .AddOracle(
-        connectionString: connectionString,
-        name: "Oracle",
-        tags: new[] { "ready", "oracle-database" })
-    .AddCheck<CarrapatoHealthCheck>(
-        "carrapato_repositorio",
-        tags: new[] { "ready" });
+        connectionString: connectionString!,
+        name: "oracle-db",
+        tags: new[] { "ready", "oracle", "database" })
+    .AddCheck<CarrapatoHealthCheck>("carrapato_repositorio", tags: new[] { "ready" })
+    .AddCheck("api-health", () => HealthCheckResult.Healthy("API está funcionando corretamente"), tags: new[] { "ready" });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
+    c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de filiais e motos Mottu v1");
+    c.DefaultModelsExpandDepth(1);
+    c.DisplayRequestDuration();
+});
 
-    // mostra todas as versões do Swagger dinamicamente
-    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-    app.UseSwaggerUI(c =>
-    {
-        foreach (var description in provider.ApiVersionDescriptions)
-        {
-            c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"API de filiais e motos Mottu {description.GroupName}");
-        }
-    });
+// HTTPS Redirection - but allow JWT authentication to work first
+
+// CORS - Add this to support HTTPS requests
+app.UseCors(policy =>
+{
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+});
+
+// Authentication MUST come before HTTPS redirection for JWT to work properly
+app.UseAuthentication();
+app.UseAuthorization();
+
+// HTTPS redirection after authentication
+// Enable HTTPS redirection in production to prevent man-in-the-middle attacks.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
+// Health Checks endpoints
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
-
-// Liveness: retorna 200 so se o app estiver rodando
+// Liveness: retorna 200 OK se a aplicação estiver em execução
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false, // sem check de dependencia, so liveness
@@ -151,8 +246,9 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

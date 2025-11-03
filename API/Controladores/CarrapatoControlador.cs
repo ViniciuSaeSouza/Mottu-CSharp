@@ -3,14 +3,17 @@ using Aplicacao.Servicos;
 using Dominio.Excecao;
 using Microsoft.AspNetCore.Mvc;
 using Aplicacao.Abstracoes;
+using Asp.Versioning;
 using Dominio.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/carrapatos")]
 [Tags("Carrapatos")]
+[Authorize]
 public class CarrapatoControlador : ControllerBase
 {
     private readonly CarrapatoServico _servico;

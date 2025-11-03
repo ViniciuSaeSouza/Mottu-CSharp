@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Asp.Versioning.ApiExplorer;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace API
 {
