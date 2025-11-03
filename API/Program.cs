@@ -207,7 +207,6 @@ app.UseSwaggerUI(c =>
 });
 
 // HTTPS Redirection - but allow JWT authentication to work first
-app.UseRouting();
 
 // CORS - Add this to support HTTPS requests
 app.UseCors(policy =>
