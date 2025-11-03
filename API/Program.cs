@@ -7,7 +7,6 @@ using Infraestrutura.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using API;
 using API.Saude;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -18,6 +17,7 @@ using System.Text;
 using API.Servicos;
 using API.ML;
 using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Dominio.Interfaces.Mottu;
 using Infraestrutura.Repositorios.Mottu;
 
@@ -35,28 +35,6 @@ string? connectionString = null;
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Versão da API
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ReportApiVersions = true;
-    options.ApiVersionReader = new UrlSegmentApiVersionReader(); // usa segmento '/api/v{version}/resource' no padrão das rotas dos controllers
-});
-
-// Explorer para versões (necessário para o Swagger)
-builder.Services.AddVersionedApiExplorer(options =>
-{
-    options.GroupNameFormat = "'v'VVV"; // ex: v1.0
-    options.SubstituteApiVersionInUrl = true;
-});
-
-// Registrar configurador que cria um SwaggerDoc por versão
-builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-
-// Swagger/OpenAPI
-builder.Services.AddEndpointsApiExplorer();
-
 // JWT Configuration
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "MinhaChaveSecretaSuperSeguraParaJWT123456";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MottuAPI";
@@ -73,7 +51,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.FromMinutes(5), // Allow 5 minutes clock skew
+            RequireExpirationTime = true,
+            RequireSignedTokens = true
         };
     });
 
@@ -96,6 +77,9 @@ builder.Services.AddApiVersioning(opt =>
 });
 
 builder.Services.AddHealthChecks();
+
+// Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(swagger =>
 {
@@ -129,8 +113,9 @@ builder.Services.AddSwaggerGen(swagger =>
         Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Authorization: Bearer {token}\"",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
 
     swagger.AddSecurityRequirement(new OpenApiSecurityRequirement()
@@ -143,7 +128,7 @@ builder.Services.AddSwaggerGen(swagger =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 },
-                Scheme = "oauth2",
+                Scheme = "bearer",
                 Name = "Bearer",
                 In = ParameterLocation.Header,
             },
@@ -213,25 +198,45 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-
-    // mostra todas as versões do Swagger dinamicamente
-    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de filiais e motos Mottu v1");
         c.SwaggerEndpoint("/swagger/v2/swagger.json", "API de filiais e motos Mottu v2");
-        c.DefaultModelsExpandDepth(-1);
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de filiais e motos Mottu v1");
+        c.DefaultModelsExpandDepth(1);
+        c.DisplayRequestDuration();
     });
 }
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
 
-app.UseHttpsRedirection();
+// HTTPS Redirection - but allow JWT authentication to work first
+app.UseRouting();
 
-// Authentication & Authorization
+// CORS - Add this to support HTTPS requests
+app.UseCors(policy =>
+{
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+});
+
+// Authentication MUST come before HTTPS redirection for JWT to work properly
 app.UseAuthentication();
 app.UseAuthorization();
+
+// HTTPS redirection after authentication
+// Temporarily disable HTTPS redirection for development debugging
+// if (!app.Environment.IsDevelopment())
+// {
+//     app.UseHttpsRedirection();
+// }
 
 // Health Checks endpoints
 app.MapHealthChecks("/health", new HealthCheckOptions

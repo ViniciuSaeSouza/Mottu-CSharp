@@ -25,15 +25,18 @@ namespace API.Servicos
             {
                 new Claim(ClaimTypes.Name, usuario),
                 new Claim(ClaimTypes.Role, role),
+                new Claim(ClaimTypes.NameIdentifier, usuario),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Sub, usuario)
             };
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"] ?? "MottuAPI",
                 audience: _configuration["Jwt:Audience"] ?? "MottuAPI",
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -55,7 +58,9 @@ namespace API.Servicos
                     ValidateAudience = true,
                     ValidAudience = _configuration["Jwt:Audience"] ?? "MottuAPI",
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.FromMinutes(5),
+                    RequireExpirationTime = true,
+                    RequireSignedTokens = true
                 }, out SecurityToken validatedToken);
 
                 return true;

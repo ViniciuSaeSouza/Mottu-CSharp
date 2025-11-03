@@ -1,6 +1,7 @@
 using Aplicacao.Abstracoes;
 using Aplicacao.DTOs.Moto;
 using Aplicacao.Servicos;
+using Asp.Versioning;
 using Dominio.Excecao;
 using Dominio.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace API.Controladores;
 
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/motos")]
 [Tags("Motos")]
 [Authorize]

@@ -103,20 +103,6 @@ A API suporta múltiplas versões (v1 e v2).
 - GET `/health/ready` — dependências (Oracle, repositórios)
 - GET `/health/live` — liveness
 
-## Exemplos rápidos (curl)
-- Login para obter token
-```bash
-curl -X POST "https://localhost:7099/api/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"admin\",\"senha\":\"admin123\"}"
-```
-- Listar motos paginadas (v2 via header)
-```bash
-curl -s "https://localhost:7099/api/motos?pagina=1&tamanhoPagina=10" -H "X-Version: 2.0"
-```
-- Predição individual (sem token; v2 via query)
-```bash
-curl -X POST "https://localhost:7099/api/predicao/manutencao-moto?version=2.0" -H "Content-Type: application/json" -d "{\"kmRodados\":15000,\"tempoUso\":12,\"numeroViagens\":300,\"idadeVeiculo\":2}"
-```
-
 ## Testes
 - Executar todos os testes
 ```bash

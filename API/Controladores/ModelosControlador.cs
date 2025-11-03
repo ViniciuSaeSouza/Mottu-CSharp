@@ -1,11 +1,12 @@
-﻿using Dominio.Enumeradores;
+﻿using Asp.Versioning;
+using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/modelos-moto")]
 [Tags("Modelos das Motos")]
 [AllowAnonymous]

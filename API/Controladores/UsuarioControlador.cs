@@ -1,14 +1,14 @@
 ﻿using Aplicacao.DTOs.Usuario;
 using Aplicacao.Servicos;
+using Asp.Versioning;
 using Dominio.Excecao;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/usuarios")]
 [Tags("Usuários")]
 [Authorize]

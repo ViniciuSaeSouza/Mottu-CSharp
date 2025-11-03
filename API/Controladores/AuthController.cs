@@ -8,9 +8,8 @@ using API.DTOs;
 namespace API.Controladores
 {
     [ApiController]
-    [ApiVersion("1.0")]
     [ApiVersion("2.0")]
-    [Route("api/auth")]
+    [Route("api/v{version:apiVersion}/auth")]
     [AllowAnonymous]
     public class AuthController : ControllerBase
     {
