@@ -65,9 +65,18 @@ namespace API.Servicos
 
                 return true;
             }
-            catch
+            catch (SecurityTokenException)
             {
                 return false;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            catch (Exception)
+            {
+                // Optionally, log the exception here if a logger is available.
+                throw;
             }
         }
     }
