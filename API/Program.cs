@@ -234,7 +234,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-// Liveness: retorna 200 se o app estiver rodando
+// Liveness: retorna 200 OK se a aplicação estiver em execução
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false, // sem check de dependencia, so liveness
