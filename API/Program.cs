@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Servicos;
-using API.ML;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Dominio.Interfaces.Mottu;
@@ -184,7 +183,6 @@ builder.Services.AddScoped<CarrapatoServico>();
 
 // JWT e ML.NET Services
 builder.Services.AddScoped<JwtService>();
-builder.Services.AddSingleton<MotoMLService>();
 
 // HealthCheck
 builder.Services.AddHealthChecks()
