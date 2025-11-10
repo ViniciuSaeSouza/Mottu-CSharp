@@ -2,6 +2,7 @@
 using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores;
 
@@ -26,10 +27,10 @@ public class ZonasControlador : ControllerBase
     /// Uma lista de objetos representando as zonas, cada um contendo um Id e um Nome.
     /// Em caso de erro, retorna um status 500 com uma mensagem de erro.
     /// </returns>
-    [HttpGet]
+    [HttpGet(Name = nameof(ObterZonas))]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
     [ProducesResponseType(statusCode: StatusCodes.Status500InternalServerError)]
-    public ActionResult<IEnumerable<object>> ObterZonas()
+    public ActionResult<Recurso<IEnumerable<object>>> ObterZonas()
     {
         try
         {
@@ -38,7 +39,13 @@ public class ZonasControlador : ControllerBase
                 .Select(z => new { Id = z, Nome = z.ToString() })
                 .ToList();
 
-            return Ok(zonas);
+            var recurso = new Recurso<IEnumerable<object>>
+            {
+                Dados = zonas,
+                Links = CriarLinksColecao()
+            };
+
+            return Ok(recurso);
 
         }
         catch (Exception ex)
@@ -47,5 +54,13 @@ public class ZonasControlador : ControllerBase
 
             return Problem("Erro interno do servidor");
         }
+    }
+
+    private List<Link> CriarLinksColecao()
+    {
+        return new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(ObterZonas), null) ?? string.Empty, Method = "GET" }
+        };
     }
 }

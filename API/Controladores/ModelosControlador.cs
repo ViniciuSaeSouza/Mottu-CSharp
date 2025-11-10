@@ -2,6 +2,7 @@
 using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores;
 
@@ -28,10 +29,10 @@ public class ModelosControlador : ControllerBase
     /// 200 em caso de sucesso
     /// 500 em caso de erro.
     /// </returns>
-    [HttpGet]
+    [HttpGet(Name = nameof(Listar))]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
     [ProducesResponseType(statusCode: StatusCodes.Status500InternalServerError)]
-    public IActionResult Listar()
+    public ActionResult<Recurso<IEnumerable<object>>> Listar()
     {
         try
         {
@@ -40,7 +41,13 @@ public class ModelosControlador : ControllerBase
                 .Cast<ModeloMotoEnum>()
                 .Select(m => new { id = (int)m, nome = m.ToString() });
 
-            return Ok(modelos);
+            var recurso = new Recurso<IEnumerable<object>>
+            {
+                Dados = modelos,
+                Links = CriarLinksColecao()
+            };
+
+            return Ok(recurso);
         }
         catch (Exception ex)
         {
@@ -48,5 +55,13 @@ public class ModelosControlador : ControllerBase
 
             return Problem("Erro interno do servidor.");
         }
+    }
+
+    private List<Link> CriarLinksColecao()
+    {
+        return new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(Listar), null) ?? string.Empty, Method = "GET" }
+        };
     }
 }

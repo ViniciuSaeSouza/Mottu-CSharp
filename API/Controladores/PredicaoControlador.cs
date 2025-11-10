@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using API.ML;
 using Asp.Versioning;
 using API.ML.DTOs;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores
 {
@@ -24,12 +25,12 @@ namespace API.Controladores
         /// </summary>
         /// <param name="dadosMoto">Dados da moto para análise</param>
         /// <returns>Predição de manutenção</returns>
-        [HttpPost("manutencao-moto")]
+        [HttpPost("manutencao-moto", Name = nameof(PredizirManutencao))]
         [AllowAnonymous]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
 
-        public IActionResult PredizirManutencao([FromBody] DadosPredicaoDto dadosMoto)
+        public ActionResult<Recurso<PredicaoResultadoDto>> PredizirManutencao([FromBody] DadosPredicaoDto dadosMoto)
         {
             try
             {
@@ -45,7 +46,7 @@ namespace API.Controladores
                     ? $"Manutenção urgente necessária. Veículo com {dadosMoto.KmRodados:N0} km rodados."
                     : $"Veículo em bom estado. Próxima revisão recomendada em {10000 - (dadosMoto.KmRodados % 10000):N0} km.";
 
-                return Ok(new PredicaoResultadoDto
+                var resultado = new PredicaoResultadoDto
                 {
                     PrecisaManutencao = predicao.PrecisaManutencao,
                     Probabilidade = Math.Round(predicao.Probabilidade * 100, 1),
@@ -53,7 +54,15 @@ namespace API.Controladores
                     AvaliacaoRisco = avaliacaoRisco,
                     Recomendacao = recomendacao,
                     DataAnalise = DateTime.UtcNow
-                });
+                };
+
+                var recurso = new Recurso<PredicaoResultadoDto>
+                {
+                    Dados = resultado,
+                    Links = CriarLinksPredicao()
+                };
+
+                return Ok(recurso);
             }
             catch (Exception ex)
             {
@@ -66,11 +75,11 @@ namespace API.Controladores
         /// </summary>
         /// <param name="frota">Lista de motos para análise</param>
         /// <returns>Análise da frota com ranking de prioridade</returns>
-        [HttpPost("analise-frota")]
+        [HttpPost("analise-frota", Name = nameof(AnalisarFrota))]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
-        public IActionResult AnalisarFrota([FromBody] List<MotoFrotaDto> frota)
+        public ActionResult<Recurso<PredicaoAnaliseFrotaResumoDto>> AnalisarFrota([FromBody] List<MotoFrotaDto> frota)
         {
             try
             {
@@ -110,7 +119,13 @@ namespace API.Controladores
                     Ranking = ranking
                 };
 
-                return Ok(resumo);
+                var recurso = new Recurso<PredicaoAnaliseFrotaResumoDto>
+                {
+                    Dados = resumo,
+                    Links = CriarLinksAnaliseFrota()
+                };
+
+                return Ok(recurso);
             }
             catch (Exception ex)
             {
@@ -123,6 +138,24 @@ namespace API.Controladores
             // Priorizacao simples ponderando probabilidade, quilometragem e idade do veiculo
             var score = (probabilidade * 0.6) + (Math.Min(kmRodados / 30000.0, 1.0) * 0.25) + (Math.Min(idadeVeiculo / 5.0, 1.0) * 0.15);
             return (int)Math.Round(score * 100, 0); // retorno como inteiro percentual 0..100
+        }
+
+        private List<Link> CriarLinksPredicao()
+        {
+            return new List<Link>
+            {
+                new Link { Rel = "self", Href = Url.Link(nameof(PredizirManutencao), null) ?? string.Empty, Method = "POST" },
+                new Link { Rel = "analise-frota", Href = Url.Link(nameof(AnalisarFrota), null) ?? string.Empty, Method = "POST" }
+            };
+        }
+
+        private List<Link> CriarLinksAnaliseFrota()
+        {
+            return new List<Link>
+            {
+                new Link { Rel = "self", Href = Url.Link(nameof(AnalisarFrota), null) ?? string.Empty, Method = "POST" },
+                new Link { Rel = "predicao-moto", Href = Url.Link(nameof(PredizirManutencao), null) ?? string.Empty, Method = "POST" }
+            };
         }
     }
 }

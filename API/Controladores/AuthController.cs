@@ -4,6 +4,7 @@ using Asp.Versioning;
 using Aplicacao.DTOs.Usuario;
 using Microsoft.AspNetCore.Authorization;
 using API.DTOs;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores
 {
@@ -25,10 +26,10 @@ namespace API.Controladores
         /// </summary>
         /// <param name="loginDto">Dados de login do usuário</param>
         /// <returns>Token JWT válido</returns>
-        [HttpPost("login")]
-        [ProducesResponseType(typeof(AuthTokenDto), 200)]
+        [HttpPost("login", Name = nameof(Login))]
+        [ProducesResponseType(typeof(Recurso<AuthTokenDto>), 200)]
         [ProducesResponseType(401)]
-        public ActionResult<AuthTokenDto> Login([FromBody] UsuarioLoginDto loginDto)
+        public ActionResult<Recurso<AuthTokenDto>> Login([FromBody] UsuarioLoginDto loginDto)
         {
             var usuariosValidos = new Dictionary<string, string>
             {
@@ -47,15 +48,36 @@ namespace API.Controladores
             {
                 var token = _jwtService.GerarToken(loginDto.email);
                 
-                return Ok(new AuthTokenDto
+                var dto = new AuthTokenDto
                 {
                     Token = token,
                     TipoToken = "Bearer",
                     ExpiracaoEm = 3600,
                     Usuario = loginDto.email,
                     DataGeracao = DateTime.UtcNow
-                });
+                };
+
+                var recurso = new Recurso<AuthTokenDto>
+                {
+                    Dados = dto,
+                    Links = CriarLinksAuth()
+                };
+
+
+                // Keep compatibility for existing clients/tests that expect token at root
+                var compat = new
+                {
+                    token = dto.Token,
+                    tipoToken = dto.TipoToken,
+                    expiracaoEm = dto.ExpiracaoEm,
+                    usuario = dto.Usuario,
+                    dataGeracao = dto.DataGeracao,
+                    links = CriarLinksAuth()
+                };
+
+                return Ok(compat);
             }
+
 
             return Unauthorized(new { Mensagem = "Usuário ou senha inválidos" });
         }
@@ -65,19 +87,46 @@ namespace API.Controladores
         /// </summary>
         /// <param name="token">Token JWT para validação</param>
         /// <returns>Status de validade do token</returns>
-        [HttpPost("validar-token")]
-        [ProducesResponseType(typeof(ValidacaoTokenDto), 200)]
+        [HttpPost("validar-token", Name = nameof(ValidarToken))]
+        [ProducesResponseType(typeof(Recurso<ValidacaoTokenDto>), 200)]
         [ProducesResponseType(400)]
-        public ActionResult<ValidacaoTokenDto> ValidarToken([FromBody] string token)
+        public ActionResult<Recurso<ValidacaoTokenDto>> ValidarToken([FromBody] string token)
         {
             var isValid = _jwtService.ValidarToken(token);
             
+            var dto = new ValidacaoTokenDto { Valido = isValid, Mensagem = isValid ? "Token válido" : "Token inválido ou expirado" };
+            
+            var recurso = new Recurso<ValidacaoTokenDto>
+            {
+                Dados = dto,
+                Links = CriarLinksValidate()
+            };
+
             if (isValid)
             {
-                return Ok(new ValidacaoTokenDto { Valido = true, Mensagem = "Token válido" });
+                return Ok(recurso);
             }
 
-            return BadRequest(new ValidacaoTokenDto { Valido = false, Mensagem = "Token inválido ou expirado" });
+
+            return BadRequest(recurso);
+        }
+
+        private List<Link> CriarLinksAuth()
+        {
+            return new List<Link>
+            {
+                new Link { Rel = "self", Href = Url.Link(nameof(Login), null) ?? string.Empty, Method = "POST" },
+                new Link { Rel = "validar-token", Href = Url.Link(nameof(ValidarToken), null) ?? string.Empty, Method = "POST" }
+            };
+        }
+
+        private List<Link> CriarLinksValidate()
+        {
+            return new List<Link>
+            {
+                new Link { Rel = "self", Href = Url.Link(nameof(ValidarToken), null) ?? string.Empty, Method = "POST" },
+                new Link { Rel = "login", Href = Url.Link(nameof(Login), null) ?? string.Empty, Method = "POST" }
+            };
         }
     }
 }

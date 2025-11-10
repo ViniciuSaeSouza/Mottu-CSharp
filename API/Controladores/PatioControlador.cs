@@ -4,6 +4,7 @@ using Asp.Versioning;
 using Dominio.Excecao;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Aplicacao.Abstracoes;
 
 namespace API.Controladores;
 
@@ -31,16 +32,22 @@ public class PatioControlador : ControllerBase
     /// 200 OK se os pátios forem encontrados.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpGet]
+    [HttpGet(Name = nameof(GetPatios))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<PatioLeituraDto>>> GetPatios()
+    public async Task<ActionResult<Recurso<IEnumerable<PatioLeituraDto>>>> GetPatios()
     {
         try
         {
             var patios = await _patioServico.ObterTodos();
+
+            var recurso = new Recurso<IEnumerable<PatioLeituraDto>>
+            {
+                Dados = patios,
+                Links = CriarLinksColecao()
+            };
             
-            return Ok(patios);
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
@@ -54,6 +61,7 @@ public class PatioControlador : ControllerBase
             
             return Problem("Erro interno do servidor.");
         }
+
     }
 
     /// <summary>
@@ -69,18 +77,24 @@ public class PatioControlador : ControllerBase
     /// 404 Not Found em caso de pátio não encontrado.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = nameof(GetPatio))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PatioLeituraDto>> GetPatio(int id)
+    public async Task<ActionResult<Recurso<PatioLeituraDto>>> GetPatio(int id)
     {
         try
         {
             var patio = await _patioServico.ObterPorId(id);
             
-            return Ok(patio);
+            var recurso = new Recurso<PatioLeituraDto>
+            {
+                Dados = patio,
+                Links = CriarLinks(patio)
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
@@ -123,17 +137,23 @@ public class PatioControlador : ControllerBase
     /// 400 se o objeto patioCreateDto não for passado corretamente no corpo.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpPost]
+    [HttpPost(Name = nameof(CriarPatio))]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PatioLeituraDto>> CriarPatio([FromBody] PatioCriarDto patioCreateDto)
+    public async Task<ActionResult<Recurso<PatioLeituraDto>>> CriarPatio([FromBody] PatioCriarDto patioCreateDto)
     {
         try
         {
             var patio = await _patioServico.Criar(patioCreateDto);
             
-            return CreatedAtAction(nameof(GetPatio), new { id = patio.Id }, patio);
+            var recurso = new Recurso<PatioLeituraDto>
+            {
+                Dados = patio,
+                Links = CriarLinks(patio)
+            };
+
+            return CreatedAtAction(nameof(GetPatio), new { id = patio.Id }, recurso);
         }
         catch (ExcecaoDominio ex)
         {
@@ -170,18 +190,24 @@ public class PatioControlador : ControllerBase
     /// 400 Bad Request se o objeto patioUpdateDto não for passado corretamente no corpo.
     /// 500 em caso de erro.
     /// </returns>
-    [HttpPatch("{id}")]
+    [HttpPatch("{id}", Name = nameof(PatchPatio))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PatchPatio(int id, [FromBody] PatioAtualizarDto patioUpdateDto)
+    public async Task<ActionResult<Recurso<PatioLeituraDto>>> PatchPatio(int id, [FromBody] PatioAtualizarDto patioUpdateDto)
     {
         try
         {
             var patioAtualizado = await _patioServico.Atualizar(id, patioUpdateDto);
             
-            return Ok(patioAtualizado);
+            var recurso = new Recurso<PatioLeituraDto>
+            {
+                Dados = patioAtualizado,
+                Links = CriarLinks(patioAtualizado)
+            };
+
+            return Ok(recurso);
         }
         catch (ExcecaoDominio ex)
         {
@@ -215,7 +241,7 @@ public class PatioControlador : ControllerBase
     /// Retorna 400 Bad Request se o ID for inválido (não for um número inteiro).
     /// 500 em caso de erro.
     /// </returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}", Name = nameof(DeletaPatio))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -246,5 +272,64 @@ public class PatioControlador : ControllerBase
             
             return  Problem("Erro interno do servidor");
         }
+    }
+
+    private string ObterVersao()
+    {
+        // 1) RouteData common token
+        if (RouteData.Values.TryGetValue("version", out var v) && v != null)
+            return v.ToString() ?? "2.0";
+
+        // 2) Some setups may expose 'apiVersion' route value
+        if (RouteData.Values.TryGetValue("apiVersion", out var av) && av != null)
+            return av.ToString() ?? "2.0";
+
+        // 3) Query string
+        if (Request?.Query.TryGetValue("api-version", out var qv) == true && !string.IsNullOrWhiteSpace(qv))
+            return qv.ToString();
+
+        // 4) Header
+        if (Request?.Headers.TryGetValue("api-version", out var hv) == true && !string.IsNullOrWhiteSpace(hv))
+            return hv.ToString();
+
+        // 5) Try API versioning helper (if available)
+        try
+        {
+            var requested = HttpContext.GetRequestedApiVersion();
+            if (requested != null)
+                return requested.ToString();
+        }
+        catch { /* ignore if extension not available */ }
+
+        // fallback
+        return "2.0";
+    }
+
+    private List<Link> CriarLinks(PatioLeituraDto patio)
+    {
+        var version = ObterVersao();
+
+        var links = new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(GetPatio), new { version, id = patio.Id }) ?? string.Empty, Method = "GET" },
+            new Link { Rel = "update", Href = Url.Link(nameof(PatchPatio), new { version, id = patio.Id }) ?? string.Empty, Method = "PATCH" },
+            new Link { Rel = "delete", Href = Url.Link(nameof(DeletaPatio), new { version, id = patio.Id }) ?? string.Empty, Method = "DELETE" },
+            new Link { Rel = "collection", Href = Url.Link(nameof(GetPatios), new { version }) ?? string.Empty, Method = "GET" }
+        };
+
+        return links;
+    }
+
+    private List<Link> CriarLinksColecao()
+    {
+        var version = ObterVersao();
+
+        var links = new List<Link>
+        {
+            new Link { Rel = "self", Href = Url.Link(nameof(GetPatios), new { version }) ?? string.Empty, Method = "GET" },
+            new Link { Rel = "create", Href = Url.Link(nameof(CriarPatio), new { version }) ?? string.Empty, Method = "POST" }
+        };
+
+        return links;
     }
 }
