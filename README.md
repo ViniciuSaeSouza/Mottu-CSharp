@@ -12,7 +12,10 @@ API RESTful em .NET 8 para gestão de motos, pátios (filiais) e usuários, com 
 - Swagger/OpenAPI com exemplos e modelos
 
 ## Quickstart
-Pré-requisitos: .NET 8 SDK instalado
+Pré-requisitos: 
+- .NET 8 SDK instalado
+- Projeto clonado
+- Terminal na Raiz do projeto `Mottu-CSharp\`
 
 1) Restaurar dependências
 ```bash
@@ -28,13 +31,11 @@ Connection__String=Data Source=oracle.fiap.com.br:1521/ORCL;User Id=<usuario>;Pa
 
 3) Executar a API
 ```bash
-dotnet run --project API
+dotnet run --project API --launch-profile "https"
 ```
 
 4) Acessar a documentação
 - Swagger UI: https://localhost:7018/swagger
-- v1: https://localhost:7018/swagger/v1/swagger.json
-- v2: https://localhost:7018/swagger/v2/swagger.json
 
 ## Configuração
 Variáveis de ambiente suportadas:
