@@ -41,9 +41,19 @@ namespace API.ML
         public MotoMLService()
         {
             _mlContext = new MLContext(seed: 1);
-            TreinarModelo();
+            // Lazy initialization: model will be trained when first needed
         }
 
+        // Lazy initialization in prediction method
+        public MotoManutencaoPredicao PreverManutencao(MotoManutencaoData input)
+        {
+            if (_model == null)
+            {
+                TreinarModelo();
+            }
+            var predictionEngine = _mlContext.Model.CreatePredictionEngine<MotoManutencaoData, MotoManutencaoPredicao>(_model);
+            return predictionEngine.Predict(input);
+        }
         private void TreinarModelo()
         {
             // Dados de exemplo para treinamento do modelo
