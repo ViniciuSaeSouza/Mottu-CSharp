@@ -53,23 +53,7 @@ dotnet run --project API --launch-profile "https"
 - Health Check Live: https://localhost:7018/health/live
 - Health Check Ready: https://localhost:7018/health/ready
 
-## Configuração
-
-### Configuração da Connection String Oracle:
-Edite o arquivo `API/appsettings.json` e configure a seção ConnectionStrings:
-
-```json
-{
-  "ConnectionStrings": {
-    "Oracle": "Data Source=hostname:port/service_name;User Id=username;Password=password;"
-  }
-}
-```
-
-## Segurança
-- ⚠️ Não commite credenciais reais no appsettings.json
-- ✅ Para produção, use variáveis de ambiente ou Azure Key Vault
-- ✅ Adicione appsettings.json ao .gitignore se contiver credenciais sensíveis
+---
 
 ## Versionamento
 A API suporta múltiplas versões (v1 e v2).
