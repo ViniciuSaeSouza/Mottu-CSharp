@@ -12,6 +12,7 @@ namespace API.Controladores
     [Authorize]
     public class PredicaoControlador : ControllerBase
     {
+        private const int MAX_FLEET_SIZE = 1000;
         private readonly MotoMLService _motoMlService;
 
         public PredicaoControlador(MotoMLService motoMlService)
@@ -72,6 +73,12 @@ namespace API.Controladores
         [ProducesResponseType(400)]
         public IActionResult AnalisarFrota([FromBody] List<MotoFrotaDto> frota)
         {
+            if (frota == null || frota.Count == 0)
+                return BadRequest(new { erro = "A lista de motos não pode ser vazia" });
+
+            if (frota.Count > MAX_FLEET_SIZE)
+                return BadRequest(new { erro = $"O tamanho máximo da frota é {MAX_FLEET_SIZE}" });
+
             try
             {
                 var resultados = new List<AnaliseMotoDto>();
