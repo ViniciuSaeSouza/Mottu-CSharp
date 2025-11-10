@@ -20,11 +20,6 @@ using Asp.Versioning.ApiExplorer;
 using Dominio.Interfaces.Mottu;
 using Infraestrutura.Repositorios.Mottu;
 
-// TODO: adicionar logica de vinculo usuario patio
-// TODO: adicionar logica de moto com patio
-// TODO: adicionar logica de moto com carrapato
-// TODO: adicionar logica de carrapato com patio
-
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +33,17 @@ builder.Services.AddControllers();
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "MinhaChaveSecretaSuperSeguraParaJWT123456";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MottuAPI";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "MottuAPI";
+var corsPolicyName = "AllowAll";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName, policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -169,6 +175,7 @@ catch (ArgumentNullException)
 }
 
 // Injeção de repositórios
+builder.Services.AddScoped<IMottuRepositorio, MotoMottuRepositorio>();
 builder.Services.AddScoped<IMotoRepositorio, MotoRepositorio>();
 builder.Services.AddScoped<IRepositorio<Patio>, PatioRepositorio>();
 builder.Services.AddScoped<IRepositorioUsuario, UsuarioRepositorio>();
@@ -205,22 +212,15 @@ app.UseSwaggerUI(c =>
     c.DisplayRequestDuration();
 });
 
-// HTTPS Redirection - but allow JWT authentication to work first
 
-// CORS - Add this to support HTTPS requests
-app.UseCors(policy =>
-{
-    policy.AllowAnyOrigin()
-          .AllowAnyMethod()
-          .AllowAnyHeader();
-});
+// CORS -
+app.UseCors(corsPolicyName);
 
-// Authentication MUST come before HTTPS redirection for JWT to work properly
 app.UseAuthentication();
 app.UseAuthorization();
 
 // HTTPS redirection after authentication
-// Enable HTTPS redirection in production to prevent man-in-the-middle attacks.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
