@@ -38,6 +38,11 @@ namespace API.ML
         private readonly MLContext _mlContext;
         private ITransformer? _model;
 
+        // Risk assessment thresholds for maintenance prediction
+        private const float HIGH_RISK_THRESHOLD = 0.8f; // Threshold for high risk classification
+        private const float MEDIUM_RISK_THRESHOLD = 0.6f; // Threshold for medium risk classification
+        private const float LOW_RISK_THRESHOLD = 0.4f; // Threshold for low risk classification
+
         public MotoMLService()
         {
             _mlContext = new MLContext(seed: 1);
@@ -119,9 +124,9 @@ namespace API.ML
         {
             return predicao.Probabilidade switch
             {
-                >= 0.8f => "Alto risco - Manutenção urgente recomendada",
-                >= 0.6f => "Médio risco - Agendar manutenção em breve",
-                >= 0.4f => "Baixo risco - Monitorar periodicamente",
+                >= HIGH_RISK_THRESHOLD => "Alto risco - Manutenção urgente recomendada",
+                >= MEDIUM_RISK_THRESHOLD => "Médio risco - Agendar manutenção em breve",
+                >= LOW_RISK_THRESHOLD => "Baixo risco - Monitorar periodicamente",
                 _ => "Muito baixo risco - Veículo em bom estado"
             };
         }
