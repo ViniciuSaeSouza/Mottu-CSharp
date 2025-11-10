@@ -137,16 +137,17 @@ namespace Tests.Integration
             // Arrange
             var tokenInvalido = "token.invalido.aqui";
             var json = JsonSerializer.Serialize(tokenInvalido);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            using (var content = new StringContent(json, Encoding.UTF8, "application/json"))
+            {
+                // Act
+                var response = await _client.PostAsync("/api/v2.0/auth/validar-token", content);
 
-            // Act
-            var response = await _client.PostAsync("/api/v2.0/auth/validar-token", content);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            
-            var responseContent = await response.Content.ReadAsStringAsync();
-            responseContent.Should().Contain("\"valido\":false");
+                // Assert
+                response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+                
+                var responseContent = await response.Content.ReadAsStringAsync();
+                responseContent.Should().Contain("\"valido\":false");
+            }
         }
     }
 }
