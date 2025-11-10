@@ -12,36 +12,64 @@ API RESTful em .NET 8 para gestão de motos, pátios (filiais) e usuários, com 
 - Swagger/OpenAPI com exemplos e modelos
 
 ## Quickstart
-Pré-requisitos: .NET 8 SDK instalado
+Pré-requisitos: 
+- .NET 8 SDK instalado
+- Projeto clonado
+- Terminal na Raiz do projeto `Mottu-CSharp\`
 
-1) Restaurar dependências
+### 1) Restaurar dependências
 ```bash
 dotnet restore
 ```
 
-2) Configurar ambiente (variáveis)
-- Crie um arquivo `API/.env` com a string de conexão Oracle (exemplo FIAP):
-```
-Connection__String=Data Source=oracle.fiap.com.br:1521/ORCL;User Id=<usuario>;Password=<senha>;
-```
-- Variáveis opcionais para JWT (possuem padrões): Jwt__Key, Jwt__Issuer, Jwt__Audience
+### 2) Configurar conexão com Oracle
+Edite o arquivo `API/appsettings.json` e substitua a connection string Oracle:
 
-3) Executar a API
+```json
+{
+  "ConnectionStrings": {
+    "Oracle": "Data Source=your-oracle-host:1521/your-service-name;User Id=your-username;Password=your-password;"
+  }
+}
+```
+
+**Exemplo para ambiente FIAP:**
+```json
+{
+  "ConnectionStrings": {
+    "Oracle": "Data Source=oracle.fiap.com.br:1521/ORCL;User Id=RM123456;Password=sua-senha-aqui;"
+  }
+}
+```
+
+### 3) Executar a API
 ```bash
-dotnet run --project API
+dotnet run --project API --launch-profile "https"
 ```
 
-4) Acessar a documentação
+### 4) Acessar a documentação
 - Swagger UI: https://localhost:7018/swagger
-- v1: https://localhost:7018/swagger/v1/swagger.json
-- v2: https://localhost:7018/swagger/v2/swagger.json
+- Health Check Geral: https://localhost:7018/health
+- Health Check Live: https://localhost:7018/health/live
+- Health Check Ready: https://localhost:7018/health/ready
 
 ## Configuração
-Variáveis de ambiente suportadas:
-- Connection__String: string de conexão Oracle (obrigatória)
-- Jwt__Key: chave secreta JWT (opcional; possui padrão)
-- Jwt__Issuer: emissor do JWT (opcional; possui padrão)
-- Jwt__Audience: audiência do JWT (opcional; possui padrão)
+
+### Configuração da Connection String Oracle:
+Edite o arquivo `API/appsettings.json` e configure a seção ConnectionStrings:
+
+```json
+{
+  "ConnectionStrings": {
+    "Oracle": "Data Source=hostname:port/service_name;User Id=username;Password=password;"
+  }
+}
+```
+
+## Segurança
+- ⚠️ Não commite credenciais reais no appsettings.json
+- ✅ Para produção, use variáveis de ambiente ou Azure Key Vault
+- ✅ Adicione appsettings.json ao .gitignore se contiver credenciais sensíveis
 
 ## Versionamento
 A API suporta múltiplas versões (v1 e v2).

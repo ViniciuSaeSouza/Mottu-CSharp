@@ -72,7 +72,7 @@ namespace Tests.Integration
 
                 // Assert
                 response.Content.Headers.ContentType?.MediaType.Should().Be("application/json");
-                
+
                 var content = await response.Content.ReadAsStringAsync();
                 content.Should().StartWith("{");
                 content.Should().EndWith("}");
@@ -87,7 +87,7 @@ namespace Tests.Integration
 
             // Assert
             var content = await response.Content.ReadAsStringAsync();
-            
+
             // Verificar se contém informações de cada health check
             content.Should().Contain("status");
             content.Should().Contain("totalDuration");

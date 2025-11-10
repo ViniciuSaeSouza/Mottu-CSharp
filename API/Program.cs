@@ -160,18 +160,18 @@ builder.Services.AddSwaggerGen(swagger =>
 
 try
 {
-    connectionString = Environment.GetEnvironmentVariable("Connection__String") ??
+    connectionString = Environment.GetEnvironmentVariable("ConnectionString__Oracle") ??
                            builder.Configuration.GetConnectionString("Oracle");
     
     if (string.IsNullOrEmpty(connectionString))
-        throw new ArgumentNullException(nameof(connectionString), "Connection string cannot be null or empty");
+        throw new ArgumentNullException(nameof(connectionString), "Connection string cannot be null or empty. Please set the ConnectionString__Oracle environment variable or configure it in appsettings.json");
         
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseOracle(connectionString));
 }
 catch (ArgumentNullException)
 {
-    throw new Exception("Falha ao buscar a variável de ambiente");
+    throw new Exception("Falha ao configurar a connection string do Oracle. Verifique se a variável de ambiente ConnectionString__Oracle está definida.");
 }
 
 // Injeção de repositórios
