@@ -35,6 +35,9 @@ namespace API.ML
 
     public class MotoMLService
     {
+        // Threshold for maintenance recommendation - vehicles with probability above this value are flagged for maintenance
+        private const float MAINTENANCE_THRESHOLD = 0.75f;
+
         private readonly MLContext _mlContext;
         private ITransformer? _model;
 
@@ -99,8 +102,7 @@ namespace API.ML
             var altaUtilizacao  = kmRodados >= 25000f || tempoUso >= 24f || numeroViagens >= 800f || idadeVeiculo >= 5f;
 
             // Limite mais conservador para indicar manutenção
-            var threshold = 0.75f;
-            var precisa = predicted.Probabilidade >= threshold;
+            var precisa = predicted.Probabilidade >= MAINTENANCE_THRESHOLD;
 
             if (baixaUtilizacao)
                 precisa = false;

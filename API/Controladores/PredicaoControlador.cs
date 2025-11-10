@@ -12,6 +12,11 @@ namespace API.Controladores
     [Authorize]
     public class PredicaoControlador : ControllerBase
     {
+        // Priority calculation weights - used to calculate maintenance priority score
+        private const double PROBABILITY_WEIGHT = 0.6;  // Weight for maintenance probability in priority calculation
+        private const double KM_WEIGHT = 0.25;          // Weight for kilometers driven in priority calculation
+        private const double AGE_WEIGHT = 0.15;         // Weight for vehicle age in priority calculation
+
         private readonly MotoMLService _motoMlService;
 
         public PredicaoControlador(MotoMLService motoMlService)
@@ -121,7 +126,7 @@ namespace API.Controladores
         private static int CalcularPrioridade(float probabilidade, float kmRodados, float idadeVeiculo)
         {
             // Priorizacao simples ponderando probabilidade, quilometragem e idade do veiculo
-            var score = (probabilidade * 0.6) + (Math.Min(kmRodados / 30000.0, 1.0) * 0.25) + (Math.Min(idadeVeiculo / 5.0, 1.0) * 0.15);
+            var score = (probabilidade * PROBABILITY_WEIGHT) + (Math.Min(kmRodados / 30000.0, 1.0) * KM_WEIGHT) + (Math.Min(idadeVeiculo / 5.0, 1.0) * AGE_WEIGHT);
             return (int)Math.Round(score * 100, 0); // retorno como inteiro percentual 0..100
         }
     }
