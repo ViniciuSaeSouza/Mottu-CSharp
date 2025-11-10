@@ -6,7 +6,6 @@ using Dominio.Persistencia;
 
 namespace Aplicacao.Servicos;
 
-//TODO: Adicionar validações específicas do usuário (e.g., email único, formato de email, tamanho da senha, etc.)
 public class UsuarioServico
 {
     private readonly IRepositorioUsuario _repositorio;

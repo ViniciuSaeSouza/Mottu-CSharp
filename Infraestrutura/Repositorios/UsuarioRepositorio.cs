@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestrutura.Repositorios;
 
-// TODO: SPRINT4 - Implementar método de busca de usuário por email || nome
 public class UsuarioRepositorio : IRepositorioUsuario
 {
     private readonly AppDbContext _contexto;

@@ -1,13 +1,24 @@
-﻿using Dominio.Enumeradores;
+﻿using Asp.Versioning;
+using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
 [ApiController]
-[Route("api/zonas")]
+[ApiVersion("2.0")]
+[Route("api/v{version:apiVersion}/zonas")]
 [Tags("Zonas")]
+[AllowAnonymous]
 public class ZonasControlador : ControllerBase  
 {
+    private readonly ILogger<ZonasControlador> _logger;
+
+    public ZonasControlador(ILogger<ZonasControlador>  logger)
+    {
+        _logger = logger;
+    }
+    
     /// <summary>
     /// Obtém a lista de zonas disponíveis.
     /// </summary>
@@ -32,8 +43,9 @@ public class ZonasControlador : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Erro ao listar zonas: " + ex.StackTrace);
-            return StatusCode(statusCode: 500, value: new { mensagem = "Ocorreu um erro ao listar as zonas.", detalhes = ex.Message });
+            _logger.LogError(ex, ex.Message);
+
+            return Problem("Erro interno do servidor");
         }
     }
 }

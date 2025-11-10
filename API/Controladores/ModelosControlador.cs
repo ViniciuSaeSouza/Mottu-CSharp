@@ -1,21 +1,32 @@
-﻿using Dominio.Enumeradores;
+﻿using Asp.Versioning;
+using Dominio.Enumeradores;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controladores;
 
-
 [ApiController]
-[Route("api/modelos-moto")]
+[ApiVersion("2.0")]
+[Route("api/v{version:apiVersion}/modelos-moto")]
 [Tags("Modelos das Motos")]
+[AllowAnonymous]
 public class ModelosControlador : ControllerBase
 {
+    private readonly ILogger<ModelosControlador> _logger;
+
+    public ModelosControlador(ILogger<ModelosControlador>  logger)
+    {
+        _logger = logger;
+    }
+    
     
     /// <summary>
     /// Lista todos os modelos de moto disponíveis.
     /// </summary>
     /// <returns>
     /// Uma lista de objetos representando os modelos de moto, cada um contendo um id e um nome.
-    /// Em caso de erro, retorna um status 500 com uma mensagem de erro.
+    /// 200 em caso de sucesso
+    /// 500 em caso de erro.
     /// </returns>
     [HttpGet]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
@@ -33,8 +44,9 @@ public class ModelosControlador : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Erro ao listar modelos de moto: " + ex.StackTrace);
-            return StatusCode(statusCode: 500, value: new { mensagem = "Ocorreu um erro ao listar os modelos de moto.", detalhes = ex.Message });
+            _logger.LogError(ex, ex.Message);
+
+            return Problem("Erro interno do servidor.");
         }
     }
 }
