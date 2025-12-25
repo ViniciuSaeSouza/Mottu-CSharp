@@ -1,0 +1,10 @@
+Connection String Oracle:
+"Data Source=oracle.fiap.com.br:1521/orcl;User Id=RM554456;Password=080995;"
+
+Github:
+https://github.com/ViniciuSaeSouza/Mottu-CSharp
+
+Integrantes: 
+RM 558843 - Laura de Oliveira Cintra - 2TDSPJ
+RM 558832 - Maria Eduarda Alves da Paixão - 2TDSPJ
+RM 554456 - Vinícius Saes de Souza - 2TDSPY
