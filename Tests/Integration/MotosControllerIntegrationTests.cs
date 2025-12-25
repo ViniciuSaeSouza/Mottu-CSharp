@@ -20,7 +20,7 @@ namespace Tests.Integration
         {
             builder.ConfigureServices(services =>
             {
-                var descriptorsToRemove = services.Where(d => 
+                var descriptorsToRemove = services.Where(d =>
                     d.ServiceType == typeof(DbContextOptions<AppDbContext>) ||
                     d.ServiceType == typeof(AppDbContext) ||
                     d.ServiceType == typeof(DbContextOptions) ||
@@ -41,11 +41,11 @@ namespace Tests.Integration
                     options.EnableSensitiveDataLogging();
                 });
 
-                var authDescriptors = services.Where(d => 
+                var authDescriptors = services.Where(d =>
                     d.ServiceType.Name.Contains("Authentication") ||
                     d.ServiceType.Name.Contains("Authorization") ||
                     d.ServiceType.Name.Contains("Jwt")).ToList();
-                
+
                 foreach (var desc in authDescriptors)
                 {
                     services.Remove(desc);
@@ -53,7 +53,7 @@ namespace Tests.Integration
 
                 services.AddAuthentication("Test")
                     .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("Test", options => { });
-                
+
                 services.AddAuthorization(options =>
                 {
                     options.DefaultPolicy = new AuthorizationPolicyBuilder("Test")
@@ -65,7 +65,7 @@ namespace Tests.Integration
                 using var scope = sp.CreateScope();
                 var scopedServices = scope.ServiceProvider;
                 var db = scopedServices.GetRequiredService<AppDbContext>();
-                
+
                 db.Database.EnsureCreated();
             });
         }
